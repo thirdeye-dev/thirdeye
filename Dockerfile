@@ -2,7 +2,7 @@ FROM python:3.9.9-buster
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends apt-utils libsasl2-dev libssl-dev \
-    vim libldap2-dev python-dev libfuzzy-dev net-tools python3-psycopg2 git osslsigncode apache2-utils \
+ libfuzzy-dev net-tools python3-psycopg2 git osslsigncode apache2-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -14,9 +14,9 @@ export function BaseAuthLayout(props) {
 
       <div className="row justify-content-center center-screen">
         <div styles={{ border: "1px solid white" }} className="col-md-6 col-sm-12">
-          <Paper radius="md" p="xl" withBorder {...props}>
+          {/* <Paper radius="md" p="xl" withBorder {...props}> */}
             {props.children}
-          </Paper>
+          {/* </Paper> */}
         </div>
       </div>
     </div>

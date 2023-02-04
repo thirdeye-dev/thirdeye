@@ -59,7 +59,9 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "drf_spectacular",
     "authentication",
-    "api_app"
+    "api_app",
+    "api_app.core",
+    "api_app.monitoring"
 ]
 
 SIMPLE_JWT = {
@@ -207,9 +209,6 @@ if not BROKER_URL.endswith(BROKER_HEARTBEAT):
 BROKER_POOL_LIMIT = 1
 BROKER_CONNECTION_TIMEOUT = 10
 
-# celery configs
-# celery beat configs
-PING_SERVERS_MINUTES = "*/1"
 
 # run every 10th minute
 
@@ -228,8 +227,8 @@ CELERY_ENABLE_UTC = True
 
 # Spectacular settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Eye",
-    "DESCRIPTION": "Eye OpenAPI Documentation",
+    "TITLE": "ThirdEye",
+    "DESCRIPTION": "ThirdEyeEye OpenAPI Documentation",
     "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVERS": [

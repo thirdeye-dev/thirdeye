@@ -11,13 +11,15 @@ app = Celery("backend")
 app.config_from_object("django.conf:settings")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-app.conf.beat_schedule = {
-    "ping_servers": {
-        "task": "backend.tasks.PingServers",
-        "schedule": crontab(minute=settings.PING_SERVERS_MINUTES),
-        "options": {"queue": "default"},
-    },
-}
+
+# use the following if needed
+# app.conf.beat_schedule = {
+#     "crontask": {
+#         "task": "",
+#         "schedule": crontab(minute=),
+#         "options": {"queue": "default"},
+#     },
+# }
 
 app.conf.update(
     task_default_queue="default",

@@ -38,7 +38,7 @@ export default function MyApp(props) {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>Eye</title>
+        <title>ThirdEye</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <link
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"

@@ -109,30 +109,30 @@ class GoogleLoginCallbackView(APIView):
         ):
             # Not giving out the actual error as we risk exposing the client secret
             raise AuthenticationFailed("OAuth authentication error.")
+
         user = token.get("userinfo")
         user_email = user.get("email")
-        # user_name = user.get("name")
+        user_name = user.get("name")
         # image = user.get("image").get("url")
+
         try:
             return User.objects.get(email=user_email)
         except User.DoesNotExist:
-            logging.info("[Google Oauth] User does not exist. Won't create a new one.")
-            raise AuthenticationFailed(
-                "User email didn't exist in the database before."
+            logging.info("[Google Oauth] User does not exist. Creating new one.")
+            return User.objects.create_user(
+                email=user_email,
+                username=user_name,
+                password=None,
+                auth_provider="google",
+                # avatar=image,
             )
-            # return User.objects.create_user(
-            #     email=user_email,
-            #     username=user_name,
-            #     password=None,
-            #     auth_provider="google",
-            #     # avatar=image,
-            # )
 
     def get(self, request):
         return self.post(request)
 
     def post(self, request):
         user = self.validate_and_return_user(request)
+        print(user)
 
         tokens = user.tokens()
         access_token = tokens.get("access")
@@ -140,7 +140,7 @@ class GoogleLoginCallbackView(APIView):
 
         # Uncomment this for local testing
         return redirect(
-            "http://localhost:3000/auth/social?access"
+            "http://localhost:3000/api/social?access"
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
         # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))

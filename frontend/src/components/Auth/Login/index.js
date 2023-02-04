@@ -64,56 +64,13 @@ export function LoginForm() {
         <div className="row">
           <div className="col d-flex justify-content-center">
             <a href="/api/authentication/google" role="button">
-              <Button color="orange.4" variant="outline" leftIcon={<GoogleIcon />}>
+              <Button color="orange.4" variant="subtle" leftIcon={<GoogleIcon />}>
                 <Text>Login with Google</Text>
               </Button>
             </a>
           </div>
         </div>
-        <Divider color="orange.6" label={<Text>Or continue with email</Text>} labelPosition="center" my="lg" />
-        <div className="mb-3">
-          <TextInput
-            icon={<IconAt size={14} />}
-            placeholder="example@gmail.com"
-            label="Email"
-            withAsterisk
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
-        </div>
-        <div className="mb-3">
-          <PasswordInput
-            icon={<IconPassword size={14} />}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Your password"
-            label="Password"
-            required
-          />
-        </div>
-        {errorMessage && (
-          <div className="alert alert-danger" role="alert">
-            {errorMessage}
-          </div>
-        )}
 
-        <div className="row">
-          <div className="col d-flex justify-content-center">
-            <Group position="right" mt="md">
-              {/* <Button type="submit">Submit</Button> */}
-              <Button
-                onSubmit={handleSubmit}
-                type="submit"
-                variant="gradient"
-                gradient={{ from: "#ed6ea0", to: "#ec8c69", deg: 35 }}
-                disabled={isLoading}
-              >
-                <Text>Login</Text>
-              </Button>
-            </Group>
-          </div>
-        </div>
       </fieldset>
     </form>
   );

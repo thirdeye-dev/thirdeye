@@ -12,7 +12,7 @@ export function Logo() {
       size={36}
       weight={900}
     >
-      Eye.
+      ThirdEye.
     </Text>
   );
 }
