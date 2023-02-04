@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 92
+ignore =
+    # line break before binary operator,
+    W503
+    # missing whitespace after ',' (caused by black style)
+    E231,
+    # invalid escape sequence (caused by regex)
+    W605,
+exclude =
+    Dockerfile
+    docker-compose*
+    venv
+    docs
+    migrations
+    virtualenv
+    .envc

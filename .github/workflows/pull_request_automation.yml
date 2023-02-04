@@ -1,0 +1,48 @@
+name: Build & Tests
+
+on:
+  pull_request:
+    branches: [master, dev]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+
+jobs:
+  linters:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout urNode backend
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4.0.0
+        with:
+          python-version: 3.9
+
+      - name: Install Dependencies
+        run: |
+          pip3 install --upgrade pip
+          pip3 install -r requirements/test-requirements.txt
+
+      - name: Black formatter
+        run: |
+          black . --check --diff --exclude "migrations|venv"
+
+      - name: Lint with flake8 (PEP8 enforcer + linter)
+        run: |
+          flake8 . --config=.flake8 --show-source
+
+      - name: isort
+        run: |
+          isort . --profile black --filter-files --check-only --diff
+
+      - name: Install modules
+        run: |
+          cd frontend
+          yarn
+
+      - name: Run ESLint
+        run: |
+          cd frontend
+          ./node_modules/.bin/eslint . --ext .js,.jsx,.ts,.tsx
