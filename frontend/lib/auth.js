@@ -25,7 +25,7 @@ export const logoutUser = async () => {
     method: "POST",
     headers: {
       "Content-type": "application/json;charset=UTF-8",
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `JWT ${getToken()}`,
     },
   });
   const data = await res.json();
@@ -36,7 +36,7 @@ export const logoutUser = async () => {
 export const whoAmI = async () => {
   const res = await fetch("/api/authentication/me", {
     headers: {
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `JWT ${getToken()}`,
       "Content-type": "application/json;charset=UTF-8",
     },
     method: "GET",
