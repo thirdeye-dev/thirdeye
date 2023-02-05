@@ -13,7 +13,7 @@ class SmartContractList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(owner=self.request.user)
 
 class SmartContractCreate(generics.CreateAPIView):
     queryset = SmartContract.objects.all()
@@ -26,7 +26,7 @@ class SmartContractRetrieve(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(owner=self.request.user)
 
 class SmartContractUpdate(generics.UpdateAPIView):
     queryset = SmartContract.objects.all()

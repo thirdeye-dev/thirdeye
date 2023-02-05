@@ -6,7 +6,7 @@ User = get_user_model()
 class SmartContract(models.Model):
     address = models.CharField(max_length=42, unique=True)
     name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
