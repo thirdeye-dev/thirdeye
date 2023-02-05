@@ -1,0 +1,7 @@
+{
+    "GAS_PRICE_THRESHOLD": {
+        "entrypoint": "add_to_gas_price_entrypoint",
+        "description": "Gas price threshold crossing by constant monitoring",
+        "type": "repeating_cronjob"
+    }
+}

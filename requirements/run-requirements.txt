@@ -1,9 +1,10 @@
 django==3.2.16
 gunicorn==20.1.*
 djangorestframework-simplejwt
-djangorestframework-jwt 
+djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
+django-cache-memoize
 drf_yasg
 psycopg2-binary
 django-rest-swagger
@@ -14,4 +15,5 @@ redis
 django-jsonfield
 django-celery-beat
 scipy
+web3
 drf-spectacular

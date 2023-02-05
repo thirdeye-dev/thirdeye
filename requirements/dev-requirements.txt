@@ -4,6 +4,7 @@ djangorestframework-simplejwt
 djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
+django-cache-memoize
 drf_yasg
 django-rest-swagger
 Authlib==1.0.1
@@ -11,6 +12,7 @@ django-cors-headers
 celery
 psycopg2-binary
 redis
+web3
 django-jsonfield
 flake8==4.0.1
 black==22.3.0
