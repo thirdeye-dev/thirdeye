@@ -1,6 +1,7 @@
 django==3.2.16
 gunicorn==20.1.*
 djangorestframework-simplejwt
+djangorestframework-jwt 
 djangorestframework
 djangorestframework-swagger
 drf_yasg

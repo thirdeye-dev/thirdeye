@@ -67,6 +67,7 @@ INSTALLED_APPS = [
 SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
+    "AUTH_HEADER_TYPES": ("JWT",),
     "UPDATE_LAST_LOGIN": False,
     "ACCESS_TOKEN_LIFETIME": timedelta(weeks=5),
 }

@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from .models import SmartContract
 from .serializers import SmartContractSerializer
 
@@ -10,7 +10,7 @@ class IsOwner(permissions.BasePermission):
 class SmartContractList(generics.ListAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -18,12 +18,12 @@ class SmartContractList(generics.ListAPIView):
 class SmartContractCreate(generics.CreateAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 class SmartContractRetrieve(generics.RetrieveAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -31,11 +31,11 @@ class SmartContractRetrieve(generics.RetrieveAPIView):
 class SmartContractUpdate(generics.UpdateAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
 class SmartContractDelete(generics.DestroyAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
 
