@@ -6,35 +6,30 @@ import { useCookies } from "react-cookie";
 
 export default function Social() {
   const router = useRouter();
-  const { query } = router;
-
-  console.log(query);
-
+  const [cookie, setCookie] = useCookies(["user"]);
+  const query = router.query
   const access_token = query.access;
   const refresh_token = query.refresh;
 
-  const user = {
-    access_token,
-    refresh_token,
-  };
-
-  const [cookie, setCookie] = useCookies(["user"]);
+  console.log(access_token, refresh_token);
 
   useEffect(() => {
-    const to_forward = "/dashboard/status";
+      const to_forward = "/dashboard/status";
 
-    console.log("user --> ", user)
-
-    if (access_token && refresh_token) {
+      const user = {
+        access_token,
+        refresh_token,
+      };
+      console.log("user --> ", user)
+    
       setCookie("user", JSON.stringify(user), {
         path: "/",
         maxAge: 3600, // Expires after 1hr
         sameSite: true,
       });
-      router.push(to_forward);
-    }
 
-    }, []);
+      router.push(to_forward);
+    }, [access_token && refresh_token]);
 
   return (
     <div>

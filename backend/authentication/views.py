@@ -140,7 +140,7 @@ class GoogleLoginCallbackView(APIView):
 
         # Uncomment this for local testing
         return redirect(
-            "http://localhost:3000/api/social?access"
+            "http://localhost:3000/auth/social?access"
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
         # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
