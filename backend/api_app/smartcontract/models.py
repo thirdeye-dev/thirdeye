@@ -8,6 +8,7 @@ User = get_user_model()
 class SmartContract(BaseMixin):
     address = models.CharField(max_length=42, unique=True)
     name = models.CharField(max_length=100)
+    chain = models.CharField(max_length=100, unique=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
