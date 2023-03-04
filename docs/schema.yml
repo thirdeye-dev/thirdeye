@@ -130,7 +130,6 @@ paths:
       - cookieAuth: []
       - tokenAuth: []
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -138,6 +137,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/IOC'
           description: ''
+  /monitoring/set_ioc_alert:
+    post:
+      operationId: monitoring_set_ioc_alert_create
+      tags:
+      - monitoring
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /smartcontract/{id}:
     get:
       operationId: smartcontract_retrieve
@@ -298,6 +310,16 @@ paths:
           description: ''
 components:
   schemas:
+    ChainEnum:
+      enum:
+      - ETH
+      - BSC
+      - POLYGON
+      type: string
+      description: |-
+        * `ETH` - Eth
+        * `BSC` - Bsc
+        * `POLYGON` - Polygon
     IOC:
       type: object
       properties:
@@ -309,10 +331,14 @@ components:
           type: string
         type:
           type: string
+        params:
+          type: object
+          additionalProperties: {}
       required:
       - description
       - entrypoint
       - name
+      - params
       - type
     Login:
       type: object
@@ -354,8 +380,7 @@ components:
           type: string
           maxLength: 100
         chain:
-          type: string
-          maxLength: 100
+          $ref: '#/components/schemas/ChainEnum'
         owner:
           type: integer
           readOnly: true
@@ -379,8 +404,7 @@ components:
           type: string
           maxLength: 100
         chain:
-          type: string
-          maxLength: 100
+          $ref: '#/components/schemas/ChainEnum'
         owner:
           type: integer
           readOnly: true

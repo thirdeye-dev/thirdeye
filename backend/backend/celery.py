@@ -37,7 +37,7 @@ app.conf.update(
     accept_content=["application/json"],
     task_serializer="json",
     result_serializer="json",
-    imports=("backend.tasks",),
+    imports=("api_app.monitoring.tasks",),
     worker_redirect_stdouts=False,
     worker_hijack_root_logger=False,
     # these two are needed to enable priority and correct tasks execution

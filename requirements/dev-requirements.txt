@@ -4,6 +4,7 @@ djangorestframework-simplejwt
 djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
+django-postgres-extra
 django-cache-memoize
 drf_yasg
 django-rest-swagger
@@ -22,3 +23,4 @@ coverage==6.4
 sphinx
 sphinxcontrib-redoc
 sphinx_rtd_theme
+websocket-client==1.5.1
