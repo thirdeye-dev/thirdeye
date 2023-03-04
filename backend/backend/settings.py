@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     "api_app",
     "api_app.core",
     "api_app.monitoring",
-    "api_app.smartcontract"
+    "api_app.smartcontract",
 ]
 
 SIMPLE_JWT = {

@@ -5,11 +5,13 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 # chain choices enum: "ETH", "BSC", "POLYGON"
 class Chain(models.TextChoices):
     ETH = "ETH"
     BSC = "BSC"
     POLYGON = "POLYGON"
+
 
 class SmartContract(BaseMixin):
     address = models.CharField(max_length=42, unique=True)
