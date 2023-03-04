@@ -130,7 +130,6 @@ paths:
       - cookieAuth: []
       - tokenAuth: []
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -148,7 +147,6 @@ paths:
       - cookieAuth: []
       - tokenAuth: []
       - jwtAuth: []
-      - {}
       responses:
         '200':
           description: No response body
@@ -318,6 +316,10 @@ components:
       - BSC
       - POLYGON
       type: string
+      description: |-
+        * `ETH` - Eth
+        * `BSC` - Bsc
+        * `POLYGON` - Polygon
     IOC:
       type: object
       properties:
