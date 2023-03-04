@@ -3,10 +3,7 @@ import logging
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import (
-    api_view,
-    permission_classes
-)
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from api_app.core.serializers import IOCSerializer
@@ -24,9 +21,7 @@ logger = logging.getLogger(__name__)
 def set_ioc_alert(request):
     serializer_class = SetIoCSerializer(
         data=request.data,
-        context={
-            "request": request
-        },
+        context={"request": request},
     )
 
     if serializer_class.is_valid():
@@ -38,7 +33,7 @@ def set_ioc_alert(request):
         # if not already added
         if MonitoringTasks.objects.filter(
             SmartContract__contract_address=serializer_class.data["contract_address"],
-            SmartContract__user=serializer_class.data["user_id"]
+            SmartContract__user=serializer_class.data["user_id"],
         ).exists():
             return Response(
                 {"message": "IOC alert set successfully."}, status=status.HTTP_200_OK
