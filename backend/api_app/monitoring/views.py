@@ -12,6 +12,7 @@ from .serializers import SetIoCSerializer
 
 logger = logging.getLogger(__name__)
 
+
 @api_view(["POST"])
 def set_ioc_alert(request):
     serializer_class = SetIoCSerializer(data=request.data)
@@ -30,14 +31,11 @@ def set_ioc_alert(request):
         )
 
         return Response(
-            {"message": "IOC alert set successfully."},
-            status=status.HTTP_200_OK
+            {"message": "IOC alert set successfully."}, status=status.HTTP_200_OK
         )
     else:
-        return Response(
-            serializer_class.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class IoCListAPI(APIView):
     serializer_class = IOCSerializer
@@ -47,9 +45,7 @@ class IoCListAPI(APIView):
             iocs = self.serializer_class.read_and_verify_config()
             return Response(iocs, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.exception(
-                f"get_iocs requester:{str(request.user)} error:{e}."
-            )
+            logger.exception(f"get_iocs requester:{str(request.user)} error:{e}.")
             return Response(
                 {"error": "error in get_iocs. Check logs."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -7,6 +7,7 @@ from django.conf import settings
 from rest_framework import serializers as rfs
 from cache_memoize import cache_memoize
 
+
 class IOCSerializer(rfs.Serializer):
     name = rfs.CharField(required=True)
     entrypoint = rfs.CharField(required=True)
@@ -18,11 +19,7 @@ class IOCSerializer(rfs.Serializer):
 
     @classmethod
     def _get_config_path(cls) -> str:
-        return os.path.join(
-            settings.BASE_DIR, 
-            "configuration", 
-            cls.CONFIG_FILE_NAME
-        )
+        return os.path.join(settings.BASE_DIR, "configuration", cls.CONFIG_FILE_NAME)
 
     @classmethod
     def _read_config(cls):
@@ -30,7 +27,7 @@ class IOCSerializer(rfs.Serializer):
         with open(config_path) as f:
             config_dict = json.load(f)
         return config_dict
-    
+
     @classmethod
     def _verify_params(cls, params):
         for param in params:
