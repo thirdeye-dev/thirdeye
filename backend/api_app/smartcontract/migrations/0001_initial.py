@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,18 +14,42 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SmartContract',
+            name="SmartContract",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('address', models.CharField(max_length=42, unique=True)),
-                ('name', models.CharField(max_length=100)),
-                ('chain', models.CharField(choices=[('ETH', 'Eth'), ('BSC', 'Bsc'), ('POLYGON', 'Polygon')], max_length=16)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("address", models.CharField(max_length=42, unique=True)),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "chain",
+                    models.CharField(
+                        choices=[
+                            ("ETH", "Eth"),
+                            ("BSC", "Bsc"),
+                            ("POLYGON", "Polygon"),
+                        ],
+                        max_length=16,
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
