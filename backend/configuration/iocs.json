@@ -1,6 +1,10 @@
 {
     "GAS_PRICE_THRESHOLD": {
         "entrypoint": "add_to_gas_price_entrypoint",
+        "params": {
+            "threshold": "float",
+            "smart_contract_address": "str"
+        },
         "description": "Gas price threshold crossing by constant monitoring",
         "type": "repeating_cronjob"
     }

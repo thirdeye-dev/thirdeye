@@ -1,72 +1,64 @@
-import os
-import sys
-import json
-import hashlib
 import logging
 
-from django.conf import settings
 from rest_framework import serializers as rfs
-from cache_memoize import cache_memoize
+
+from api_app.monitoring.models import IoC
+from api_app.core.serializers import IOCSerializer
 
 logger = logging.getLogger(__name__)
 
-class IOCSerializer(rfs.Serializer):
-    name = rfs.CharField(required=True)
-    entrypoint = rfs.CharField(required=True)
-    description = rfs.CharField(required=True)
-    type = rfs.CharField(required=True)
+class SetIoCSerializer(rfs.ModelSerializer):
 
-    CONFIG_FILE_NAME = "iocs.json"
-
-    @classmethod
-    def _get_config_path(cls) -> str:
-        return os.path.join(
-            settings.BASE_DIR, 
-            "configuration", 
-            cls.CONFIG_FILE_NAME
-        )
-
-    @classmethod
-    def _read_config(cls):
-        config_path = cls._get_config_path()
-        with open(config_path) as f:
-            config_dict = json.load(f)
-        return config_dict
-
-    @classmethod
-    def _md5_config_file(cls) -> str:
-        """
-        Returns md5sum of config file.
-        """
-        fpath = cls._get_config_path()
-        with open(fpath, "r") as fp:
-            buffer = fp.read().encode("utf-8")
-            md5hash = hashlib.md5(buffer).hexdigest()
-        return md5hash
-
-    @classmethod
-    @cache_memoize(
-        timeout=sys.maxsize,
-        args_rewrite=lambda cls: f"{cls.__name__}-{cls._md5_config_file()}",
+    ioc_name = rfs.CharField(required=True)
+    ioc_params = rfs.JSONField(required=True)
+    
+    # make alert_types a choice field that only accepts the values in the alert_types
+    alert_types = rfs.ListField(
+        child=rfs.CharField(),
+        required=False,
     )
-    def read_and_verify_config(cls) -> dict:
-        """
-        Returns verified config.
-        This function is memoized for the md5sum of the JSON file.
-        """
-        config_dict = cls._read_config()
+    alert_url = rfs.CharField(required=False)
 
-        serializer_errors = {}
-        for key, config in config_dict.items():
-            new_config = {"name": key, **config}
-            serializer = cls(data=new_config) 
-            if serializer.is_valid():
-                config_dict[key] = serializer.data
-            else:
-                serializer_errors[key] = serializer.errors
+    class Meta:
+        model = IoC
+        fields = "__all__"
 
-        if bool(serializer_errors):
-            logger.error(f"{cls.__name__} serializer failed: {serializer_errors}")
-            raise rfs.ValidationError(serializer_errors)
+    def validate(self, value):
+        type_map = {
+            "int": int,
+            "str": str,
+            "float": float,
+            # add more types as we go
+        }
 
-        return config_dict
+        attrs = super().validate(attrs)
+
+        iocs = IOCSerializer.read_and_verify_config()
+        ioc_name = attrs.get("ioc_name")
+        ioc = iocs.get(ioc_name)
+
+        if not ioc:
+            raise rfs.ValidationError(f"IOC {ioc_name} not found.")
+
+        ioc_params = attrs.get("ioc_params")
+        for params in ioc_params:
+            param = ioc_params.get(params) 
+            if not param:
+                raise rfs.ValidationError(f"IOC {ioc_name} value not found.")
+
+            if type(param) != type_map.get(
+                    ioc.get("params").get(param)
+                ):
+                raise rfs.ValidationError(
+                    f"IOC {ioc_name} value type not found."
+                )
+
+        attrs["smart_contract"] = ioc_params.get("smart_contract_address")
+        attrs["user_id"] = self.context.get("request").user
+        attrs["threshold"] = ioc_params.get("threshold")
+        attrs["threshold_currency"] = ioc_params.get("threshold_currency")
+        attrs["alert_types"] = attrs.get("alert_types")
+        attrs["alert_url"] = attrs.get("alert_url")
+
+        return attrs
+

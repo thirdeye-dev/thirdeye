@@ -5,6 +5,7 @@ djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
 django-cache-memoize
+django-postgres-extra
 drf_yasg
 psycopg2-binary
 django-rest-swagger
@@ -17,3 +18,4 @@ django-celery-beat
 scipy
 web3
 drf-spectacular
+websocket-client==1.5.1

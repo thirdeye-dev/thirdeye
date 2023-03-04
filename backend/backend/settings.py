@@ -30,6 +30,8 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+INFURA_PROJECT_ID = "06108462af034cb888c38fb5aed5c7d2"
+
 
 # Oauth definitions
 AUTHLIB_OAUTH_CLIENTS = {}
@@ -52,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_swagger",
