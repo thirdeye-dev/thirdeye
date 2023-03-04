@@ -44,21 +44,14 @@ class ThresholdCurrency(models.TextChoices):
 def validate_alert_type(value):
     if value not in AlertType.values:
         raise ValidationError((f"{value} is not a valid choice for AlertType"))
-    
+
 
 # monitoring model for celery tasks
 class MonitoringTasks(models.Model):
-    SmartContract = models.ForeignKey(
-        SmartContract, 
-        on_delete=models.CASCADE
-    )
+    SmartContract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
 
     # celery task id
-    task_id = models.CharField(
-        max_length=255, 
-        blank=True, 
-        null=True
-    )
+    task_id = models.CharField(max_length=255, blank=True, null=True)
 
     # celery task status
     task_status = models.CharField(max_length=16, blank=True, null=True)

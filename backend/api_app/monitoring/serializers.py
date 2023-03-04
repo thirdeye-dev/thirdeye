@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 class SetIoCSerializer(rfs.ModelSerializer):
     ioc_name = rfs.CharField(required=True)
     ioc_params = rfs.JSONField(required=True)
-    smart_contract_id = rfs.CharField(
-        required=True
-    )
+    smart_contract_id = rfs.CharField(required=True)
 
     # make alert_types a choice field that only accepts the values in the alert_types
     alert_types = rfs.ListField(
@@ -40,15 +38,13 @@ class SetIoCSerializer(rfs.ModelSerializer):
             "float": float,
             # add more types as we go
         }
-        smart_contract = SmartContract.objects.get(
-            pk=attrs.get("smart_contract_id")
-        )
+        smart_contract = SmartContract.objects.get(pk=attrs.get("smart_contract_id"))
 
         if not smart_contract.user == self.context["request"].user:
             raise rfs.ValidationError(
                 "You do not have permission to set an alert for this contract."
             )
-        
+
         attrs = super().validate(attrs)
 
         iocs = IOCSerializer.read_and_verify_config()
