@@ -1,34 +1,33 @@
-name: Auto-Format Python Code
+name: Black Formatting
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
 
 jobs:
-  format:
+  check-formatting:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up Python environment
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
-        
+
     - name: Install dependencies
-      run: pip install black
-      
-    - name: Format code
-      run: black .
-      
-    - name: Commit changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Auto-format Python code [skip ci]"
-        
-    - name: Push changes
-      uses: ad-m/github-push-action@master
+        python -m pip install --upgrade pip
+        pip install black
+
+    - name: Check formatting
+      run: black --check .
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
+        title: "Fix black formatting issues (${{ github.sha }})"
+        body: "This pull request fixes formatting issues detected by black on commit ${{ github.sha }}."
+        branch: fix-black-formatting-${{ github.sha }}
+        commit-message: "Fix black formatting issues (${{ github.sha }})"
