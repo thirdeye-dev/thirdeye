@@ -30,8 +30,17 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-INFURA_PROJECT_ID = "06108462af034cb888c38fb5aed5c7d2"
+# INFURA_TOKEN
+INFURA_PROJECT_ID = os.environ.get("INFURA_PROJECT_ID", "")
 
+# mapping of URLs to different ethereum based chains and networks
+CHAINS_AND_NETWORKS = {
+    "eth": {
+        "mainnet": f"https://mainnet.infura.io/v3/{INFURA_PROJECT_ID}",
+        "goerli": f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}",
+        "sepolia": f"https://sepolia.infura.io/v3{INFURA_PROJECT_ID}"
+    }
+}
 
 # Oauth definitions
 AUTHLIB_OAUTH_CLIENTS = {}

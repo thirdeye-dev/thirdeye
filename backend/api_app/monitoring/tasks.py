@@ -10,7 +10,6 @@ from requests.exceptions import RequestException
 
 
 from django.conf import settings
-from celery import shared_task, Task
 from celery.utils.log import get_task_logger
 
 from backend.celery import app
@@ -18,7 +17,7 @@ from api_app.monitoring.models import IOCAlert, IoC
 
 logger = get_task_logger(__name__)
 
-INFURA_PROJECT_ID = settings.INFURA_PROJECT_ID
+CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
 
 
 @app.task(bind=True)
@@ -99,12 +98,21 @@ def check_threshold(response, threshold, contract_address, user_id):
 
 # main monitior task
 @app.task(bind=True)
-def monitor_contract(self, contract_address, user_id):
-    ws = websocket.create_connection(
-        f"wss://mainnet.infura.io/ws/v3/{INFURA_PROJECT_ID}"
-    )
-    r = redis.Redis(host="localhost", port=6379, db=0)
+def monitor_contract(self, contract_address, user_id, network="mainnet", chain="eth"):
+    # chains and networks supported
+    # eth: mainnet, sepolia, goerli
 
+    chain_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
+    if not chain_url:
+        error_msg = f"Chain {chain} or network {network} not supported"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
+    ws = websocket.create_connection(
+        f"{chain_url}"
+    )
+
+    r = redis.Redis(host="localhost", port=6379, db=0)
     # Subscribe to new transactions for a specific smart contract
     subscribe_data = {
         "id": 1,
