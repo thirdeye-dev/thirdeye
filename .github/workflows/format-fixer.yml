@@ -18,11 +18,10 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install black isort flake8
+        pip install black isort flake8 autoflake
       
-    - name: Lint code with Flake8
-      run: |
-        flake8 .
+    - name: Remove unused imports with autoflake
+      run: autoflake --remove-unused-variables --in-place --recursive .
         
     - name: Format code with isort
       run: isort .
