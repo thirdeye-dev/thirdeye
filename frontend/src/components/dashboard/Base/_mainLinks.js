@@ -48,7 +48,7 @@ const data = [
   {
     icon: <IconActivity size={16} />,
     color: "blue",
-    label: "Status",
+    label: "Contracts",
     dest: "/dashboard/status",
   },
   {
