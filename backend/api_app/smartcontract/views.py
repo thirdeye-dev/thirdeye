@@ -17,7 +17,6 @@ class SmartContractList(generics.ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
 
-
 class SmartContractCreate(generics.CreateAPIView):
     queryset = SmartContract.objects.all()
     serializer_class = SmartContractSerializer

@@ -8,15 +8,27 @@ User = get_user_model()
 
 # chain choices enum: "ETH", "BSC", "POLYGON"
 class Chain(models.TextChoices):
-    ETH = "ETH"
-    BSC = "BSC"
-    POLYGON = "POLYGON"
+    ETH = "ETH", "eth"
+    BSC = "BSC", "bsc"
+    POLYGON = "POLYGON", "polygon"
 
+class Network(models.TextChoices):
+    # eth network choices
+    MAINNET = "MAINNET", "mainnet"
+    SEPOLIS = "SEPOLIS", "sepolis"
+    GOERLI = "GOERLI", "goerli"
 
 class SmartContract(BaseMixin):
     address = models.CharField(max_length=42, unique=True)
     name = models.CharField(max_length=100)
-    chain = models.CharField(max_length=16, choices=Chain.choices)
+    chain = models.CharField(
+        max_length=16, 
+        choices=Chain.choices
+    )
+    network = models.CharField(
+        max_length=100,
+        choices=Network.choices,
+    )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
