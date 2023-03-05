@@ -317,9 +317,9 @@ components:
       - POLYGON
       type: string
       description: |-
-        * `ETH` - Eth
-        * `BSC` - Bsc
-        * `POLYGON` - Polygon
+        * `ETH` - eth
+        * `BSC` - bsc
+        * `POLYGON` - polygon
     IOC:
       type: object
       properties:
@@ -360,6 +360,16 @@ components:
       - email
       - password
       - tokens
+    NetworkEnum:
+      enum:
+      - MAINNET
+      - SEPOLIS
+      - GOERLI
+      type: string
+      description: |-
+        * `MAINNET` - mainnet
+        * `SEPOLIS` - sepolis
+        * `GOERLI` - goerli
     PatchedSmartContract:
       type: object
       properties:
@@ -381,6 +391,8 @@ components:
           maxLength: 100
         chain:
           $ref: '#/components/schemas/ChainEnum'
+        network:
+          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
@@ -405,6 +417,8 @@ components:
           maxLength: 100
         chain:
           $ref: '#/components/schemas/ChainEnum'
+        network:
+          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
@@ -414,6 +428,7 @@ components:
       - created_at
       - id
       - name
+      - network
       - owner
       - updated_at
     TokenRefresh:
