@@ -310,16 +310,6 @@ paths:
           description: ''
 components:
   schemas:
-    ChainEnum:
-      enum:
-      - ETH
-      - BSC
-      - POLYGON
-      type: string
-      description: |-
-        * `ETH` - eth
-        * `BSC` - bsc
-        * `POLYGON` - polygon
     IOC:
       type: object
       properties:
@@ -360,16 +350,6 @@ components:
       - email
       - password
       - tokens
-    NetworkEnum:
-      enum:
-      - MAINNET
-      - SEPOLIS
-      - GOERLI
-      type: string
-      description: |-
-        * `MAINNET` - mainnet
-        * `SEPOLIS` - sepolis
-        * `GOERLI` - goerli
     PatchedSmartContract:
       type: object
       properties:
@@ -377,6 +357,10 @@ components:
           type: integer
           readOnly: true
         address:
+          type: string
+        chain:
+          type: string
+        network:
           type: string
         created_at:
           type: string
@@ -389,10 +373,6 @@ components:
         name:
           type: string
           maxLength: 100
-        chain:
-          $ref: '#/components/schemas/ChainEnum'
-        network:
-          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
@@ -404,6 +384,10 @@ components:
           readOnly: true
         address:
           type: string
+        chain:
+          type: string
+        network:
+          type: string
         created_at:
           type: string
           format: date-time
@@ -415,10 +399,6 @@ components:
         name:
           type: string
           maxLength: 100
-        chain:
-          $ref: '#/components/schemas/ChainEnum'
-        network:
-          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
