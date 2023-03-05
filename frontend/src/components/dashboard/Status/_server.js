@@ -91,7 +91,7 @@ export function Server({ server }) {
         <div className={classes.inner}>
           <div>
             <Text size="xl" className={classes.label}>
-              {server.name}
+              {server.address}
             </Text>
             <Group mt="lg">{items}</Group>
           </div>
