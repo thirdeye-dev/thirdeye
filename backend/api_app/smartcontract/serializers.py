@@ -12,6 +12,8 @@ def smart_contract_validator(value):
 
 class SmartContractSerializer(serializers.ModelSerializer):
     address = serializers.CharField(validators=[smart_contract_validator])
+    chain = serializers.CharField(required=True)
+    network = serializers.CharField(required=True)
 
     class Meta:
         model = SmartContract
