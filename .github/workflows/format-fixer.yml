@@ -1,7 +1,9 @@
 name: Auto-Format Python Code
 
-on: [push, pull_request]
-
+on:
+  push:
+  pull_request:
+  
 jobs:
   format:
     runs-on: ubuntu-latest
@@ -15,20 +17,28 @@ jobs:
         python-version: '3.9'
         
     - name: Install dependencies
-      run: pip install black
+      run: |
+        pip install black isort flake8 autoflake
       
-    - name: Format code
+    - name: Remove unused imports with autoflake
+      run: autoflake --remove-unused-variables --in-place --recursive .
+        
+    - name: Format code with isort
+      run: isort .
+      
+    - name: Format code with Black
       run: black .
       
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Auto-format Python code [skip ci]"
-        
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
+        if [[ -n $(git diff-index --quiet HEAD --) ]]; then
+          git add .
+          git commit -m "Auto-format Python code [skip ci]"
+          git push
+        else
+          echo "No changes to commit"
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
