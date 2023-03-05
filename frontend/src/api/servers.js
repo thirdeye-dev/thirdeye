@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 const fetchServers = async () => {
   try {
-    const resp = await fetch("/api/servers/settings");
+    const resp = await fetch("/api//smartcontract/list");
     return await resp.json();
   } catch (e) {
     console.error(e);
@@ -11,7 +11,7 @@ const fetchServers = async () => {
 
 const fetchServer = async (id) => {
   try {
-    const resp = await fetch(`/api/servers/settings/${id}`);
+    const resp = await fetch(`/api//smartcontract/${id}`);
     return await resp.json();
   } catch (e) {
     console.error(e);
