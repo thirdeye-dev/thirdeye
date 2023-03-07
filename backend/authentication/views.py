@@ -1,5 +1,6 @@
-import logging
 import os
+import logging
+import requests
 
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
@@ -94,6 +95,17 @@ def google_login(request):
         if "No such client: " in str(error):
             raise AuthenticationFailed("Google OAuth is not configured.")
         raise error
+    
+def github_login(request):
+    redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
+        "0.0.0.0:8000", "localhost:3000/api"
+    )
+    try:
+        return oauth.github.authorize_redirect(request, redirect_uri)
+    except AttributeError as error:
+        if "No such client: " in str(error):
+            raise AuthenticationFailed("Github OAuth is not configured.")
+        raise error
 
 
 class GoogleLoginCallbackView(APIView):
@@ -142,3 +154,68 @@ class GoogleLoginCallbackView(APIView):
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
         # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
+
+class GithubLoginCallbackView(APIView):
+    @staticmethod
+    def validate_and_return_user(request):
+        try:
+            token = oauth.github.authorize_access_token(request)
+        except (
+            OAuthError,
+            OAuth2Error,
+        ):
+            # Not giving out the actual error as we risk exposing the client secret
+            raise AuthenticationFailed("OAuth authentication error.")
+
+        resp = oauth.github.get('user', token=token)
+        resp.raise_for_status()
+        profile = resp.json()
+        user_name = profile.get("name")
+
+        # get user emails from github
+        emails_resp = oauth.github.get('user/emails', token=token)
+        emails_resp.raise_for_status()
+        emails = emails_resp.json()
+
+        # find the primary email
+        primary_emails = [e for e in emails if e.get('primary') and e.get('verified')]
+        user_email = primary_emails[0].get('email') if primary_emails else None
+
+        # fallback to the first email
+        if not user_email and emails:
+            user_email = emails[0].get('email')
+
+        try:
+            return User.objects.get(email=user_email)
+        except User.DoesNotExist:
+            logging.info(
+                "[Github Oauth] User does not exist. Creating new one.\n"
+                f"{profile}"
+            )
+            return User.objects.create_user(
+                email=user_email,
+                username=user_name,
+                password=None,
+                auth_provider="github",
+                # avatar=image,
+            )
+
+    def get(self, request):
+        return self.post(request)
+
+    def post(self, request):
+        user = self.validate_and_return_user(request)
+        print(user)
+
+        tokens = user.tokens()
+        access_token = tokens.get("access")
+        refresh_token = tokens.get("refresh")
+
+        # Uncomment this for local testing
+        return redirect(
+            "http://localhost:3000/auth/social?access"
+            f"={access_token}&refresh={refresh_token}&username={user.username}"
+        )
+        # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
+
+

@@ -12,7 +12,6 @@ class IOCSerializer(rfs.Serializer):
     name = rfs.CharField(required=True)
     entrypoint = rfs.CharField(required=True)
     description = rfs.CharField(required=True)
-    type = rfs.CharField(required=True)
     params = rfs.JSONField(required=True)
 
     CONFIG_FILE_NAME = "iocs.json"

@@ -9,13 +9,13 @@ User = get_user_model()
 # chain choices enum: "ETH", "BSC", "POLYGON"
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
-    BSC = "BSC", "bsc"
-    POLYGON = "POLYGON", "polygon"
 
 class Network(models.TextChoices):
     # eth network choices
     MAINNET = "MAINNET", "mainnet"
-    SEPOLIS = "SEPOLIS", "sepolia"
+add_contract_ui
+    SEPOLIA = "SEPOLIA", "sepolia"
+master
     GOERLI = "GOERLI", "goerli"
 
 class SmartContract(BaseMixin):
