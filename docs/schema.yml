@@ -4,6 +4,33 @@ info:
   version: 0.0.1
   description: ThirdEyeEye OpenAPI Documentation
 paths:
+  /authentication/github-callback:
+    get:
+      operationId: authentication_github_callback_retrieve
+      tags:
+      - authentication
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: authentication_github_callback_create
+      tags:
+      - authentication
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /authentication/google-callback:
     get:
       operationId: authentication_google_callback_retrieve
@@ -310,16 +337,6 @@ paths:
           description: ''
 components:
   schemas:
-    ChainEnum:
-      enum:
-      - ETH
-      - BSC
-      - POLYGON
-      type: string
-      description: |-
-        * `ETH` - eth
-        * `BSC` - bsc
-        * `POLYGON` - polygon
     IOC:
       type: object
       properties:
@@ -329,8 +346,6 @@ components:
           type: string
         description:
           type: string
-        type:
-          type: string
         params:
           type: object
           additionalProperties: {}
@@ -339,7 +354,6 @@ components:
       - entrypoint
       - name
       - params
-      - type
     Login:
       type: object
       properties:
@@ -360,16 +374,6 @@ components:
       - email
       - password
       - tokens
-    NetworkEnum:
-      enum:
-      - MAINNET
-      - SEPOLIS
-      - GOERLI
-      type: string
-      description: |-
-        * `MAINNET` - mainnet
-        * `SEPOLIS` - sepolis
-        * `GOERLI` - goerli
     PatchedSmartContract:
       type: object
       properties:
@@ -377,6 +381,10 @@ components:
           type: integer
           readOnly: true
         address:
+          type: string
+        chain:
+          type: string
+        network:
           type: string
         created_at:
           type: string
@@ -389,10 +397,6 @@ components:
         name:
           type: string
           maxLength: 100
-        chain:
-          $ref: '#/components/schemas/ChainEnum'
-        network:
-          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
@@ -404,6 +408,10 @@ components:
           readOnly: true
         address:
           type: string
+        chain:
+          type: string
+        network:
+          type: string
         created_at:
           type: string
           format: date-time
@@ -415,10 +423,6 @@ components:
         name:
           type: string
           maxLength: 100
-        chain:
-          $ref: '#/components/schemas/ChainEnum'
-        network:
-          $ref: '#/components/schemas/NetworkEnum'
         owner:
           type: integer
           readOnly: true
