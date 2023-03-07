@@ -23,3 +23,12 @@ class SmartContractSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["owner"] = self.context["request"].user
         return super().create(validated_data)
+    
+
+    def validate(self, data):
+        if data["chain"] == "ETH":
+            if data["network"] not in ["MAINNET", "SEPOLIA", "GOERLI"]:
+                raise serializers.ValidationError(
+                    "Invalid network for ETH chain"
+                )
+        return data

@@ -15,7 +15,7 @@ class Chain(models.TextChoices):
 class Network(models.TextChoices):
     # eth network choices
     MAINNET = "MAINNET", "mainnet"
-    SEPOLIS = "SEPOLIS", "sepolia"
+    SEPOLIA = "SEPOLIA", "sepolia"
     GOERLI = "GOERLI", "goerli"
 
 class SmartContract(BaseMixin):
@@ -28,6 +28,7 @@ class SmartContract(BaseMixin):
     network = models.CharField(
         max_length=100,
         choices=Network.choices,
+        default=Network.MAINNET
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
