@@ -36,8 +36,9 @@ def send_webhook(self, url, msg, ioc_id):
 
     ioc = IoC.objects.get(id=ioc_id)
     try:
+        request_token = secrets.token_urlsafe(16)
         r = requests.post(
-            url, data={"message": msg, "request_token": secrets.token_urlsafe(16)}
+            url, data={"message": msg, "request_token": request_token}
         )
         r.raise_for_status()
         alert_attempt = IOCAlert.objects.create(
@@ -47,12 +48,13 @@ def send_webhook(self, url, msg, ioc_id):
             response=r.text,
             response_code=r.status_code,
             ioc=ioc,
+            request_token=request_token
         )
 
     except RequestException as exc:
         self.retry(exc=exc, countdown=60)
         alert_attempt = IOCAlert.objects.create(
-            url=url, message=msg, status="FAILURE", response=exc, ioc=ioc
+            url=url, message=msg, status="FAILURE", response=exc, ioc=ioc, request_token=request_token
         )
 
     alert_attempt.save()
@@ -147,7 +149,7 @@ def monitor_contract(self, contract_address, user_id, network="mainnet", chain="
                     continue
 
                 for ioc in iocs:
-                    if ioc.ioc_type == "GAS_THRESHOLD":
+                    if ioc.ioc_type == "GAS_PRICE_THRESHOLD":
                         check_threshold(
                             response, ioc.threshold, contract_address, user_id
                         )

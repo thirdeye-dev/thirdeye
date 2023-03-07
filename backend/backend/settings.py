@@ -50,6 +50,11 @@ AUTHLIB_OAUTH_CLIENTS["google"] = {
     "client_secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
 }
 
+AUTHLIB_OAUTH_CLIENTS["github"] = {
+    "client_id": os.environ.get("GITHUB_CLIENT_ID", ""),
+    "client_secret": os.environ.get("GITHUB_CLIENT_SECRET", ""),
+}
+
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True

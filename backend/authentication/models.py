@@ -36,7 +36,11 @@ class UserManager(BaseUserManager):
         return user
 
 
-AUTH_PROVIDERS = {"google": "google", "email": "email"}
+AUTH_PROVIDERS = {
+    "google": "google", 
+    "email": "email",
+    "github": "github",
+}
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseMixin):
