@@ -50,7 +50,8 @@ function NewServerModal({ closeModal }) {
     },
     validate: {
       address: (value) => (value.length !== 64 ? "Address must be 64 characters long" : null),
-      id: (value) => (value.length < 1 ? "Enter Valid Chain ID" : null),
+      chain: (value) => (value.length < 1 ? "Enter Valid Chain" : null),
+      network: (value) => (value.length < 1 ? "Enter Valid Network" : null),
     },
   });
 
@@ -78,7 +79,19 @@ function NewServerModal({ closeModal }) {
             required
             data-autofocus
             // eslint-disable-next-line react/jsx-props-no-spreading
-            {...form.getInputProps("id")}
+            {...form.getInputProps("chain")}
+          />
+        </Grid.Col>
+        <Grid.Col>
+          <TextInput
+            placeholder="Network"
+            variant="filled"
+            radius="md"
+            withAsterisk
+            required
+            data-autofocus
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("network")}
           />
         </Grid.Col>
       </Grid>
@@ -132,13 +145,13 @@ export function Servers() {
         </ActionIcon>
       </Group>
 
-      {/* <Paper
+      <Paper
         sx={(theme) => ({
           padding: theme.spacing.md,
           marginTop: theme.spacing.md,
         })}
       >
-        {servers.length > 0 ? (
+        {/* {servers.length > 0 ? (
           <SimpleGrid cols={2}>
             {servers.map((server) => (
               <Server server={server} />
@@ -146,8 +159,8 @@ export function Servers() {
           </SimpleGrid>
         ) : (
           <Text>No contracts available.</Text>
-        )}
-      </Paper> */}
+        )} */}
+      </Paper>
     </>
   );
 }

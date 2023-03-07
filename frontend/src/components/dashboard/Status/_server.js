@@ -91,12 +91,18 @@ export function Server({ server }) {
         <div className={classes.inner}>
           <div>
             <Text size="xl" className={classes.label}>
+              {server.id}
+            </Text>
+            <Group mt="lg">{items}</Group>
+          </div>
+          <div>
+            <Text size="xl" className={classes.label}>
               {server.address}
             </Text>
             <Group mt="lg">{items}</Group>
           </div>
 
-          <div className={classes.ring}>
+          {/* <div className={classes.ring}>
             <RingProgress
               roundCaps
               thickness={6}
@@ -113,9 +119,9 @@ export function Server({ server }) {
                 </div>
               }
             />
-          </div>
+          </div> */}
 
-          <div className={classes.ring}>
+          {/* <div className={classes.ring}>
             <RingProgress
               roundCaps
               thickness={6}
@@ -132,7 +138,7 @@ export function Server({ server }) {
                 </div>
               }
             />
-          </div>
+          </div> */}
         </div>
       </Card>
     </Link>

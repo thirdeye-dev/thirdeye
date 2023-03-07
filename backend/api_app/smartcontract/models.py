@@ -15,7 +15,7 @@ class Chain(models.TextChoices):
 class Network(models.TextChoices):
     # eth network choices
     MAINNET = "MAINNET", "mainnet"
-    SEPOLIS = "SEPOLIS", "sepolis"
+    SEPOLIS = "SEPOLIS", "sepolia"
     GOERLI = "GOERLI", "goerli"
 
 class SmartContract(BaseMixin):
