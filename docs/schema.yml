@@ -4,6 +4,33 @@ info:
   version: 0.0.1
   description: ThirdEyeEye OpenAPI Documentation
 paths:
+  /authentication/github-callback:
+    get:
+      operationId: authentication_github_callback_retrieve
+      tags:
+      - authentication
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: authentication_github_callback_create
+      tags:
+      - authentication
+      security:
+      - basicAuth: []
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /authentication/google-callback:
     get:
       operationId: authentication_google_callback_retrieve
@@ -319,8 +346,6 @@ components:
           type: string
         description:
           type: string
-        type:
-          type: string
         params:
           type: object
           additionalProperties: {}
@@ -329,7 +354,6 @@ components:
       - entrypoint
       - name
       - params
-      - type
     Login:
       type: object
       properties:

@@ -8,7 +8,7 @@ django-postgres-extra
 django-cache-memoize
 drf_yasg
 django-rest-swagger
-Authlib==1.0.1
+Authlib==0.14.3
 django-cors-headers
 celery
 psycopg2-binary

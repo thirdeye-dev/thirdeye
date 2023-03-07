@@ -58,19 +58,33 @@ export function LoginForm() {
     );
   }
 
+  function GithubIcon() {
+    return (
+      // According to value of cookie colorScheme, if it is "dark", fill the following Image with white color.
+      // <Image src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" width={20} height={20} />
+      <Image src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" width={20} height={20} 
+        style={{filter: "invert(1)"}}/>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <fieldset className="text-light">
         <div className="row">
           <div className="col d-flex justify-content-center">
-            <a href="/api/authentication/google" role="button">
-              <Button color="orange.4" variant="subtle" leftIcon={<GoogleIcon />}>
-                <Text>Login with Google</Text>
+
+            {/* Add header text to the button below which says "Let's get you in" */}
+            <Text size="xl" weight={700} color="gray.0">
+              Let's get you in:&nbsp;&nbsp;&nbsp;
+            </Text>
+
+            <a href="/api/authentication/github" role="button">
+              <Button color="orange.4" variant="subtle" leftIcon={<GithubIcon />}>
+                <Text>Login with Github</Text>
               </Button>
             </a>
           </div>
         </div>
-
       </fieldset>
     </form>
   );
