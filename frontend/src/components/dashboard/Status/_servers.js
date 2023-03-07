@@ -30,7 +30,7 @@ const showSuccessNotification = () => {
 
 function NewServerModal({ closeModal }) {
   const addContract = (data) => {
-    fetch("/api//smartcontract/create", {
+    fetch("/api/smartcontract/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
