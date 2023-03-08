@@ -108,9 +108,7 @@ def monitor_contract(self, contract_address, user_id, network="mainnet", chain="
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    ws = websocket.create_connection(
-        f"{chain_url}"
-    )
+    ws = websocket.create_connection(f"{chain_url}")
 
     r = redis.Redis(host="localhost", port=6379, db=0)
     # Subscribe to new transactions for a specific smart contract
