@@ -1,9 +1,21 @@
-import { Text, SimpleGrid, Paper, ActionIcon, Group, Modal, TextInput, Grid, Button } from "@mantine/core";
+import {
+  Text,
+  SimpleGrid,
+  Paper,
+  ActionIcon,
+  Group,
+  Modal,
+  TextInput,
+  Grid,
+  Button,
+  Menu,
+  Select,
+} from "@mantine/core";
 import { IconPlus, IconCheck } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { useEffect, useState } from "react";
-import { fetchServers } from "../../../api/servers";
+import { fetchContracts } from "../../../api/servers";
 import { Server } from "./_server";
 
 const showSuccessNotification = () => {
@@ -29,8 +41,11 @@ const showSuccessNotification = () => {
 };
 
 function NewServerModal({ closeModal }) {
+  // eslint-disable-next-line no-undef
+  const [chainValue, setValue] = useState();
+
   const addContract = (data) => {
-    fetch("/api//smartcontract/create", {
+    fetch("/api/smartcontract/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -46,12 +61,11 @@ function NewServerModal({ closeModal }) {
   const form = useForm({
     initialValues: {
       address: "",
-      id: "",
+      chain: "",
+      network: "",
     },
     validate: {
       address: (value) => (value.length !== 64 ? "Address must be 64 characters long" : null),
-      chain: (value) => (value.length < 1 ? "Enter Valid Chain" : null),
-      network: (value) => (value.length < 1 ? "Enter Valid Network" : null),
     },
   });
 
@@ -67,29 +81,33 @@ function NewServerModal({ closeModal }) {
             required
             data-autofocus
             // eslint-disable-next-line react/jsx-props-no-spreading
-            {...form.getInputProps("addres")}
+            {...form.getInputProps("address")}
           />
         </Grid.Col>
         <Grid.Col>
-          <TextInput
-            placeholder="Chain ID"
-            variant="filled"
-            radius="md"
-            withAsterisk
-            required
-            data-autofocus
+          <Select
+            value={chainValue}
+            onChange={(value) => setValue(value)}
+            placeholder="Select Chain"
+            data={[
+              { value: "ethereum", label: "Ethereum" },
+              { value: "polygon", label: "Polygon" },
+            ]}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...form.getInputProps("chain")}
           />
         </Grid.Col>
         <Grid.Col>
-          <TextInput
-            placeholder="Network"
-            variant="filled"
-            radius="md"
-            withAsterisk
-            required
-            data-autofocus
+          <Select
+            value={chainValue}
+            onChange={(value) => setValue(value)}
+            placeholder="Select Network"
+            data={[
+              { value: "mainnet", label: "Mainnet" },
+              { value: "goerli", label: "Goerli" },
+              { value: "sepolia", label: "Sepolia" },
+              { value: "mumbai", label: "Mumbai" },
+            ]}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...form.getInputProps("network")}
           />
@@ -116,7 +134,7 @@ export function Servers() {
   const [servers, setServers] = useState([]);
 
   useEffect(() => {
-    fetchServers().then((json) => setServers(json.results));
+    fetchContracts().then((json) => setServers(json.results));
   }, []);
 
   const openNewServerModal = () => {
@@ -126,7 +144,7 @@ export function Servers() {
   const onCloseNewServerModal = async () => {
     setNewServerModalOpened(false);
 
-    fetchServers().then((json) => {
+    fetchContracts().then((json) => {
       setServers(json.results);
     });
   };

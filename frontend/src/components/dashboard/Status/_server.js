@@ -1,7 +1,8 @@
-import { createStyles, Text, Card, RingProgress, Group } from "@mantine/core";
+import { createStyles, Text, Card, RingProgress, Group, ActionIcon, Menu } from "@mantine/core";
+import { IconDotsVertical, IconTrash, IconPencil } from "@tabler/icons";
+import { Polygon, Ethereum } from "@thirdweb-dev/chain-icons";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-// import { useEffect, useState } from 'react';
-// import { fetchHistory } from '../../../api/servers';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -32,114 +33,75 @@ const useStyles = createStyles((theme) => ({
       flexDirection: "column",
     },
   },
-
-  ring: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "flex-end",
-
-    [theme.fn.smallerThan(350)]: {
-      justifyContent: "center",
-      marginTop: theme.spacing.md,
-    },
-  },
 }));
 
 export function Server({ server }) {
   // eslint-disable-next-line no-unused-vars
   const { classes, theme } = useStyles();
+  const [opened, setOpened] = useState(false);
 
-  const successUp = (
-    <Text style={{ fontSize: "12px" }} color="green">
-      UP
-    </Text>
-  );
-
-  const failureDown = (
-    <Text style={{ fontSize: "12px" }} color="red">
-      DOWN
-    </Text>
-  );
-
-  const stats = [
-    {
-      label: "Frontend",
-      value: server.frontend_last_ping_status === true ? successUp : failureDown,
-    },
-    {
-      label: "API",
-      value: server.api_last_ping_status === true ? successUp : failureDown,
-    },
-  ];
-
-  const items = stats.map((stat) => (
-    <div key={stat.label}>
-      <Text className={classes.label}>{stat.value}</Text>
-      <Text size="xs" color="dimmed">
-        {stat.label}
-      </Text>
-    </div>
-  ));
-
-  // const getFrontendUptime = (() => Math.floor(Math.random() * 100));
-
-  // const getAPIUptime = (() => Math.floor(Math.random() * 100));
+  const openNewServerModal = () => {
+    setOpened(true);
+  };
 
   return (
     <Link href={`/dashboard/status/${server.id}`}>
       <Card withBorder p="xl" radius="md" className={classes.card}>
-        <div className={classes.inner}>
-          <div>
-            <Text size="xl" className={classes.label}>
-              {server.id}
-            </Text>
-            <Group mt="lg">{items}</Group>
-          </div>
-          <div>
-            <Text size="xl" className={classes.label}>
-              {server.address}
-            </Text>
-            <Group mt="lg">{items}</Group>
-          </div>
-
-          {/* <div className={classes.ring}>
-            <RingProgress
-              roundCaps
-              thickness={6}
-              size={150}
-              sections={[{ value: server.frontend_percentage_uptime, color: "yellow" }]}
-              label={
-                <div>
-                  <Text align="center" size="lg" className={classes.label} sx={{ fontSize: 22 }}>
-                    {Math.round(server.frontend_percentage_uptime)}%
-                  </Text>
-                  <Text align="center" size="xs" color="dimmed">
-                    Uptime
-                  </Text>
-                </div>
-              }
-            />
-          </div> */}
-
-          {/* <div className={classes.ring}>
-            <RingProgress
-              roundCaps
-              thickness={6}
-              size={150}
-              sections={[{ value: server.api_percentage_uptime, color: "orange" }]}
-              label={
-                <div>
-                  <Text align="center" size="lg" className={classes.label} sx={{ fontSize: 22 }}>
-                    {Math.round(server.api_percentage_uptime)}%
-                  </Text>
-                  <Text align="center" size="xs" color="dimmed">
-                    API Uptime
-                  </Text>
-                </div>
-              }
-            />
-          </div> */}
-        </div>
+        <Group position="apart">
+          <Group>
+            <div className={classes.inner}>
+              <div>
+                <Ethereum />
+              </div>
+              <div>
+                <Text size="xl" className={classes.label}>
+                  {server.id}
+                </Text>
+              </div>
+              <div>
+                <Text size="xl" className={classes.label}>
+                  {server.address}
+                </Text>
+              </div>
+              <div>
+                <Text size="xl" className={classes.label}>
+                  {server.network}
+                </Text>
+              </div>
+            </div>
+          </Group>
+          <Group>
+            <div className={classes.inner}>
+              <Menu shadow="md" position="left-start">
+                <Menu.Target>
+                  <ActionIcon>
+                    <IconDotsVertical />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item>
+                    onClick={() => openNewServerModal()}
+                    <Group>
+                      <ActionIcon>
+                        <IconPencil />
+                      </ActionIcon>
+                      <Text>Edit</Text>
+                    </Group>
+                  </Menu.Item>
+                  <Menu.Item>
+                    onClick={() => openNewServerModal()}
+                    <Group>
+                      <ActionIcon>
+                        <IconTrash />
+                      </ActionIcon>
+                      <Text>Delete</Text>
+                    </Group>
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </div>
+          </Group>
+        </Group>
       </Card>
     </Link>
   );
