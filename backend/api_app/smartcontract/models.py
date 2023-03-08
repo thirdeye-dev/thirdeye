@@ -9,8 +9,6 @@ User = get_user_model()
 # chain choices enum: "ETH", "BSC", "POLYGON"
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
-    BSC = "BSC", "bsc"
-    POLYGON = "POLYGON", "polygon"
 
 class Network(models.TextChoices):
     # eth network choices
