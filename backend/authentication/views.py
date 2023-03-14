@@ -12,6 +12,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
+from organizations.models import OrganizationUser
 
 from .oauth import oauth
 from .serializers import (
@@ -83,6 +84,24 @@ class MeAPIView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return User.objects.filter(id=user.id)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        user_data = serializer.data[0]
+
+        org_users = OrganizationUser.objects.filter(user=request.user)
+        org_data = []
+        for ou in org_users:
+            org_info = {'id': ou.organization.id, 'name': ou.organization.name}
+            if ou.is_admin:
+                org_info['role'] = 'admin'
+            if ou.is_owner:
+                org_info['role'] = 'owner'
+            org_data.append(org_info)
+
+        user_data['organizations'] = org_data
+        return Response(user_data)
 
 
 def google_login(request):
