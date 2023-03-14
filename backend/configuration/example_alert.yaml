@@ -1,0 +1,32 @@
+# Example alert configuration file
+blockchain_alerts:
+  - blockchain_name: "Ethereum"
+    network: "mainnet"
+    alert_type: "every_transaction"
+    contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
+    alerts:
+      nameA:
+        attribute: "{{ $transaction.TIMESTAMP }}"
+        operator: ">="
+        value: "2023-03-11T12:00:00Z"
+        notifications:
+          - send_email
+          - send_sms
+
+
+# Another type
+blockchain_alerts:
+  - blockchain_name: "Ethereum"
+    network: "mainnet"
+    alert_type: "amount_based"
+    contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
+    alerts:
+      nameA:
+        amount: 30
+        attribute: "{{ $transactions.FAILED }}"
+        operator: ">="
+        value: 5
+        notifications:
+          - send_email:
+              attribute: "Failed transactions were more than {{ $transactions.FAILED }} times!"
+

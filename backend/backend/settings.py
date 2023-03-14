@@ -76,6 +76,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_celery_beat",
     "drf_spectacular",
+    "organizations",
+    "django_extensions",
     "authentication",
     "api_app",
     "api_app.core",
