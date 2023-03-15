@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from organizations.models import Organization, OrganizationUser
+from organizations.serializers import OrganizationSerializer
 from organizations.views.mixins import OrganizationMixin
 from organizations.backends import invitation_backend
 
@@ -19,6 +20,22 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class CreateOrganizationAPIView(generics.CreateAPIView):
+    serializer_class = OrganizationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            # Create organization
+            organization = serializer.save()
+
+            # Add user as owner of the organization
+            organization.add_user(request.user, is_owner=True, is_admin=True)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserInviteAPIView(generics.CreateAPIView):
     serializer_class = UserInviteSerializer
@@ -47,8 +64,6 @@ class UserInviteAPIView(generics.CreateAPIView):
             'detail': 'Invitation email sent to {} for organization: .'.format(email, org.name)
             }
         )
-
-
 
     
 class UpdateUserRoleAPIView(OrganizationMixin, generics.UpdateAPIView):
