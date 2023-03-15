@@ -4,7 +4,7 @@ import { Button } from "@mantine/core";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Page() {
   return (
     <>
       <main>
