@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     "organizations",
     "django_extensions",
     "authentication",
-    "org",
+    "authentication.org",
     "api_app",
     "api_app.core",
     "api_app.monitoring",
