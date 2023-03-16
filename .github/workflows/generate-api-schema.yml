@@ -40,3 +40,6 @@ jobs:
           commit-message: "🤖 Generate OpenAPI schema for Redoc"
           delete-branch: true
           labels: "auto-generated"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.PAT }}
