@@ -125,8 +125,7 @@ class OrganizationLeaveView(APIView):
     def delete(self, request, org_pk):
         user = request.user
         org_user = OrganizationUser.objects.get(user=user, organization_id=org_pk)
-        if org_user.is_owner:
-            return Response("Owners and Admins cannot leave the organization", status=status.HTTP_400_BAD_REQUEST)
+
         org_user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     

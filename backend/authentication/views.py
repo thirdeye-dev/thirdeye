@@ -91,14 +91,13 @@ class MeAPIView(generics.ListAPIView):
         user_data = serializer.data[0]
 
         org_users = OrganizationUser.objects.filter(user=request.user)
-        org_data = []
-        for ou in org_users:
-            org_info = {'id': ou.organization.id, 'name': ou.organization.name}
-            if ou.is_admin:
-                org_info['role'] = 'admin'
-            if ou.is_owner:
-                org_info['role'] = 'owner'
-            org_data.append(org_info)
+        org_data = [
+            {
+                'id': ou.organization.id,
+                'name': ou.organization.name,
+                'is_admin': ou.is_admin,
+            } for ou in org_users
+        ]
 
         user_data['organizations'] = org_data
         return Response(user_data)

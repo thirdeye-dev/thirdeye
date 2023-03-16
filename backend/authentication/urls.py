@@ -8,12 +8,12 @@ urlpatterns = [
     path("logout", LogoutAPIView.as_view(), name="logout"),
     # path("register", RegisterView.as_view(), name="register"),
     path("token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
-    path("google", google_login, name="oauth_google"),
-    path(
-        "google-callback",
-        GoogleLoginCallbackView.as_view(),
-        name="oauth_google_callback",
-    ),
+    # path("google", google_login, name="oauth_google"),
+    # path(
+    #     "google-callback",
+    #     GoogleLoginCallbackView.as_view(),
+    #     name="oauth_google_callback",
+    # ),
     path("github", github_login, name="oauth_github"),
     path(
         "github-callback",
