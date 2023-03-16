@@ -29,7 +29,7 @@ class CreateOrganizationAPIView(generics.CreateAPIView):
             organization = serializer.save()
 
             # Add user as owner of the organization
-            organization.add_user(request.user, is_owner=True, is_admin=True)
+            organization.add_user(request.user, is_admin=True)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:

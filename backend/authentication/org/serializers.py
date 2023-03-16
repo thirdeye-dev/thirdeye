@@ -9,7 +9,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = '__all__'
 
-    # write create where i fill the slug (making it URL safe) myself on the basis of the name
     def create(self, validated_data):
         slug = validated_data['name'].replace(' ', '-').lower()
         validated_data['slug'] = slug
