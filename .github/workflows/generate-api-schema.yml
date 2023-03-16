@@ -42,3 +42,4 @@ jobs:
           labels: "auto-generated"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+          PAT: ${{ secrets.PAT }}
