@@ -6,10 +6,10 @@ import {
 } from "@mantine/core";
 import Logo from "./Logo";
 import { FiMoon, FiSun } from "react-icons/fi";
+import Link from "next/link";
 
 export default function HeaderComponent() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
 
   return (
     <Header height={"5rem"}>
@@ -21,7 +21,9 @@ export default function HeaderComponent() {
           padding: theme.spacing.md,
         })}
       >
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
 
         <ActionIcon onClick={() => toggleColorScheme()}>
           {colorScheme === "dark" ? <FiSun /> : <FiMoon />}

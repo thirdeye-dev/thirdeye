@@ -1,16 +1,12 @@
-import Head from "next/head";
-import { Inter } from "next/font/google";
-import { Button } from "@mantine/core";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-const inter = Inter({ subsets: ["latin"] });
+export default function Index() {
+  const router = useRouter();
 
-export default function Page() {
-  return (
-    <>
-      <main>
-        <Button>Button!</Button>
-        ifuheruf
-      </main>
-    </>
-  );
+  useEffect(() => {
+    router.push("/dashboard");
+  }, [router]);
+
+  return null;
 }
