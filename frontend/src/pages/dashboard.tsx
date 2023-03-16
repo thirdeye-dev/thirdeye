@@ -18,7 +18,7 @@ export default function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      <em>{user?.email}</em>
+      <em>{user?.email ?? "none"}</em>
     </div>
   );
 }

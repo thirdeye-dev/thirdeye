@@ -7,10 +7,17 @@ import { useEffect } from "react";
 export default function PostLogin() {
   const router = useRouter();
 
-  useEffect(() => {
-    const user = fetchCurrentUser();
+  const check = async () => {
+    const user = await fetchCurrentUser();
+    console.log(user);
 
-    maybeOnboarding(user, router as unknown as Router);
+    maybeOnboarding(user!, router as unknown as Router);
+  };
+
+  useEffect(() => {
+    check();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   return null;
