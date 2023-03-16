@@ -101,18 +101,6 @@ class MeAPIView(generics.ListAPIView):
 
         user_data['organizations'] = org_data
         return Response(user_data)
-
-
-def google_login(request):
-    redirect_uri = request.build_absolute_uri(reverse("oauth_google_callback")).replace(
-        "0.0.0.0:8000", "localhost:3000/api"
-    )
-    try:
-        return oauth.google.authorize_redirect(request, redirect_uri)
-    except AttributeError as error:
-        if "No such client: " in str(error):
-            raise AuthenticationFailed("Google OAuth is not configured.")
-        raise error
     
 def github_login(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
@@ -124,54 +112,6 @@ def github_login(request):
         if "No such client: " in str(error):
             raise AuthenticationFailed("Github OAuth is not configured.")
         raise error
-
-
-class GoogleLoginCallbackView(APIView):
-    @staticmethod
-    def validate_and_return_user(request):
-        try:
-            token = oauth.google.authorize_access_token(request)
-        except (
-            OAuthError,
-            OAuth2Error,
-        ):
-            # Not giving out the actual error as we risk exposing the client secret
-            raise AuthenticationFailed("OAuth authentication error.")
-
-        user = token.get("userinfo")
-        user_email = user.get("email")
-        user_name = user.get("name")
-        # image = user.get("image").get("url")
-
-        try:
-            return User.objects.get(email=user_email)
-        except User.DoesNotExist:
-            logging.info("[Google Oauth] User does not exist. Creating new one.")
-            return User.objects.create_user(
-                email=user_email,
-                username=user_name,
-                password=None,
-                auth_provider="google",
-                # avatar=image,
-            )
-
-    def get(self, request):
-        return self.post(request)
-
-    def post(self, request):
-        user = self.validate_and_return_user(request)
-        print(user)
-
-        tokens = user.tokens()
-        access_token = tokens.get("access")
-        refresh_token = tokens.get("refresh")
-
-        # Uncomment this for local testing
-        return redirect(
-            "http://localhost:3000/auth/social?access"
-            f"={access_token}&refresh={refresh_token}&username={user.username}"
-        )
-        # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
 
 class GithubLoginCallbackView(APIView):
     @staticmethod
