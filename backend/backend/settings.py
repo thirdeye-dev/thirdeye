@@ -38,7 +38,7 @@ CHAINS_AND_NETWORKS = {
     "eth": {
         "mainnet": f"https://mainnet.infura.io/v3/{INFURA_PROJECT_ID}",
         "goerli": f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}",
-        "sepolia": f"https://sepolia.infura.io/v3{INFURA_PROJECT_ID}"
+        "sepolia": f"https://sepolia.infura.io/v3{INFURA_PROJECT_ID}",
     }
 }
 
@@ -86,12 +86,12 @@ INSTALLED_APPS = [
     "api_app.smartcontract",
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your_gmail_app_password'
+EMAIL_HOST_USER = "your_email@gmail.com"
+EMAIL_HOST_PASSWORD = "your_gmail_app_password"
 
 
 SIMPLE_JWT = {
@@ -105,7 +105,7 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # enables simple command line authentication
-        "rest_framework.authentication.BasicAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
