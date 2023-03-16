@@ -3,6 +3,13 @@ on:
   push:
     branches:
       - master
+      - dev
+    paths:
+      - "backend/**"
+  pull_request_target:
+    branches:
+      - master
+      - dev
     paths:
       - "backend/**"
 
@@ -12,10 +19,13 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.head_ref }}
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
@@ -29,17 +39,11 @@ jobs:
         run: |
           ./backend/manage.py spectacular --file docs/schema.yml
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+      - name: Commit the generated schema
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          branch: "generate-openapi-schema"
-          title: "🤖 Generate OpenAPI schema for Redoc"
-          body: |
-            This PR generates the OpenAPI schema file for Redoc. It was generated automatically by a GitHub Actions workflow.
-
-          commit-message: "🤖 Generate OpenAPI schema for Redoc"
-          delete-branch: true
-          labels: "auto-generated"
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          PAT: ${{ secrets.PAT }}
+          commit_message: 🤖 commit the new OpenAPI schema
+          # this gives the commit author the github bot pfp and username
+          commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          file_pattern: 'docs/schema.yml'
