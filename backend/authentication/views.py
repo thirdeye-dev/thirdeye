@@ -77,20 +77,21 @@ class LogoutAPIView(generics.GenericAPIView):
         return Response({"status": "successful"}, status=status.HTTP_200_OK)
 
 
-class MeAPIView(generics.ListAPIView):
+class MeAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
+    def get_object(self):
         user = self.request.user
-        return User.objects.filter(id=user.id)
+        queryset = User.objects.filter(id=user.id)
+        return queryset.first()
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        user_data = serializer.data[0]
-
+    def retrieve(self, request, *args, **kwargs):
+        user_instance = self.get_object()
+        serializer = self.get_serializer(user_instance)
+        user_data = serializer.data
         org_users = OrganizationUser.objects.filter(user=request.user)
+
         org_data = [
             {
                 'id': ou.organization.id,
@@ -101,7 +102,7 @@ class MeAPIView(generics.ListAPIView):
 
         user_data['organizations'] = org_data
         return Response(user_data)
-    
+
 def github_login(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
         "0.0.0.0:8000", "localhost:3000/api"
