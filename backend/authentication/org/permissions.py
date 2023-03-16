@@ -1,16 +1,16 @@
 from rest_framework.permissions import BasePermission
+from organizations.models import Organization
 
 class IsAdminOrOwner(BasePermission):
-    """
-    Custom permission to allow only admins or owners of an organization to update the organization.
-    """
+    def has_permission(self, request, view):
+        # Get the slug from the URL path
+        org_id = view.kwargs.get('org_id')
 
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user.is_superuser:
+        # Get the organization object
+        org = Organization.objects.get(id=org_id)
+
+        # Check if the user is an admin
+        if request.user in org.admins.all():
             return True
-        if obj.owner == user:
-            return True
-        if user in obj.admin_users.all():
-            return True
+
         return False
