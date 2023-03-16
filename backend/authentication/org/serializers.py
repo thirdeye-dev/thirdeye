@@ -7,12 +7,16 @@ from organizations.models import Organization
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = '__all__'
+        fields = ('name', 'slug')
 
-    def create(self, validated_data):
-        slug = validated_data['name'].replace(' ', '-').lower()
-        validated_data['slug'] = slug
-        return super().create(validated_data)
+    def validate(self, attrs):
+        slug = attrs['name'].replace(' ', '-').lower()
+        attrs['slug'] = slug
+
+        if Organization.objects.filter(slug=slug).exists():
+            raise serializers.ValidationError(_('Organization with this name already exists.'))
+
+        return super().validate(attrs)
 
 class UserInviteSerializer(serializers.Serializer):
     email = serializers.EmailField(
