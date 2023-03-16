@@ -76,12 +76,23 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_celery_beat",
     "drf_spectacular",
+    "organizations",
+    "django_extensions",
     "authentication",
+    "authentication.org",
     "api_app",
     "api_app.core",
     "api_app.monitoring",
     "api_app.smartcontract",
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_gmail_app_password'
+
 
 SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,

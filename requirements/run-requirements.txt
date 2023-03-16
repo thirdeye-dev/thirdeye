@@ -4,8 +4,10 @@ djangorestframework-simplejwt
 djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
+django-organizations
 django-cache-memoize
 django-postgres-extra
+django_extensions
 drf_yasg
 psycopg2-binary
 django-rest-swagger
