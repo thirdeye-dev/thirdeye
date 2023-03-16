@@ -7,13 +7,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from organizations.models import Organization, OrganizationUser
-from organizations.serializers import OrganizationSerializer
 from organizations.views.mixins import OrganizationMixin
-from organizations.backends import invitation_backend
 
 from .permissions import IsAdminOrOwner
 
-from .serializers import UserInviteSerializer
+from .serializers import UserInviteSerializer, OrganizationSerializer
 from authentication.serializers import UserSerializer
 
 from django.contrib.auth import get_user_model
