@@ -5,6 +5,9 @@ import Router from "next/router";
 
 const instance = axios.create({
   baseURL: "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
   transformRequest: (data, headers) => {
     const access_token = getAccessToken();
 
