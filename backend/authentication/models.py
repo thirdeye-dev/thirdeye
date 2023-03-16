@@ -37,7 +37,6 @@ class UserManager(BaseUserManager):
 
 
 AUTH_PROVIDERS = {
-    "google": "google", 
     "email": "email",
     "github": "github",
 }
