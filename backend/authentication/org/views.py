@@ -7,13 +7,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from organizations.models import Organization, OrganizationUser
-from organizations.serializers import OrganizationSerializer
 from organizations.views.mixins import OrganizationMixin
-from organizations.backends import invitation_backend
 
 from .permissions import IsAdminOrOwner
 
-from .serializers import UserInviteSerializer
+from .serializers import UserInviteSerializer, OrganizationSerializer
 from authentication.serializers import UserSerializer
 
 from django.contrib.auth import get_user_model
@@ -127,8 +125,7 @@ class OrganizationLeaveView(APIView):
     def delete(self, request, org_pk):
         user = request.user
         org_user = OrganizationUser.objects.get(user=user, organization_id=org_pk)
-        if org_user.is_owner:
-            return Response("Owners and Admins cannot leave the organization", status=status.HTTP_400_BAD_REQUEST)
+
         org_user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     

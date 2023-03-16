@@ -1,7 +1,7 @@
 from django.core.validators import EmailValidator
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from organizations.models import OrganizationInvitation
+from organizations.models import OrganizationInvitation, Organization
 
 from django.db import models
 
@@ -9,6 +9,11 @@ from django.db import models
 class ROLE_CHOICES(models.TextChoices):
     MEMBER = 'member'
     ADMIN = 'admin'
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = '__all__'
 
 
 class UserInviteSerializer(serializers.Serializer):
