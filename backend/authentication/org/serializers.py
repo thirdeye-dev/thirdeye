@@ -7,7 +7,7 @@ from organizations.models import Organization
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ('name', 'slug')
+        fields = ('name',)
 
     def validate(self, attrs):
         slug = attrs['name'].replace(' ', '-').lower()
