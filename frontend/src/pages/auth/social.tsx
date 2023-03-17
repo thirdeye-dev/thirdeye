@@ -12,8 +12,6 @@ export default function Social() {
   const refresh_token = query.refresh;
 
   useEffect(() => {
-    const to_forward = "/dashboard/status";
-
     const user_cookie = {
       access_token,
       refresh_token,

@@ -8,5 +8,5 @@ export default async function maybeLogin(router: Router) {
     return router.push("/login");
   }
 
-  router.push("/dashboard");
+  router.push("/org");
 }

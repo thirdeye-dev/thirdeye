@@ -1,3 +1,4 @@
+import { Organization } from "@/models/organization";
 import { createOrganization } from "@/services/organizations";
 import {
   Button,
@@ -20,11 +21,11 @@ export default function Onboarding() {
   const handleSubmit = async (organizationName: string) => {
     if (!organizationName) return;
 
-    await createOrganization({
+    const org: Organization = await createOrganization({
       name: organizationName,
     });
 
-    router.push("/dashboard");
+    router.push(`/org/${org.id}`);
   };
 
   return (
