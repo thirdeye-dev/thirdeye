@@ -12,7 +12,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from organizations.models import OrganizationUser
+from .organizations.models import Membership
 
 from .oauth import oauth
 from .serializers import (
@@ -90,13 +90,14 @@ class MeAPIView(generics.RetrieveAPIView):
         user_instance = self.get_object()
         serializer = self.get_serializer(user_instance)
         user_data = serializer.data
-        org_users = OrganizationUser.objects.filter(user=request.user)
+        org_users = Membership.objects.filter(user=request.user)
 
         org_data = [
             {
                 'id': ou.organization.id,
                 'name': ou.organization.name,
                 'is_admin': ou.is_admin,
+                'is_owner': ou.is_owner,
             } for ou in org_users
         ]
 

@@ -4,7 +4,6 @@ djangorestframework-simplejwt
 djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
-django-organizations
 django-postgres-extra
 django-cache-memoize
 django_extensions
