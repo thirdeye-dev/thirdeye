@@ -9,21 +9,22 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useRouter } from "next/navigation";
 
 import { CgOrganisation } from "react-icons/cg";
 
 export default function Onboarding() {
+  const router = useRouter();
   const form = useForm({});
 
-  const handleSubmit = (organizationName: string) => {
+  const handleSubmit = async (organizationName: string) => {
     if (!organizationName) return;
 
-    createOrganization(
-      JSON.stringify({
-        name: organizationName,
-        slug: organizationName.toLowerCase().replace(" ", "-"),
-      })
-    );
+    await createOrganization({
+      name: organizationName,
+    });
+
+    router.push("/dashboard");
   };
 
   return (

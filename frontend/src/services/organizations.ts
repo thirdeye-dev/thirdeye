@@ -1,9 +1,17 @@
 import { Organization } from "@/models/organization";
 import axios from "@/axios";
 
-export function createOrganization(organization: {
-  name: string;
-  slug: string;
-}) {
-  return axios.post("/org/create", organization);
+export async function createOrganization(organization: { name: string }) {
+  const response = await axios.post(
+    "/organizations/my/",
+    JSON.stringify(organization)
+  );
+
+  return response.data;
+}
+
+export async function fetchOrganizations() {
+  const response = await axios.get<Organization[]>("/organizations/my");
+
+  return response.data;
 }

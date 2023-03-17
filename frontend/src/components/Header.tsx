@@ -1,7 +1,9 @@
 import {
   ActionIcon,
+  Divider,
   Group,
   Header,
+  Select,
   useMantineColorScheme,
 } from "@mantine/core";
 import Logo from "./Logo";
@@ -21,13 +23,20 @@ export default function HeaderComponent() {
           padding: theme.spacing.md,
         })}
       >
-        <Link href="/">
-          <Logo />
-        </Link>
+        <Group>
+          <Link href="/">
+            <Logo />
+          </Link>
 
-        <ActionIcon onClick={() => toggleColorScheme()}>
-          {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-        </ActionIcon>
+          <Divider orientation="vertical" />
+          <Select placeholder="Organization" data={["one", "two"]} w="40%" />
+        </Group>
+
+        <Group>
+          <ActionIcon onClick={() => toggleColorScheme()}>
+            {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
+          </ActionIcon>
+        </Group>
       </Group>
     </Header>
   );
