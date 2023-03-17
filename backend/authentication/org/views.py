@@ -31,7 +31,12 @@ class CreateOrganizationAPIView(generics.CreateAPIView):
             # Add user as owner of the organization
             organization.add_user(request.user, is_admin=True)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            org_json = {
+                'name': serializer.validated_data['name'],
+                'id': organization.id,
+            }
+
+            return Response(org_json, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

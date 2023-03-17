@@ -10,6 +10,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
     def validate(self, attrs):
+        # i would want to move away from slug in the future
         slug = attrs['name'].replace(' ', '-').lower()
         attrs['slug'] = slug
 
