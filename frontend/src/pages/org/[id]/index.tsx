@@ -6,7 +6,7 @@ export default function Organization() {
   const { id } = router.query;
 
   useEffect(() => {
-    router.push(`/org/${id}/overview`);
+    router.push(`/org/${id}/contracts`);
   }, [id, router]);
 
   return null;
