@@ -45,7 +45,7 @@ export default function HeaderComponent() {
   };
 
   return (
-    <Header height={"5rem"}>
+    <Header height={"5rem"} fixed>
       <Group
         position="apart"
         sx={(theme) => ({

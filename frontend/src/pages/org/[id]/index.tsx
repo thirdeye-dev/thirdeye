@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Organization() {
   const router = useRouter();
   const { id } = router.query;
 
-  return (
-    <div>
-      <h1>Organization: {id}</h1>
-    </div>
-  );
+  useEffect(() => {
+    router.push(`/org/${id}/overview`);
+  }, [id, router]);
+
+  return null;
 }
