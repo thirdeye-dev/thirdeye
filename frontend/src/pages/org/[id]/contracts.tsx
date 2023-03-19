@@ -11,8 +11,9 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
 import Contract from "@/models/contract";
 import { fetchContracts } from "@/services/contracts";
@@ -39,6 +40,13 @@ export default function Contracts() {
 
   const afterFormSuccess = () => {
     closeAddModal();
+
+    notifications.show({
+      title: "Success",
+      message: "Contract added successfully",
+      color: "green",
+      icon: <AiFillCheckCircle />,
+    });
     assignContracts();
   };
 
