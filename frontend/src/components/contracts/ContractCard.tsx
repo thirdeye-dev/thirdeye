@@ -84,14 +84,16 @@ export default function ContractCard({ contract }: { contract: Contract }) {
               {contract.address}
             </Text>
 
-            <Button
-              size="xs"
-              variant="subtle"
-              color="green"
-              onClick={() => copyToClipboard(contract.address)}
-            >
-              <AiFillCopy size={"1rem"} />
-            </Button>
+            <Tooltip label="Add to clipboard" color="gray">
+              <Button
+                size="xs"
+                variant="subtle"
+                color="green"
+                onClick={() => copyToClipboard(contract.address)}
+              >
+                <AiFillCopy size={"1rem"} />
+              </Button>
+            </Tooltip>
           </Flex>
         </Paper>
 
@@ -115,15 +117,17 @@ export default function ContractCard({ contract }: { contract: Contract }) {
             </Button>
           </Group>
 
-          <Button
-            variant="subtle"
-            color="red"
-            size="sm"
-            p="xs"
-            onClick={onClickDelete}
-          >
-            <FaTrash />
-          </Button>
+          <Tooltip label="Delete" color="gray">
+            <Button
+              variant="subtle"
+              color="red"
+              size="sm"
+              p="xs"
+              onClick={onClickDelete}
+            >
+              <FaTrash />
+            </Button>
+          </Tooltip>
         </Flex>
       </Stack>
     </Card>

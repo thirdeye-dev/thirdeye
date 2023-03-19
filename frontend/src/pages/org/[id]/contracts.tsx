@@ -8,6 +8,7 @@ import {
   Paper,
   SimpleGrid,
   Text,
+  Tooltip,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
@@ -66,14 +67,16 @@ export default function Contracts() {
             CONTRACTS
           </Text>
 
-          <Button
-            color="orange.4"
-            variant="light"
-            p={"xs"}
-            onClick={onClickAdd}
-          >
-            <AiOutlinePlus size="1.3rem" />
-          </Button>
+          <Tooltip label="Add New" position="right">
+            <Button
+              color="orange.4"
+              variant="light"
+              p={"xs"}
+              onClick={onClickAdd}
+            >
+              <AiOutlinePlus size="1.3rem" />
+            </Button>
+          </Tooltip>
         </Flex>
 
         <Paper radius="md" p="xl" withBorder mih="80vh">
