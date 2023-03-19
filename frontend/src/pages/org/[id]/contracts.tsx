@@ -2,13 +2,11 @@ import { ReactNode, useEffect, useState } from "react";
 import AppShellLayout from "@/layouts/AppShellLayout";
 import {
   Button,
-  Card,
   Container,
   Flex,
   Modal,
   Paper,
   SimpleGrid,
-  Stack,
   Text,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +16,7 @@ import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 import Contract from "@/models/contract";
 import { fetchContracts } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
+import ContractCard from "@/components/contracts/ContractCard";
 
 export default function Contracts() {
   const [contracts, setContracts] = useState<Array<Contract>>([]);
@@ -80,33 +79,7 @@ export default function Contracts() {
         <Paper radius="md" p="xl" withBorder mih="80vh">
           <SimpleGrid cols={2}>
             {contracts.map((contract, idx) => (
-              <Card key={idx} shadow="sm" radius="md" p="xl" withBorder>
-                <Stack justify={"flex-start"} spacing="none">
-                  <Text size="lg" weight={700} color="cyan">
-                    {contract.name}
-                  </Text>
-
-                  <Text size="sm" weight={500} color="gray">
-                    {contract.address}
-                  </Text>
-
-                  <Flex
-                    justify="space-evenly"
-                    align="center"
-                    mt="md"
-                    mb="md"
-                    w="100%"
-                  >
-                    <Text size="sm" weight={500}>
-                      {contract.chain}
-                    </Text>
-
-                    <Text size="sm" weight={500}>
-                      {contract.network}
-                    </Text>
-                  </Flex>
-                </Stack>
-              </Card>
+              <ContractCard key={idx} contract={contract} />
             ))}
           </SimpleGrid>
         </Paper>
