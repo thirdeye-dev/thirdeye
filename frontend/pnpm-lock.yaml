@@ -6,6 +6,7 @@ specifiers:
   '@mantine/core': ^6.0.2
   '@mantine/form': ^6.0.2
   '@mantine/hooks': ^6.0.2
+  '@mantine/modals': ^6.0.2
   '@mantine/next': ^6.0.2
   '@types/node': 18.15.3
   '@types/react': 18.0.28
@@ -26,6 +27,7 @@ dependencies:
   '@mantine/core': 6.0.2_md2nfwiomeeos7ogkicwnxcafa
   '@mantine/form': 6.0.2_react@18.2.0
   '@mantine/hooks': 6.0.2_react@18.2.0
+  '@mantine/modals': 6.0.2_reujnkpez4ozmj6vonlofpozxe
   '@mantine/next': 6.0.2_qqau3dvbojnwvgou4gzbrwl7sy
   '@types/node': 18.15.3
   '@types/react': 18.0.28
@@ -322,6 +324,21 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /@mantine/modals/6.0.2_reujnkpez4ozmj6vonlofpozxe:
+    resolution: {integrity: sha512-R15OASfFfXdeDERzDf878AWjr6LgVTgGGX7SKHTd14VjyEi+QlzGvshZmSgO0hUo3gg2ONa8Pr9clZaFHY5HTQ==}
+    peerDependencies:
+      '@mantine/core': 6.0.2
+      '@mantine/hooks': 6.0.2
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 6.0.2_md2nfwiomeeos7ogkicwnxcafa
+      '@mantine/hooks': 6.0.2_react@18.2.0
+      '@mantine/utils': 6.0.2_react@18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@mantine/next/6.0.2_qqau3dvbojnwvgou4gzbrwl7sy:
