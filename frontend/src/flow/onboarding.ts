@@ -5,7 +5,7 @@ export default function maybeOnboarding(user: User, router: Router) {
   console.log(user);
 
   if (user.organizations.length > 0) {
-    return router.push("/dashboard");
+    return router.push("/org");
   }
 
   router.push("/onboarding");

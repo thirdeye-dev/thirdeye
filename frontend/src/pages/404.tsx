@@ -8,7 +8,7 @@ export default function NotFound() {
         404
       </Text>
 
-      <Link href="/dashboard">
+      <Link href="/org">
         <Button size={"lg"} color="red">
           Go back to the Dashboard
         </Button>
