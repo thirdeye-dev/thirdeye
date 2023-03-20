@@ -131,6 +131,7 @@ class GithubLoginCallbackView(APIView):
         resp.raise_for_status()
         profile = resp.json()
         user_name = profile.get("name")
+        avatar = profile.get("avatar_url")
 
         # get user emails from github
         emails_resp = oauth.github.get('user/emails', token=token)
@@ -146,7 +147,10 @@ class GithubLoginCallbackView(APIView):
             user_email = emails[0].get('email')
 
         try:
-            return User.objects.get(email=user_email)
+            user = User.objects.get(email=user_email)
+            user.avatar = avatar
+            user.save()
+            return user
         except User.DoesNotExist:
             logging.info(
                 "[Github Oauth] User does not exist. Creating new one.\n"
@@ -157,7 +161,7 @@ class GithubLoginCallbackView(APIView):
                 username=user_name,
                 password=None,
                 auth_provider="github",
-                # avatar=image,
+                avatar_url=avatar,
             )
 
     def get(self, request):
