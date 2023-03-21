@@ -29,6 +29,7 @@ class SmartContract(BaseMixin):
         default=Network.MAINNET
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

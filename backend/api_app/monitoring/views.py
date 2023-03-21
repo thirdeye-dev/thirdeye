@@ -7,8 +7,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from api_app.core.serializers import IOCSerializer
-from api_app.monitoring.models import MonitoringTasks
-from api_app.monitoring.tasks import monitor_contract
 
 from .serializers import SetIoCSerializer
 
@@ -26,38 +24,14 @@ def set_ioc_alert(request):
 
     if serializer_class.is_valid():
         serializer_class.save()
-
-        print(serializer_class.data)
-
-        # add entry to Monitoring model
-        # if not already added
-        if MonitoringTasks.objects.filter(
-            SmartContract__contract_address=serializer_class.data["contract_address"],
-            SmartContract__user=serializer_class.data["user_id"],
-        ).exists():
-            return Response(
-                {"message": "IOC alert set successfully."}, status=status.HTTP_200_OK
-            )
-
-        # start monitoring and add to db
-        monitoring_task = MonitoringTasks.objects.create(
-            SmartContract_id=serializer_class.data["contract_address"],
-            user_id=serializer_class.data["user_id"],
-        )
-
-        monitoring_celery_task = monitor_contract.delay(
-            serializer_class.data["contract_address"],
-            serializer_class.data["user_id"],
-        )
-
-        monitoring_task.task_id = monitoring_celery_task.task_id
-        monitoring_task.save()
-
         return Response(
             {"message": "IOC alert set successfully."}, status=status.HTTP_200_OK
         )
     else:
-        return Response(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer_class.errors, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class IoCListAPI(APIView):

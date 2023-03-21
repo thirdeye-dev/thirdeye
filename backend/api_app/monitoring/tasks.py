@@ -8,12 +8,15 @@ from django.contrib.auth.models import User
 
 from requests.exceptions import RequestException
 
-
 from django.conf import settings
 from celery.utils.log import get_task_logger
 
 from backend.celery import app
-from api_app.monitoring.models import IOCAlert, IoC
+from api_app.monitoring.models import (
+    IOCAlert, 
+    IoC, 
+    MonitoringTasks
+)
 
 logger = get_task_logger(__name__)
 
@@ -90,19 +93,35 @@ def check_threshold(response, threshold, contract_address, user_id):
 
             for ioc in iocs:
                 if ioc.alert_types == "WEBHOOK":
-                    send_webhook.delay(ioc.alert_url, warning)
+                    send_webhook.delay(args=[ioc.alert_url, warning])
                 elif ioc.alert_types == "SMS":
-                    send_sms.delay(ioc.alert_phone, warning)
+                    send_sms.delay(args=[ioc.alert_phone, warning])
                 elif ioc.alert_types == "EMAIL":
                     user = User.objects.get(id=user_id)
-                    send_email.delay(user.email, warning)
+                    send_email.delay(args=[user.email, warning])
 
 
+"""
 # main monitior task
+
+Future plans:
+
+Eventually, When we move to post PoC stage, i want us to move to a batch
+processing model. This will help us reduce the number of requests we make
+and also reduce the number of tasks we have to run.
+"""
 @app.task(bind=True)
-def monitor_contract(self, contract_address, user_id, network="mainnet", chain="eth"):
+def monitor_contract(self, monitoring_task_id):
     # chains and networks supported
     # eth: mainnet, sepolia, goerli
+
+    # note for myself: i feel like this can be replaced by redis really well.
+    monitoring_task = MonitoringTasks.objects.get(id=monitoring_task_id)
+
+    contract_address = monitoring_task.contract_address
+    user_id = monitoring_task.user_id
+    network = monitoring_task.network
+    chain = monitoring_task.chain
 
     chain_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
     if not chain_url:

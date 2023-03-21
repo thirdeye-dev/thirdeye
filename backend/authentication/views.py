@@ -14,6 +14,8 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from .organizations.models import Membership
 
+from authentication.models import User
+
 from .oauth import oauth
 from .serializers import (
     LoginSerializer,
@@ -23,9 +25,6 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-User = get_user_model()
 
 
 class CustomRedirect(HttpResponsePermanentRedirect):
@@ -161,7 +160,7 @@ class GithubLoginCallbackView(APIView):
                 username=user_name,
                 password=None,
                 auth_provider="github",
-                avatar_url=avatar,
+                avatar=avatar,
             )
 
     def get(self, request):
