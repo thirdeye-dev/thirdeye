@@ -1,20 +1,10 @@
-from django.urls import path
-from .views import (
-    SmartContractList,
-    SmartContractCreate,
-    SmartContractRetrieve,
-    SmartContractUpdate,
-    SmartContractDelete,
-)
+from django.urls import include, path
+from rest_framework import routers
+from .views import SmartContractViewSet
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'contract', SmartContractViewSet, basename="smartcontract")
 
 urlpatterns = [
-    path("list", SmartContractList.as_view(), name="smart_contract-list"),
-    path("create", SmartContractCreate.as_view(), name="smart_contract-create"),
-    path("<int:pk>", SmartContractRetrieve.as_view(), name="smart_contract-detail"),
-    path(
-        "<int:pk>/update", SmartContractUpdate.as_view(), name="smart_contract-update"
-    ),
-    path(
-        "<int:pk>/delete", SmartContractDelete.as_view(), name="smart_contract-delete"
-    ),
+    path('', include(router.urls)),
 ]
