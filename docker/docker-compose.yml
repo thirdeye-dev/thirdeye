@@ -8,7 +8,7 @@ services:
     networks:
       internal:
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - ../postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env
 
@@ -20,15 +20,15 @@ services:
     expose:
       - "8000"
     build:
-      context: ./
-      dockerfile: ./Dockerfile
-    entrypoint: /app/entrypoint.sh
+      context: ..
+      dockerfile: docker/Dockerfile
+    entrypoint: docker/entrypoint/entrypoint.sh
     depends_on:
       - postgres
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app
+      - ../:/app
     env_file:
       - ./.env
     links:
@@ -39,15 +39,15 @@ services:
 
   celery:
     build:
-      context: ./
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: celery_thirdeye
     volumes:
-      - "./:/app"
+      - "../:/app"
     networks:
       default:
       internal:
-    entrypoint: /app/entrypoint_celery.sh
+    entrypoint: docker/entrypoint/entrypoint_celery.sh
     env_file:
       - ./.env
     depends_on:
@@ -60,15 +60,15 @@ services:
 
   celery_beat:
     build:
-      context: ./
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     volumes:
-      - "./:/app"
+      - "../:/app"
     networks:
       default:
       internal:
     container_name: celery_beat_thirdeye
-    entrypoint: /app/entrypoint_beat_celery.sh
+    entrypoint: docker/entrypoint/entrypoint_beat_celery.sh
     env_file:
       - ./.env
     depends_on:
@@ -96,6 +96,7 @@ services:
       internal:
     image: redis:alpine
     hostname: redis
+
 
 networks:
     default:

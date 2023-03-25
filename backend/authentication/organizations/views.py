@@ -24,6 +24,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
+    def get_queryset(self):
+        return Organization.objects.filter(memberships__user=self.request.user)
+
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
@@ -39,15 +42,6 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             is_admin=True,
             is_owner=True,
         )
-        membership.save()
-
-    def perform_update(self, serializer):
-        organization = serializer.save()
-        membership = Membership.objects.get(
-            user=self.request.user,
-            organization=organization
-        )
-        membership.is_owner = True
         membership.save()
 
 class InviteUserView(generics.CreateAPIView):

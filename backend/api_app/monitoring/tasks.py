@@ -8,12 +8,15 @@ from django.contrib.auth.models import User
 
 from requests.exceptions import RequestException
 
-
 from django.conf import settings
 from celery.utils.log import get_task_logger
 
 from backend.celery import app
-from api_app.monitoring.models import IOCAlert, IoC
+from api_app.monitoring.models import (
+    IOCAlert, 
+    IoC, 
+    MonitoringTasks
+)
 
 logger = get_task_logger(__name__)
 
@@ -97,12 +100,27 @@ def check_threshold(response, threshold, contract_address, user_id):
                     user = User.objects.get(id=user_id)
                     send_email.delay(user.email, warning)
 
+"""
+The main monitior task!
 
-# main monitior task
-@app.task(bind=True)
-def monitor_contract(self, contract_address, user_id, network="mainnet", chain="eth"):
+Future plans:
+
+Eventually, When we move to post PoC stage, i want us to move to a batch
+processing model. This will help us reduce the number of requests we make
+and also reduce the number of tasks we have to run.
+"""
+@app.task(bind=True, max_retries=3)
+def monitor_contract(self, monitoring_task_id):
     # chains and networks supported
     # eth: mainnet, sepolia, goerli
+
+    # note for myself: i feel like this can be replaced by redis really well.
+    monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
+
+    contract_address = monitoring_task.SmartContract.address
+    user_id = monitoring_task.SmartContract.owner.id
+    network = monitoring_task.SmartContract.network.lower()
+    chain = monitoring_task.SmartContract.chain.lower()
 
     chain_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
     if not chain_url:
