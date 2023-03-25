@@ -22,7 +22,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    entrypoint: /app/entrypoint.sh
+    entrypoint: docker/entrypoint/entrypoint.sh
     depends_on:
       - postgres
     ports:
@@ -47,7 +47,7 @@ services:
     networks:
       default:
       internal:
-    entrypoint: /app/entrypoint_celery.sh
+    entrypoint: docker/entrypoint/entrypoint_celery.sh
     env_file:
       - ./.env
     depends_on:
@@ -68,7 +68,7 @@ services:
       default:
       internal:
     container_name: celery_beat_thirdeye
-    entrypoint: /app/entrypoint_beat_celery.sh
+    entrypoint: docker/entrypoint/entrypoint_beat_celery.sh
     env_file:
       - ./.env
     depends_on:
