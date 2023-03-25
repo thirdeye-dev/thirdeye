@@ -6,13 +6,13 @@ services:
     expose:
       - "8000"
     build:
-      context: ./
+      context: ../
       dockerfile: ./Dockerfile
     entrypoint: /app/entrypoint.sh
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app
+      - ../:/app
     env_file:
       - ./.env
     environment:

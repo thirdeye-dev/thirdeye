@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 
 from api_app.smartcontract.models import SmartContract
 from api_app.core.serializers import IOCSerializer
+from api_app.core.models import BaseMixin
 
 ioc_types = IOCSerializer.read_and_verify_config()
 ioc_choices = [ioc_type for ioc_type in ioc_types.keys()]
@@ -39,7 +40,6 @@ class ThresholdCurrency(models.TextChoices):
     GWEI = "GWEI"
     USD = "USD"
 
-
 # validate alert type
 def validate_alert_type(value):
     if value not in AlertType.values:
@@ -47,17 +47,21 @@ def validate_alert_type(value):
 
 
 # monitoring model for celery tasks
-class MonitoringTasks(models.Model):
+class MonitoringTasks(BaseMixin):
+    class TaskStatus(models.TextChoices):
+        RUNNING = "RUNNING"
+        PENDING = "PENDING"
+        STOPPED = "STOPPED"
+
     SmartContract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
 
     # celery task id
-    task_id = models.CharField(max_length=255, blank=True, null=True)
+    task_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
     # celery task status
-    task_status = models.CharField(max_length=16, blank=True, null=True)
-
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
+    task_status = models.CharField(
+        max_length=16, choices=TaskStatus.choices, default=TaskStatus.PENDING
+    )
 
     def __str__(self):
         return f"{self.SmartContract.address} - {self.task_id}"

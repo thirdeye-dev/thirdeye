@@ -100,9 +100,8 @@ def check_threshold(response, threshold, contract_address, user_id):
                     user = User.objects.get(id=user_id)
                     send_email.delay(args=[user.email, warning])
 
-
 """
-# main monitior task
+The main monitior task!
 
 Future plans:
 
@@ -110,18 +109,18 @@ Eventually, When we move to post PoC stage, i want us to move to a batch
 processing model. This will help us reduce the number of requests we make
 and also reduce the number of tasks we have to run.
 """
-@app.task(bind=True)
+@app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
     # chains and networks supported
     # eth: mainnet, sepolia, goerli
 
     # note for myself: i feel like this can be replaced by redis really well.
-    monitoring_task = MonitoringTasks.objects.get(id=monitoring_task_id)
+    monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
 
-    contract_address = monitoring_task.contract_address
-    user_id = monitoring_task.user_id
-    network = monitoring_task.network
-    chain = monitoring_task.chain
+    contract_address = monitoring_task.SmartContract.address
+    user_id = monitoring_task.SmartContract.owner.id
+    network = monitoring_task.SmartContract.network.lower()
+    chain = monitoring_task.SmartContract.chain.lower()
 
     chain_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
     if not chain_url:

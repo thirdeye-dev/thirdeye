@@ -39,6 +39,8 @@ export default function HeaderComponent() {
   }, [shouldShowOrganizationSelector]);
 
   const onOrganizationChange = (orgName: string) => {
+    if (!orgName) return;
+
     const org = orgs.current.find((org) => org.name === orgName);
 
     router.push(`/org/${org?.id}`);

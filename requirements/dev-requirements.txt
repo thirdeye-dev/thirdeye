@@ -4,6 +4,7 @@ djangorestframework-simplejwt
 djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
+flower==1.2.0
 django-postgres-extra
 django-cache-memoize
 django_extensions

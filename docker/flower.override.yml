@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  flower:
+    image: mher/flower
+    container_name: flower_app_thirdeye
+    networks:
+      default:
+      internal:
+    depends_on:
+      - rabbit
+    ports:
+      - "5555:5555"
+    environment:
+      - BROKER_URL=amqp://admin:mypass@rabbit:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
