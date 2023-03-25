@@ -97,6 +97,7 @@ services:
     image: redis:alpine
     hostname: redis
 
+
 networks:
     default:
     internal:

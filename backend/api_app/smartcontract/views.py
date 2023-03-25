@@ -4,7 +4,8 @@ from .serializers import SmartContractSerializer
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+        # user should be authenticated and the owner of the object
+        return obj.owner == request.user and request.user.is_authenticated
 
 # add permissions later
 class SmartContractViewSet(viewsets.ModelViewSet):

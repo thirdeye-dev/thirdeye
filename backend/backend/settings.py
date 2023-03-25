@@ -36,9 +36,9 @@ INFURA_PROJECT_ID = os.environ.get("INFURA_PROJECT_ID", "")
 # mapping of URLs to different ethereum based chains and networks
 CHAINS_AND_NETWORKS = {
     "eth": {
-        "mainnet": f"https://mainnet.infura.io/v3/{INFURA_PROJECT_ID}",
-        "goerli": f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}",
-        "sepolia": f"https://sepolia.infura.io/v3{INFURA_PROJECT_ID}",
+        "mainnet": f"wss://mainnet.infura.io/ws/v3/{INFURA_PROJECT_ID}",
+        "goerli": f"wss://goerli.infura.io/w3/v3/{INFURA_PROJECT_ID}",
+        "sepolia": f"wss://sepolia.infura.io/w3/v3/{INFURA_PROJECT_ID}",
     }
 }
 
