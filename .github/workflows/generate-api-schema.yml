@@ -4,14 +4,14 @@ on:
     branches:
       - master
       - dev
-  #   paths:
-  #     - "backend/**"
-  # pull_request_target:
-  #   branches:
-  #     - master
-  #     - dev
-  #   paths:
-  #     - "backend/**"
+    paths:
+      - "backend/**"
+  pull_request_target:
+    branches:
+      - master
+      - dev
+    paths:
+      - "backend/**"
 
 jobs:
   generate-schema:
