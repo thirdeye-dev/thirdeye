@@ -10,7 +10,9 @@ from api_app.core.models import BaseMixin
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, auth_provider="email", avatar=None):
+    def create_user(
+        self, username, email, password=None, auth_provider="email", avatar=None
+    ):
         if username is None:
             raise TypeError("Users should have a username")
         if email is None:
@@ -20,7 +22,7 @@ class UserManager(BaseUserManager):
             username=username,
             email=self.normalize_email(email),
             auth_provider=auth_provider,
-            avatar=avatar
+            avatar=avatar,
         )
         user.set_password(password)
         user.save()

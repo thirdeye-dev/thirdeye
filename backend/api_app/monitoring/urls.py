@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import IoCListAPI, set_ioc_alert
 
 urlpatterns = [

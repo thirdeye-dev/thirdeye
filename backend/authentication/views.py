@@ -1,7 +1,7 @@
-import os
 import logging
-import requests
+import os
 
+import requests
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
 from django.contrib.auth import get_user_model
@@ -12,11 +12,11 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from .organizations.models import Membership
 
 from authentication.models import User
 
 from .oauth import oauth
+from .organizations.models import Membership
 from .serializers import (
     LoginSerializer,
     LogoutSerializer,
@@ -93,15 +93,17 @@ class MeAPIView(generics.RetrieveAPIView):
 
         org_data = [
             {
-                'id': ou.organization.id,
-                'name': ou.organization.name,
-                'is_admin': ou.is_admin,
-                'is_owner': ou.is_owner,
-            } for ou in org_users
+                "id": ou.organization.id,
+                "name": ou.organization.name,
+                "is_admin": ou.is_admin,
+                "is_owner": ou.is_owner,
+            }
+            for ou in org_users
         ]
 
-        user_data['organizations'] = org_data
+        user_data["organizations"] = org_data
         return Response(user_data)
+
 
 def github_login(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
@@ -113,6 +115,7 @@ def github_login(request):
         if "No such client: " in str(error):
             raise AuthenticationFailed("Github OAuth is not configured.")
         raise error
+
 
 class GithubLoginCallbackView(APIView):
     @staticmethod
@@ -126,24 +129,24 @@ class GithubLoginCallbackView(APIView):
             # Not giving out the actual error as we risk exposing the client secret
             raise AuthenticationFailed("OAuth authentication error.")
 
-        resp = oauth.github.get('user', token=token)
+        resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
         profile = resp.json()
         user_name = profile.get("name")
         avatar = profile.get("avatar_url")
 
         # get user emails from github
-        emails_resp = oauth.github.get('user/emails', token=token)
+        emails_resp = oauth.github.get("user/emails", token=token)
         emails_resp.raise_for_status()
         emails = emails_resp.json()
 
         # find the primary email
-        primary_emails = [e for e in emails if e.get('primary') and e.get('verified')]
-        user_email = primary_emails[0].get('email') if primary_emails else None
+        primary_emails = [e for e in emails if e.get("primary") and e.get("verified")]
+        user_email = primary_emails[0].get("email") if primary_emails else None
 
         # fallback to the first email
         if not user_email and emails:
-            user_email = emails[0].get('email')
+            user_email = emails[0].get("email")
 
         try:
             user = User.objects.get(email=user_email)
@@ -152,8 +155,7 @@ class GithubLoginCallbackView(APIView):
             return user
         except User.DoesNotExist:
             logging.info(
-                "[Github Oauth] User does not exist. Creating new one.\n"
-                f"{profile}"
+                "[Github Oauth] User does not exist. Creating new one.\n" f"{profile}"
             )
             return User.objects.create_user(
                 email=user_email,
@@ -180,5 +182,3 @@ class GithubLoginCallbackView(APIView):
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
         # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
-
-

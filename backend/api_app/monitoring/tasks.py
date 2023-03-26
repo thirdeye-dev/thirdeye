@@ -1,22 +1,16 @@
 import json
-import redis
 import secrets
+
+import redis
 import requests
 import websocket
-
+from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.contrib.auth.models import User
-
 from requests.exceptions import RequestException
 
-from django.conf import settings
-from celery.utils.log import get_task_logger
-
+from api_app.monitoring.models import IoC, IOCAlert, MonitoringTasks
 from backend.celery import app
-from api_app.monitoring.models import (
-    IOCAlert, 
-    IoC, 
-    MonitoringTasks
-)
 
 logger = get_task_logger(__name__)
 
@@ -40,9 +34,7 @@ def send_webhook(self, url, msg, ioc_id):
     ioc = IoC.objects.get(id=ioc_id)
     try:
         request_token = secrets.token_urlsafe(16)
-        r = requests.post(
-            url, data={"message": msg, "request_token": request_token}
-        )
+        r = requests.post(url, data={"message": msg, "request_token": request_token})
         r.raise_for_status()
         alert_attempt = IOCAlert.objects.create(
             url=url,
@@ -51,13 +43,18 @@ def send_webhook(self, url, msg, ioc_id):
             response=r.text,
             response_code=r.status_code,
             ioc=ioc,
-            request_token=request_token
+            request_token=request_token,
         )
 
     except RequestException as exc:
         self.retry(exc=exc, countdown=60)
         alert_attempt = IOCAlert.objects.create(
-            url=url, message=msg, status="FAILURE", response=exc, ioc=ioc, request_token=request_token
+            url=url,
+            message=msg,
+            status="FAILURE",
+            response=exc,
+            ioc=ioc,
+            request_token=request_token,
         )
 
     alert_attempt.save()
@@ -100,6 +97,7 @@ def check_threshold(response, threshold, contract_address, user_id):
                     user = User.objects.get(id=user_id)
                     send_email.delay(args=[user.email, warning])
 
+
 """
 The main monitior task!
 
@@ -109,6 +107,8 @@ Eventually, When we move to post PoC stage, i want us to move to a batch
 processing model. This will help us reduce the number of requests we make
 and also reduce the number of tasks we have to run.
 """
+
+
 @app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
     # chains and networks supported
@@ -128,9 +128,7 @@ def monitor_contract(self, monitoring_task_id):
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    ws = websocket.create_connection(
-        f"{chain_url}"
-    )
+    ws = websocket.create_connection(f"{chain_url}")
 
     r = redis.Redis(host="localhost", port=6379, db=0)
     # Subscribe to new transactions for a specific smart contract

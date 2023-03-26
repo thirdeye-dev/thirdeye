@@ -85,11 +85,11 @@ INSTALLED_APPS = [
     "api_app.smartcontract",
 ]
 
-APPEND_SLASH=False
+APPEND_SLASH = False
 FRONTEND_URL = "http://localhost:3000/"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("SMTP_EMAIL", "")

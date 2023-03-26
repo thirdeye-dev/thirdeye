@@ -1,24 +1,19 @@
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-
-from rest_framework import (
-    status, 
-    views, 
-    viewsets,
-    generics
-)
-from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import Organization, Membership, Invitation
-from .serializers import (
-    OrganizationSerializer, 
-    MembershipSerializer,
-    InvitationSerializer
-)
+from .models import Invitation, Membership, Organization
 from .permissions import IsAdminOrReadOnly
+from .serializers import (
+    InvitationSerializer,
+    MembershipSerializer,
+    OrganizationSerializer,
+)
 
 User = get_user_model()
+
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
@@ -28,7 +23,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return Organization.objects.filter(memberships__user=self.request.user)
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == "create":
             permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsAdminOrReadOnly]
@@ -44,13 +39,14 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         )
         membership.save()
 
+
 class InviteUserView(generics.CreateAPIView):
     queryset = Invitation.objects.all()
     serializer_class = InvitationSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        organization_id = kwargs.get('organization_id')
+        organization_id = kwargs.get("organization_id")
         try:
             organization = Organization.objects.get(
                 pk=organization_id,
@@ -58,36 +54,47 @@ class InviteUserView(generics.CreateAPIView):
                 memberships__is_admin=True,
             )
         except Organization.DoesNotExist:
-            return Response({'error': 'You can\'t invite users to this organization.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "You can't invite users to this organization."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         data = request.data.copy()
-        data['organization'] = organization_id
+        data["organization"] = organization_id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email']
+        email = serializer.validated_data["email"]
 
         # Check if the user is already a member of the organization
-        if Membership.objects.filter(user__email=email, organization=organization).exists():
-            return Response({'error': 'User is already a member of this organization.'}, status=status.HTTP_400_BAD_REQUEST)
+        if Membership.objects.filter(
+            user__email=email, organization=organization
+        ).exists():
+            return Response(
+                {"error": "User is already a member of this organization."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check if the user has already been invited to join the organization
         if Invitation.objects.filter(email=email, organization=organization).exists():
             return Response(
-                {'error': 'User has already been invited to join this organization.'}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "User has already been invited to join this organization."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         invitation = Invitation.objects.create(
             email=email,
             organization=organization,
             invited_by=request.user,
-            is_admin=serializer.validated_data['is_admin'],
+            is_admin=serializer.validated_data["is_admin"],
             token=Invitation.generate_token(),
         )
 
         invitation.save()
 
-        return Response({'success': 'Invitation sent successfully.'}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"success": "Invitation sent successfully."}, status=status.HTTP_201_CREATED
+        )
 
 
 class InviteView(views.APIView):
@@ -97,7 +104,7 @@ class InviteView(views.APIView):
         invitation = get_object_or_404(Invitation, token=token)
         organization = invitation.organization
         if invitation.email == request.user.email:
-            declined = request.data.get('decline', False)
+            declined = request.data.get("decline", False)
             if declined:
                 invitation.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
@@ -111,11 +118,14 @@ class InviteView(views.APIView):
             membership.save()
             invitation.is_accepted = True
             invitation.save()
-            return Response({
-                "status": "Accepted Invitation Successfully!",
-                'organization': OrganizationSerializer(organization).data,
-                'membership': MembershipSerializer(membership).data,
-            })
-        return Response({
-            "error": "You are not authorized to accept this invitation."
-        }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "status": "Accepted Invitation Successfully!",
+                    "organization": OrganizationSerializer(organization).data,
+                    "membership": MembershipSerializer(membership).data,
+                }
+            )
+        return Response(
+            {"error": "You are not authorized to accept this invitation."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
