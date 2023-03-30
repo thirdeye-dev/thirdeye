@@ -17,9 +17,8 @@ logger = logging.getLogger(__name__)
 @permission_classes([IsAuthenticated])
 def set_sample_alert(request):
     """
-        Simply for the PoC.
+    Simply for the PoC.
     """
-    pass
 
 
 # add authentication to this
