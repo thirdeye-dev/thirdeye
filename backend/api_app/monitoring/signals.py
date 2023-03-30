@@ -1,6 +1,4 @@
-import requests
-
-from celery.signals import task_success
+from celery.signals import task_success, task_failure
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -19,16 +17,22 @@ def smart_contract_post_save(sender, instance, created, **kwargs):
             SmartContract=instance,
         )
 
+        # this calls the next signal
+        # which is for the monitoring task
         monitoring_task.save()
 
-        task = tasks.monitor_contract.delay(monitoring_task.id)
+@receiver(post_save, sender=MonitoringTasks)
+def monitoring_task_post_save(sender, instance, created, **kwargs):
+    if created:
+        task = tasks.monitor_contract.delay(instance.id)
 
-        monitoring_task.task_status = MonitoringTasks.TaskStatus.RUNNING
-        monitoring_task.task_id = task.id
+        instance.task_status = MonitoringTasks.TaskStatus.RUNNING
+        instance.task_id = task.id
 
-        monitoring_task.save()
+        instance.save()
 
 
+@task_failure.connect(sender=tasks.monitor_contract, weak=False)
 @task_success.connect(sender=tasks.monitor_contract, weak=False)
 def post_monitor_run_handler(request=None, **kwargs):
     sender = kwargs.get('sender')

@@ -25,3 +25,14 @@ cd docker/
 cp .pgadmin.env.template .pgadmin.env
 docker-compose -f docker-compose.yml pgadmin.override.yml up
 ```
+
+# flower setup
+
+Still to be finished. Breaks celery at the moment.
+
+```
+cd docker/
+docker-compose -f docker-compose.yml flower.override.yml up
+```
+
+

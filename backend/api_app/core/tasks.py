@@ -26,8 +26,7 @@ def entrypoint(self):
     # this can happen if the worker is restarted
     # or if the task is not running for some reason
     tasks_to_delete = MonitoringTasks.objects.all()
-    for task in tasks_to_delete:
-        task.delete()
+    tasks_to_delete.delete()
 
     smart_contracts = SmartContract.objects.filter(active=True)
     for contract in smart_contracts:
@@ -35,13 +34,8 @@ def entrypoint(self):
             SmartContract=contract,
         )
 
-        monitoring_task.save()
-
-        task = tasks.monitor_contract.apply_async(args=[monitoring_task.id])
-
-        monitoring_task.task_status = MonitoringTasks.TaskStatus.RUNNING
-        monitoring_task.task_id = task.id
-
+        # this calls the signal which is 
+        # for the monitoring task
         monitoring_task.save()
 
 # TODO: add a celery-beat task to check if the main monitoring task for a
