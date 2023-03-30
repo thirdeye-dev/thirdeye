@@ -1,14 +1,10 @@
-from backend.celery import app
-from api_app.monitoring.models import (
-    IOCAlert, 
-    IoC, 
-    MonitoringTasks
-)
-from api_app.smartcontract.models import SmartContract
-from api_app.monitoring import tasks
-
-from celery.utils.log import get_task_logger
 from celery import signals
+from celery.utils.log import get_task_logger
+
+from api_app.monitoring import tasks
+from api_app.monitoring.models import IoC, IOCAlert, MonitoringTasks
+from api_app.smartcontract.models import SmartContract
+from backend.celery import app
 
 logger = get_task_logger(__name__)
 
@@ -38,18 +34,20 @@ def entrypoint(self):
         # for the monitoring task
         monitoring_task.save()
 
+
 # TODO: add a celery-beat task to check if the main monitoring task for a
 #  smart contract is running. If not, start it again.
 @app.task(bind=True)
 def fail_check(self):
     # 1 task per smart contract should be running minimum.
     # write a fail safe to check for it.
-    
-    # write a query to get all smart contracts which have a failed monitoring 
+
+    # write a query to get all smart contracts which have a failed monitoring
     # task model instance
     # or one that does not exist at all.
     # then start a new monitoring task for it.
     pass
+
 
 @signals.worker_ready.connect
 def start_monitoring_tasks(**kwargs):

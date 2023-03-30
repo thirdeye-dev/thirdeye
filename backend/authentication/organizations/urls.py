@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework import routers
-from .views import OrganizationViewSet, InviteView, InviteUserView
+
+from .views import InviteUserView, InviteView, OrganizationViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r"my", OrganizationViewSet)

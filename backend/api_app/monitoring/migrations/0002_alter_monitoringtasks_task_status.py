@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('monitoring', '0001_initial'),
+        ("monitoring", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='monitoringtasks',
-            name='task_status',
-            field=models.CharField(choices=[('RUNNING', 'Running'), ('PENDING', 'Pending'), ('SUCCESS', 'Success'), ('FAILURE', 'Failure')], default='PENDING', max_length=16),
+            model_name="monitoringtasks",
+            name="task_status",
+            field=models.CharField(
+                choices=[
+                    ("RUNNING", "Running"),
+                    ("PENDING", "Pending"),
+                    ("SUCCESS", "Success"),
+                    ("FAILURE", "Failure"),
+                ],
+                default="PENDING",
+                max_length=16,
+            ),
         ),
     ]

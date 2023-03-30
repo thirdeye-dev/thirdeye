@@ -2,8 +2,8 @@ import logging
 
 from rest_framework import serializers as rfs
 
-from api_app.monitoring.models import IoC
 from api_app.core.serializers import IOCSerializer
+from api_app.monitoring.models import IoC
 from api_app.smartcontract.models import SmartContract
 
 logger = logging.getLogger(__name__)

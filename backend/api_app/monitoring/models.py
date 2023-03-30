@@ -1,11 +1,11 @@
-from django.db import models
-from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
 
-from api_app.smartcontract.models import SmartContract
-from api_app.core.serializers import IOCSerializer
 from api_app.core.models import BaseMixin
+from api_app.core.serializers import IOCSerializer
+from api_app.smartcontract.models import SmartContract
 
 ioc_types = IOCSerializer.read_and_verify_config()
 ioc_choices = [ioc_type for ioc_type in ioc_types.keys()]
@@ -39,6 +39,7 @@ class ThresholdCurrency(models.TextChoices):
     ETH = "ETH"
     GWEI = "GWEI"
     USD = "USD"
+
 
 # validate alert type
 def validate_alert_type(value):

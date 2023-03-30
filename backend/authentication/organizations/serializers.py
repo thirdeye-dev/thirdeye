@@ -1,15 +1,18 @@
 import uuid
 
 from rest_framework import serializers
-from .models import Organization, Invitation, Membership
+
+from .models import Invitation, Membership, Organization
 
 
 class MembershipSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = Membership
-        fields = '__all__'
+        fields = "__all__"
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -18,24 +21,32 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        read_only_fields = ('id', 'is_member', 'memberships', 'created_at', 'updated_at')
-        fields = '__all__'
+        read_only_fields = (
+            "id",
+            "is_member",
+            "memberships",
+            "created_at",
+            "updated_at",
+        )
+        fields = "__all__"
 
     def save(self, **kwargs):
         id = uuid.uuid4()
-        self.validated_data['id'] = id
+        self.validated_data["id"] = id
 
         return super().save(**kwargs)
 
     def get_is_member(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         return (
-            request.user.is_authenticated and obj.memberships.filter(user=request.user).exists()
+            request.user.is_authenticated
+            and obj.memberships.filter(user=request.user).exists()
         )
+
 
 class InvitationSerializer(serializers.ModelSerializer):
     is_admin = serializers.BooleanField(default=False)
 
     class Meta:
         model = Invitation
-        fields = ('email', 'is_admin')
+        fields = ("email", "is_admin")

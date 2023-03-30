@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('authentication', '0006_user_avatar_url'),
+        ("authentication", "0006_user_avatar_url"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='user',
-            name='avatar_url',
+            model_name="user",
+            name="avatar_url",
         ),
         migrations.AlterField(
-            model_name='user',
-            name='avatar',
+            model_name="user",
+            name="avatar",
             field=models.URLField(blank=True, null=True),
         ),
     ]
