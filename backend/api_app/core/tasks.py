@@ -30,7 +30,7 @@ def entrypoint(self):
             SmartContract=contract,
         )
 
-        # this calls the signal which is 
+        # this calls the signal which is
         # for the monitoring task
         monitoring_task.save()
 

@@ -20,6 +20,7 @@ def smart_contract_post_save(sender, instance, created, **kwargs):
         # which is for the monitoring task
         monitoring_task.save()
 
+
 @receiver(post_save, sender=MonitoringTasks)
 def monitoring_task_post_save(sender, instance, created, **kwargs):
     if created:
