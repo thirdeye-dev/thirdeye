@@ -6,7 +6,7 @@ blockchain_alerts:
     contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
     alerts:
       nameA:
-        attribute: "{{ $transaction.TIMESTAMP }}"
+        attribute: "{{ $transaction.timestamp }}"
         operator: ">="
         value: "2023-03-11T12:00:00Z"
         notifications:
@@ -23,7 +23,7 @@ blockchain_alerts:
     alerts:
       nameA:
         time: 30 # miliseconds
-        attribute: "{{ $transactions.FAILED }}"
+        attribute: "{{ $transactions.failed }}"
         operator: ">="
         value: 5
         notifications:

@@ -13,6 +13,15 @@ from .serializers import SetIoCSerializer
 logger = logging.getLogger(__name__)
 
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def set_sample_alert(request):
+    """
+        Simply for the PoC.
+    """
+    pass
+
+
 # add authentication to this
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
