@@ -2,12 +2,14 @@ import json
 
 import requests
 import websocket
+from datetime import datetime
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import MonitoringTasks
+from api_app.monitoring.models import MonitoringTasks, Alerts
+from .serializers import BlockchainAlertRunner
 from backend.celery import app
 
 logger = get_task_logger(__name__)
@@ -47,8 +49,6 @@ def monitor_contract(self, monitoring_task_id):
     if network_id != int(w3.net.version):
         raise ValueError("Connected to the wrong Ethereum network")
 
-    # contract_address = w3.toChecksumAddress(contract_address)
-
     ws = websocket.create_connection(rpc_url)
 
     # Subscribe to new transactions for a specific smart contract
@@ -62,11 +62,26 @@ def monitor_contract(self, monitoring_task_id):
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
 
-    def handle_event(data):
-        requests.post(
-            "https://eot0jnzvvvbvr8j.m.pipedream.net",
-            json=data
-        )
+    def fetch_transaction_details(transaction_hash):
+        request_data = {
+            "id": 2,
+            "jsonrpc": "2.0",
+            "method": "eth_getTransactionByHash",
+            "params": [transaction_hash],
+        }
+        ws.send(json.dumps(request_data))
+        response = json.loads(ws.recv())
+        transaction_data = response['result']
+
+        # converting most things into integers
+        transaction_data["timestamp"] = datetime.now().timestamp()
+        transaction_data["value"] = int(transaction_data["value"], 16)
+        transaction_data["gasPrice"] = int(transaction_data["gasPrice"], 16)
+        transaction_data["gas"] = int(transaction_data["gas"], 16)
+        transaction_data["chainId"] = int(transaction_data["chainId"], 16)
+        transaction_data["nonce"] = int(transaction_data["nonce"], 16)
+
+        return transaction_data
 
     while True:
         try:
@@ -77,13 +92,20 @@ def monitor_contract(self, monitoring_task_id):
                 subscription_id = response['result']
             elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
                 transaction_hash = response['params']['result']['transactionHash']
-                handle_event(response)
+                transaction = fetch_transaction_details(transaction_hash)
+                # fetch alerts from the database
+                # run the alerts
+                alerts = Alerts.objects.filter(smart_contract=monitoring_task.SmartContract)
+                for alert in alerts:
+                    # TODO: I want to check later in the YAML
+                    # if the alert is checked every_transaction 
+                    # or every x amount of time.
+                    alert_runner = BlockchainAlertRunner(alert.alert_yaml, transaction)
+                    alert_runner.run()
 
         except websocket.WebSocketConnectionClosedException:
-            handle_event(data={"error": "WebSocket connection closed unexpectedly"})
             break
         except Exception as e:
-            handle_event(data={"error": f"WebSocket connection closed unexpectedly {e}"})
             break
 
     ws.close()
