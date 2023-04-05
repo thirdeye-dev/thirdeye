@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.organizations.permissions import IsMember
+
 from .models import Alerts
 
 logger = logging.getLogger(__name__)
@@ -19,8 +20,5 @@ class AlertViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsMember]
 
     def get_queryset(self):
-        queryset = Alerts.objects.filter(
-            organization=self.request.user
-        )
+        queryset = Alerts.objects.filter(organization=self.request.user)
         return queryset
-

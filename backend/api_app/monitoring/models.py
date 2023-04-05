@@ -2,11 +2,11 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-
 from yamlfield.fields import YAMLField
 
 from api_app.core.models import BaseMixin
 from api_app.smartcontract.models import SmartContract
+
 
 # monitoring model for celery tasks
 class MonitoringTasks(BaseMixin):
@@ -28,11 +28,9 @@ class MonitoringTasks(BaseMixin):
     def __str__(self):
         return f"{self.SmartContract.address} - {self.task_id}"
 
+
 class Alerts(BaseMixin):
-    smart_contract = models.ForeignKey(
-        SmartContract, 
-        on_delete=models.CASCADE
-    )
+    smart_contract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
     alert_yaml = YAMLField()
 
     name = models.CharField(max_length=255, blank=True, null=True)

@@ -1,6 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as Status
+from rest_framework import viewsets
+from rest_framework.response import Response
+
+from authentication.organizations.models import Membership, Organization
 
 from .models import SmartContract
 from .serializers import SmartContractSerializer

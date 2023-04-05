@@ -2,7 +2,6 @@ from uuid import UUID
 
 from rest_framework import permissions
 
-from django.db.models import Q
 from .models import Membership, Organization
 
 

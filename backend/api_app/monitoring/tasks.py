@@ -2,10 +2,9 @@ import json
 
 import requests
 import websocket
-from web3 import Web3
 from celery.utils.log import get_task_logger
 from django.conf import settings
-
+from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
 from api_app.monitoring.models import MonitoringTasks
@@ -24,6 +23,8 @@ Eventually, When we move to post PoC stage, i want us to move to a batch
 processing model. This will help us reduce the number of requests we make
 and also reduce the number of tasks we have to run.
 """
+
+
 @app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
@@ -56,13 +57,7 @@ def monitor_contract(self, monitoring_task_id):
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
-        "params": [
-            "logs",
-            {
-                "address": contract_address,
-                "fromBlock": "latest"
-            }
-        ],
+        "params": ["logs", {"address": contract_address, "fromBlock": "latest"}],
     }
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
