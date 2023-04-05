@@ -17,7 +17,7 @@ class IsMember(permissions.BasePermission):
         owner_organization = request.data.get("owner_organization", None)
         if owner_organization is None:
             return False
-        
+
         # check if owner_organization is a well formed uuid
         try:
             UUID(owner_organization)
@@ -30,9 +30,7 @@ class IsMember(permissions.BasePermission):
         if organization is None:
             return False
 
-        return Membership.is_member(
-            user=request.user, organization=organization
-        )
+        return Membership.is_member(user=request.user, organization=organization)
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
