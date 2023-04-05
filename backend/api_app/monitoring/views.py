@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
+from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,13 @@ logger = logging.getLogger(__name__)
 # and if he is of none, then he can set alerts
 class AlertViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsMember]
+    serializer = AlertsAPISerializer
 
     def get_queryset(self):
-        queryset = Alerts.objects.filter(organization=self.request.user)
+        owner_organization = self.request.data.get("owner_organization")
+        queryset = Alerts.objects.filter(smart_contract__owner_organization=owner_organization)
         return queryset
+
+    def perform_create(self, serializer):
+        owner_organization = self.request.data.get("owner_organization")
+        serializer.save(owner_organization=owner_organization)

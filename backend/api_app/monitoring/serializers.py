@@ -10,10 +10,11 @@ from api_app.monitoring.models import Alerts
 logger = logging.getLogger(__name__)
 
 
-class AlertSerializer(rfs.ModelSerializer):
+class AlertsAPISerializer(rfs.ModelSerializer):
     class Meta:
         model = Alerts
         fields = "__all__"
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 # new code. This is the new serializer.
 # Transaction class to map transaction attributes
