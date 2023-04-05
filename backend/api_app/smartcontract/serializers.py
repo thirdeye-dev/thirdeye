@@ -3,6 +3,7 @@ import re
 from rest_framework import serializers
 
 from authentication.organizations.models import Organization
+
 from .models import SmartContract
 
 

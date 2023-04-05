@@ -63,27 +63,30 @@ def monitor_contract(self, monitoring_task_id):
     subscription_id = None
 
     def handle_event(data):
-        requests.post(
-            "https://eot0jnzvvvbvr8j.m.pipedream.net",
-            json=data
-        )
+        requests.post("https://eot0jnzvvvbvr8j.m.pipedream.net", json=data)
 
     while True:
         try:
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            if 'result' in response and response.get('id') == 1:
-                subscription_id = response['result']
-            elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
-                transaction_hash = response['params']['result']['transactionHash']
+            if "result" in response and response.get("id") == 1:
+                subscription_id = response["result"]
+            elif (
+                subscription_id
+                and "params" in response
+                and response["params"]["subscription"] == subscription_id
+            ):
+                response["params"]["result"]["transactionHash"]
                 handle_event(response)
 
         except websocket.WebSocketConnectionClosedException:
             handle_event(data={"error": "WebSocket connection closed unexpectedly"})
             break
         except Exception as e:
-            handle_event(data={"error": f"WebSocket connection closed unexpectedly {e}"})
+            handle_event(
+                data={"error": f"WebSocket connection closed unexpectedly {e}"}
+            )
             break
 
     ws.close()
