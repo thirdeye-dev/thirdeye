@@ -11,7 +11,7 @@ class IsMember(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-        
+
         organisation_id = request.data.get("organization_id", None)
 
         if organisation_id is None:

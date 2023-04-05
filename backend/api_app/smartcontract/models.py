@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from api_app.core.models import BaseMixin
-
 from authentication.organizations.models import Organization
 
 User = get_user_model()
@@ -12,11 +11,13 @@ User = get_user_model()
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
 
+
 class Network(models.TextChoices):
     # eth network choices
     MAINNET = "MAINNET", "mainnet"
     SEPOLIA = "SEPOLIA", "sepolia"
     GOERLI = "GOERLI", "goerli"
+
 
 class SmartContract(BaseMixin):
     address = models.CharField(max_length=42, unique=True)

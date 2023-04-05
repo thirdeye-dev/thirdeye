@@ -1,7 +1,4 @@
-import hashlib
-import json
 import os
-import sys
 from datetime import datetime
 
 import yaml
@@ -64,6 +61,7 @@ class AlertDescriptiveSerializer(serializers.Serializer):
 
 class BlockchainAlertsSerializer(serializers.Serializer):
     blockchain_alerts = AlertDescriptiveSerializer(many=True)
+
 
 def parse_yaml_file(file_path):
     with open(file_path, "r") as yaml_file:

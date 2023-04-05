@@ -2,10 +2,9 @@ import json
 
 import requests
 import websocket
-from web3 import Web3
 from celery.utils.log import get_task_logger
 from django.conf import settings
-
+from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
 from api_app.monitoring.models import MonitoringTasks
@@ -24,12 +23,14 @@ Eventually, When we move to post PoC stage, i want us to move to a batch
 processing model. This will help us reduce the number of requests we make
 and also reduce the number of tasks we have to run.
 """
+
+
 @app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
 
     contract_address = monitoring_task.SmartContract.address
-    user_id = monitoring_task.SmartContract.owner.id
+    monitoring_task.SmartContract.owner.id
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
 
@@ -59,13 +60,7 @@ def monitor_contract(self, monitoring_task_id):
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
-        "params": [
-            "logs",
-            {
-                "address": contract_address,
-                "fromBlock": "latest"
-            }
-        ],
+        "params": ["logs", {"address": contract_address, "fromBlock": "latest"}],
     }
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
@@ -73,7 +68,7 @@ def monitor_contract(self, monitoring_task_id):
     def handle_event(transaction_hash):
         requests.post(
             "https://eot0jnzvvvbvr8j.m.pipedream.net",
-            json={"transaction_hash": transaction_hash}
+            json={"transaction_hash": transaction_hash},
         )
         logger.info(f"Transaction sent to the endpoint: {transaction_hash}")
 
@@ -82,10 +77,14 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            if 'result' in response and response.get('id') == 1:
-                subscription_id = response['result']
-            elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
-                transaction_hash = response['params']['result']['transactionHash']
+            if "result" in response and response.get("id") == 1:
+                subscription_id = response["result"]
+            elif (
+                subscription_id
+                and "params" in response
+                and response["params"]["subscription"] == subscription_id
+            ):
+                transaction_hash = response["params"]["result"]["transactionHash"]
                 handle_event(transaction_hash)
 
         except websocket.WebSocketConnectionClosedException:
