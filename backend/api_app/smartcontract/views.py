@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status as Status
 
@@ -6,40 +6,29 @@ from .models import SmartContract
 from .serializers import SmartContractSerializer
 
 from authentication.organizations.models import Membership, Organization
-
-
-class CanRead(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return Membership.is_member(request.user, obj.owner_organization)
-
+from authentication.organizations.permissions import IsMember
 
 # add permissions later
 class SmartContractViewSet(viewsets.ModelViewSet):
     serializer_class = SmartContractSerializer
-    permission_classes = [CanRead]
+    permission_classes = [IsMember]
 
     def get_queryset(self):
-        owner_organization_id = self.request.query_params.get("owner_organization_id")
+        owner_owner_organization = self.request.data.get("owner_organization")
 
-        if not owner_organization_id:
-            raise Response({
-                "error": "owner_organization_id is required"
-                }, status=Status.HTTP_400_BAD_REQUEST)
-
-        owner_organization = Organization.objects.get(id=owner_organization_id)
+        owner_organization = Organization.objects.get(id=owner_owner_organization)
 
         return SmartContract.objects.filter(owner_organization=owner_organization)
 
     def perform_create(self, serializer):
-        owner_organization_id = self.request.query_params.get("owner_organization_id", None)
-        if not owner_organization_id:
-            raise Response({"error": "owner_organization_id is required"}, status=Status.HTTP_400_BAD_REQUEST)
+        owner_owner_organization = self.request.data.get("owner_organization")
 
-        owner_organization = Organization.objects.get(id=owner_organization_id)
+        owner_organization = Organization.objects.get(id=owner_owner_organization)
 
         is_member = Membership.is_member(self.request.user, owner_organization)
 
         if is_member:
             serializer.save(owner_organization=owner_organization)
-            return
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.data, status=Status.HTTP_201_CREATED)
         raise Response({"error": "User is not a member of the organization"}, status=Status.HTTP_400_BAD_REQUEST)

@@ -29,7 +29,6 @@ def monitor_contract(self, monitoring_task_id):
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
 
     contract_address = monitoring_task.SmartContract.address
-    user_id = monitoring_task.SmartContract.owner.id
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
 
@@ -41,20 +40,18 @@ def monitor_contract(self, monitoring_task_id):
 
     # fix the chain. it should be number.
     network_id = int(chain) if chain.isdigit() else 1
-    w3 = Web3(Web3.HTTPProvider(rpc_url))
+    w3 = Web3(Web3.WebsocketProvider(rpc_url))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-
-    if not w3.isConnected():
-        raise ConnectionError("Could not connect to Ethereum network")
 
     if network_id != int(w3.net.version):
         raise ValueError("Connected to the wrong Ethereum network")
 
-    contract_address = w3.toChecksumAddress(contract_address)
+    # contract_address = w3.toChecksumAddress(contract_address)
 
     ws = websocket.create_connection(rpc_url)
 
     # Subscribe to new transactions for a specific smart contract
+    # look into the eth_subscribe method
     subscribe_data = {
         "id": 1,
         "jsonrpc": "2.0",
@@ -70,12 +67,11 @@ def monitor_contract(self, monitoring_task_id):
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
 
-    def handle_event(transaction_hash):
+    def handle_event(data):
         requests.post(
             "https://eot0jnzvvvbvr8j.m.pipedream.net",
-            json={"transaction_hash": transaction_hash}
+            json=data
         )
-        logger.info(f"Transaction sent to the endpoint: {transaction_hash}")
 
     while True:
         try:
@@ -86,13 +82,13 @@ def monitor_contract(self, monitoring_task_id):
                 subscription_id = response['result']
             elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
                 transaction_hash = response['params']['result']['transactionHash']
-                handle_event(transaction_hash)
+                handle_event(response)
 
         except websocket.WebSocketConnectionClosedException:
-            logger.error("WebSocket connection closed unexpectedly")
+            handle_event(data={"error": "WebSocket connection closed unexpectedly"})
             break
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
+            handle_event(data={"error": f"WebSocket connection closed unexpectedly {e}"})
             break
 
     ws.close()

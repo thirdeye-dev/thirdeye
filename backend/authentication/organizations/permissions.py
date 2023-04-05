@@ -1,25 +1,39 @@
+from uuid import UUID
+
 from rest_framework import permissions
 
-from .models import Membership
+from django.db.models import Q
+from .models import Membership, Organization
 
 
 class IsMember(permissions.BasePermission):
     """
-    Custom permission to only allow members of an organization to view it.
+    Custom permission to only allow members of an organization.
     """
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-        
-        organisation_id = request.data.get("organization_id", None)
 
-        if organisation_id is None:
+        owner_organization = request.data.get("owner_organization", None)
+        if owner_organization is None:
+            return False
+        
+        # check if owner_organization is a well formed uuid
+        try:
+            UUID(owner_organization)
+        except ValueError:
             return False
 
-        return Membership.objects.filter(
-            user=request.user, organization=organisation_id
-        ).exists()
+        organization = Organization.objects.filter(id=owner_organization).first()
+
+        # i want this to be handled by the serializer
+        if organization is None:
+            return False
+
+        return Membership.is_member(
+            user=request.user, organization=organization
+        )
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
