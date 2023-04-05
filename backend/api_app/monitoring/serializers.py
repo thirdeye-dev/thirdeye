@@ -1,6 +1,4 @@
 import logging
-import os
-from datetime import datetime
 
 import yaml
 from rest_framework import rfs as rfs
@@ -15,6 +13,7 @@ class AlertsAPISerializer(rfs.ModelSerializer):
         model = Alerts
         fields = "__all__"
         read_only_fields = ["id", "created_at", "updated_at"]
+
 
 # new code. This is the new serializer.
 # Transaction class to map transaction attributes
@@ -63,7 +62,7 @@ class AlertSerializer(rfs.Serializer):
 
 
 class AlertDescriptiveSerializer(rfs.Serializer):
-    # later on, I want to add for "every_transaction" and 
+    # later on, I want to add for "every_transaction" and
     # every x amount of time: "moment_of_day", where
     # i can expect a validated cron expression
     alert_type = rfs.ChoiceField(choices=["every_transaction"])

@@ -1,16 +1,17 @@
 import json
+from datetime import datetime
 
 import requests
 import websocket
-from datetime import datetime
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import MonitoringTasks, Alerts
-from .serializers import BlockchainAlertRunner
+from api_app.monitoring.models import Alerts, MonitoringTasks
 from backend.celery import app
+
+from .serializers import BlockchainAlertRunner
 
 logger = get_task_logger(__name__)
 
@@ -71,7 +72,7 @@ def monitor_contract(self, monitoring_task_id):
         }
         ws.send(json.dumps(request_data))
         response = json.loads(ws.recv())
-        transaction_data = response['result']
+        transaction_data = response["result"]
 
         # converting most things into integers
         transaction_data["timestamp"] = datetime.now().timestamp()
@@ -88,24 +89,30 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            if 'result' in response and response.get('id') == 1:
-                subscription_id = response['result']
-            elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
-                transaction_hash = response['params']['result']['transactionHash']
+            if "result" in response and response.get("id") == 1:
+                subscription_id = response["result"]
+            elif (
+                subscription_id
+                and "params" in response
+                and response["params"]["subscription"] == subscription_id
+            ):
+                transaction_hash = response["params"]["result"]["transactionHash"]
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts
-                alerts = Alerts.objects.filter(smart_contract=monitoring_task.SmartContract)
+                alerts = Alerts.objects.filter(
+                    smart_contract=monitoring_task.SmartContract
+                )
                 for alert in alerts:
                     # TODO: I want to check later in the YAML
-                    # if the alert is checked every_transaction 
+                    # if the alert is checked every_transaction
                     # or every x amount of time.
                     alert_runner = BlockchainAlertRunner(alert.alert_yaml, transaction)
                     alert_runner.run()
 
         except websocket.WebSocketConnectionClosedException:
             break
-        except Exception as e:
+        except Exception:
             break
 
     ws.close()

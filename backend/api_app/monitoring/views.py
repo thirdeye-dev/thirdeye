@@ -23,7 +23,9 @@ class AlertViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         owner_organization = self.request.data.get("owner_organization")
-        queryset = Alerts.objects.filter(smart_contract__owner_organization=owner_organization)
+        queryset = Alerts.objects.filter(
+            smart_contract__owner_organization=owner_organization
+        )
         return queryset
 
     def perform_create(self, serializer):
