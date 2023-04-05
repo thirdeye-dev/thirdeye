@@ -1,13 +1,10 @@
 blockchain_alerts:
-  - blockchain_name: "Ethereum"
-    network: "mainnet"
-    alert_type: "every_transaction"
-    contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
+  - alert_type: "every_transaction"
     alerts:
       nameA:
         attribute: "{{ $transaction.gas }}"
         operator: ">="
-        value: 100001
+        value: 100000
         notifications:
           - send_email
           - send_sms

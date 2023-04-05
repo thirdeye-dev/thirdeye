@@ -18,16 +18,10 @@ User = get_user_model()
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Organization.objects.filter(memberships__user=self.request.user)
-
-    def get_permissions(self):
-        if self.action == "create":
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsAdminOrReadOnly]
-        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         organization = serializer.save()

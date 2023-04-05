@@ -54,6 +54,10 @@ class Membership(BaseMixin):
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
 
+    @classmethod
+    def is_member(cls, user, organization):
+        return cls.objects.filter(user=user, organization=organization).exists()
+
 
 class Invitation(BaseMixin):
     email = models.EmailField()

@@ -1,8 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import AlertViewSet
 
-from .views import IoCListAPI, set_ioc_alert
+router = DefaultRouter(trailing_slash=False)
+router.register(r"alerts", AlertViewSet, basename="alerts")
 
 urlpatterns = [
-    path("get_ioc_config", IoCListAPI.as_view()),
-    path("set_ioc_alert", set_ioc_alert),
+    path("", include(router.urls)),
 ]

@@ -3,6 +3,25 @@ from rest_framework import permissions
 from .models import Membership
 
 
+class IsMember(permissions.BasePermission):
+    """
+    Custom permission to only allow members of an organization to view it.
+    """
+
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
+        organisation_id = request.data.get("organization_id", None)
+
+        if organisation_id is None:
+            return False
+
+        return Membership.objects.filter(
+            user=request.user, organization=organisation_id
+        ).exists()
+
+
 class IsAdminOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow admin users to edit an organization.
@@ -11,9 +30,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-
-        if request.method in permissions.SAFE_METHODS:
-            return True
 
         return Membership.objects.filter(
             user=request.user, organization=view.kwargs["pk"], is_admin=True
@@ -29,8 +45,6 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        if request.method in permissions.SAFE_METHODS:
-            return True
         return (
             request.user.is_authenticated
             and Membership.objects.filter(

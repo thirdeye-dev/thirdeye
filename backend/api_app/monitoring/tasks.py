@@ -1,102 +1,19 @@
 import json
-import secrets
 
-import redis
 import requests
 import websocket
+from web3 import Web3
 from celery.utils.log import get_task_logger
 from django.conf import settings
-from django.contrib.auth.models import User
-from requests.exceptions import RequestException
 
-from api_app.monitoring.models import IoC, IOCAlert, MonitoringTasks
+from web3.middleware import geth_poa_middleware
+
+from api_app.monitoring.models import MonitoringTasks
 from backend.celery import app
 
 logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
-
-
-@app.task(bind=True)
-def send_sms(self, to_phone, result):
-    pass
-
-
-@app.task(bind=True)
-def send_email(self, to_email, result):
-    pass
-
-
-@app.task(bind=True, max_retries=3)
-def send_webhook(self, url, msg, ioc_id):
-    rds = redis.Redis(host="localhost", port=6379, db=0)
-
-    ioc = IoC.objects.get(id=ioc_id)
-    try:
-        request_token = secrets.token_urlsafe(16)
-        r = requests.post(url, data={"message": msg, "request_token": request_token})
-        r.raise_for_status()
-        alert_attempt = IOCAlert.objects.create(
-            url=url,
-            message=msg,
-            status="SUCCESS",
-            response=r.text,
-            response_code=r.status_code,
-            ioc=ioc,
-            request_token=request_token,
-        )
-
-    except RequestException as exc:
-        self.retry(exc=exc, countdown=60)
-        alert_attempt = IOCAlert.objects.create(
-            url=url,
-            message=msg,
-            status="FAILURE",
-            response=exc,
-            ioc=ioc,
-            request_token=request_token,
-        )
-
-    alert_attempt.save()
-
-    # add to redis set with exp[iration of 1 hour
-    # to prevent duplicate alerts
-    key = f"{ioc.contract_address}:{ioc.user.id}"
-    rds.sadd(key, msg)
-    rds.expire(key, 3600)
-
-    return r.json()
-
-
-def check_threshold(response, threshold, contract_address, user_id):
-    tx = response["params"]["result"]
-    if "gasPrice" in tx:
-        gas_price_wei = int(tx["gasPrice"], 16)
-        gas_price_gwei = gas_price_wei // 10**9
-        if gas_price_gwei > threshold:
-            warning = (
-                f"Gas price crossed the threshold of {threshold} "
-                f"Gwei for contract {contract_address}."
-                f" Current gas price: {gas_price_gwei} Gwei"
-            )
-
-            logger.warning(warning)
-            # check if user has any alerts set up
-            # if so, send alert
-            # if not, do nothing
-            iocs = IoC.objects.filter(
-                smart_contract__address=contract_address, user__id=user_id
-            )
-
-            for ioc in iocs:
-                if ioc.alert_types == "WEBHOOK":
-                    send_webhook.delay(args=[ioc.alert_url, warning])
-                elif ioc.alert_types == "SMS":
-                    send_sms.delay(args=[ioc.alert_phone, warning])
-                elif ioc.alert_types == "EMAIL":
-                    user = User.objects.get(id=user_id)
-                    send_email.delay(args=[user.email, warning])
-
 
 """
 The main monitior task!
@@ -107,14 +24,8 @@ Eventually, When we move to post PoC stage, i want us to move to a batch
 processing model. This will help us reduce the number of requests we make
 and also reduce the number of tasks we have to run.
 """
-
-
 @app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
-    # chains and networks supported
-    # eth: mainnet, sepolia, goerli
-
-    # note for myself: i feel like this can be replaced by redis really well.
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
 
     contract_address = monitoring_task.SmartContract.address
@@ -122,53 +33,60 @@ def monitor_contract(self, monitoring_task_id):
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
 
-    chain_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
-    if not chain_url:
+    rpc_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
+    if not rpc_url:
         error_msg = f"Chain {chain} or network {network} not supported"
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    ws = websocket.create_connection(f"{chain_url}")
+    # fix the chain. it should be number.
+    network_id = int(chain) if chain.isdigit() else 1
+    w3 = Web3(Web3.HTTPProvider(rpc_url))
+    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-    r = redis.Redis(host="localhost", port=6379, db=0)
+    if not w3.isConnected():
+        raise ConnectionError("Could not connect to Ethereum network")
+
+    if network_id != int(w3.net.version):
+        raise ValueError("Connected to the wrong Ethereum network")
+
+    contract_address = w3.toChecksumAddress(contract_address)
+
+    ws = websocket.create_connection(rpc_url)
+
     # Subscribe to new transactions for a specific smart contract
     subscribe_data = {
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
         "params": [
-            {"address": contract_address, "topics": ["0x"], "fromBlock": "latest"},
-            "pendingTransactions",
+            "logs",
+            {
+                "address": contract_address,
+                "fromBlock": "latest"
+            }
         ],
     }
     ws.send(json.dumps(subscribe_data))
+    subscription_id = None
+
+    def handle_event(transaction_hash):
+        requests.post(
+            "https://eot0jnzvvvbvr8j.m.pipedream.net",
+            json={"transaction_hash": transaction_hash}
+        )
+        logger.info(f"Transaction sent to the endpoint: {transaction_hash}")
 
     while True:
         try:
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            print(response)
-            if "params" in response and "result" in response["params"]:
-                # result = response["params"]["result"]
-
-                # check active IoCs on that smart contract
-                # by that user; Later might implement caching.
-                iocs = IoC.objects.filter(
-                    SmartContract__address=contract_address,
-                    SmartContract__owner_id=user_id,
-                )
-
-                key = f"{contract_address}:{user_id}"
-                if r.get(key):
-                    logger.info(f"Duplicate alert for {key}")
-                    continue
-
-                for ioc in iocs:
-                    if ioc.ioc_type == "GAS_PRICE_THRESHOLD":
-                        check_threshold(
-                            response, ioc.threshold, contract_address, user_id
-                        )
+            if 'result' in response and response.get('id') == 1:
+                subscription_id = response['result']
+            elif subscription_id and 'params' in response and response['params']['subscription'] == subscription_id:
+                transaction_hash = response['params']['result']['transactionHash']
+                handle_event(transaction_hash)
 
         except websocket.WebSocketConnectionClosedException:
             logger.error("WebSocket connection closed unexpectedly")
