@@ -13,7 +13,6 @@ from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
 
-
 # write a simple viewset to set alerts
 # for an organisation that the user is a member of
 # and if he is of none, then he can set alerts

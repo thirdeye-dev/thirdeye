@@ -1,6 +1,5 @@
 import json
 
-import requests
 import websocket
 from datetime import datetime
 from celery.utils.log import get_task_logger

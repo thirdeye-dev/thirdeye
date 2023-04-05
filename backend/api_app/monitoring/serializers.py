@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 import yaml
-from rest_framework import rfs as rfs
+from rest_framework import serializers as rfs
 
 from api_app.monitoring.models import Alerts
 
