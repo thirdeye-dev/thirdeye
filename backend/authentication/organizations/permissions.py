@@ -14,7 +14,13 @@ class IsMember(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        owner_organization = request.data.get("owner_organization", None)
+        owner_organization = None
+        if request.method == "GET":
+            owner_organization = request.query_params.get("owner_organization")
+
+        if request.method == "POST":
+            owner_organization = request.data.get("owner_organization")
+
         if owner_organization is None:
             return False
 

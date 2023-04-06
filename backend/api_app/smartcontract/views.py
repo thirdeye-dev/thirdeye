@@ -15,7 +15,7 @@ class SmartContractViewSet(viewsets.ModelViewSet):
     permission_classes = [IsMember]
 
     def get_queryset(self):
-        owner_owner_organization = self.request.data.get("owner_organization")
+        owner_owner_organization = self.request.query_params.get("owner_organization")
 
         owner_organization = Organization.objects.get(id=owner_owner_organization)
 
