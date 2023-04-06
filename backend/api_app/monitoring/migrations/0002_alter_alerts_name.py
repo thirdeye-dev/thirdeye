@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('monitoring', '0001_initial'),
+        ("monitoring", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='alerts',
-            name='name',
-            field=models.CharField(default='default', max_length=255),
+            model_name="alerts",
+            name="name",
+            field=models.CharField(default="default", max_length=255),
             preserve_default=False,
         ),
     ]

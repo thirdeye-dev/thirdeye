@@ -2,8 +2,6 @@ import logging
 
 import yaml
 from rest_framework import serializers as rfs
-from rest_framework.response import Response
-from rest_framework import status
 
 from api_app.monitoring.models import Alerts
 
@@ -79,12 +77,13 @@ def validate_configuration(yaml_data):
     serializer.is_valid(raise_exception=True)
     return serializer.validated_data
 
+
 class AlertsAPISerializer(rfs.ModelSerializer):
     class Meta:
         model = Alerts
         fields = "__all__"
         read_only_fields = ["id", "created_at", "updated_at"]
-    
+
     def validate_alert_yaml(self, configuration):
         try:
             yaml_to_json = yaml.safe_load(configuration)
@@ -93,6 +92,7 @@ class AlertsAPISerializer(rfs.ModelSerializer):
             logger.error(e)
             raise rfs.ValidationError(e)
         return configuration
+
 
 class BlockchainAlertRunner:
     def __init__(self, config_data, transaction_data):

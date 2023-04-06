@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Invitation, Membership, Organization
-from .permissions import IsAdminOrReadOnly
 from .serializers import (
     InvitationSerializer,
     MembershipSerializer,

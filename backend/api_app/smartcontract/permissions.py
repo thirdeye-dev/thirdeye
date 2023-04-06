@@ -4,9 +4,10 @@
 
 from rest_framework import permissions
 
+from authentication.organizations.models import Membership
 
 from .models import SmartContract
-from authentication.organizations.models import Membership, Organization
+
 
 class CanAccessSmartContract(permissions.BasePermission):
     """
@@ -23,8 +24,10 @@ class CanAccessSmartContract(permissions.BasePermission):
             return False
 
         # check owner_organization of smart contract
-        organization = SmartContract.objects.filter(
-                id=smart_contract_id
-            ).first().owner_organization
-        
+        organization = (
+            SmartContract.objects.filter(id=smart_contract_id)
+            .first()
+            .owner_organization
+        )
+
         return Membership.is_member(user=request.user, organization=organization)
