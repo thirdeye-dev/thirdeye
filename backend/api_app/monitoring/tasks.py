@@ -1,7 +1,7 @@
 import json
-import requests
 from datetime import datetime
 
+import requests
 import websocket
 from celery.utils.log import get_task_logger
 from django.conf import settings
@@ -17,6 +17,7 @@ logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
 
+
 @app.task(bind=True, max_retries=3)
 def send_webhook(self, notification_id):
     notification = Notification.objects.filter(id=notification_id).first()
@@ -26,11 +27,11 @@ def send_webhook(self, notification_id):
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    # just in case, we don't 
+    # just in case, we don't
     # want to send the same notification twice
     if notification.status == Notification.Status.SENT:
         return
-    
+
     webhook_url = notification.notification_target
     webhook_body = notification.notification_body
 

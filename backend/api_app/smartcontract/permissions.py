@@ -20,7 +20,7 @@ class CanAccessSmartContract(permissions.BasePermission):
             return False
 
         smart_contract_id = request.data.get("smart_contract")
-        
+
         if request.method == "GET":
             smart_contract_id = request.query_params.get("smart_contract")
 

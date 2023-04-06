@@ -4,25 +4,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('monitoring', '0003_notification'),
+        ("monitoring", "0003_notification"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='notification',
-            name='meta_logs',
+            model_name="notification",
+            name="meta_logs",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='notification',
-            name='status',
-            field=models.CharField(choices=[('PENDING', 'Pending'), ('SENT', 'Sent'), ('FAILED', 'Failed')], default='PENDING', max_length=16),
+            model_name="notification",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("PENDING", "Pending"),
+                    ("SENT", "Sent"),
+                    ("FAILED", "Failed"),
+                ],
+                default="PENDING",
+                max_length=16,
+            ),
         ),
         migrations.AddField(
-            model_name='notification',
-            name='task_id',
+            model_name="notification",
+            name="task_id",
             field=models.CharField(blank=True, max_length=255, null=True, unique=True),
         ),
     ]

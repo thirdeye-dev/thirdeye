@@ -35,6 +35,7 @@ class Alerts(BaseMixin):
     def __str__(self):
         return f"{self.smart_contract.address} - {self.name}"
 
+
 class Notification(BaseMixin):
     class NotificationType(models.TextChoices):
         EMAIL = "EMAIL"
@@ -55,7 +56,7 @@ class Notification(BaseMixin):
     # this can be email, phone number, or webhook url
     notification_target = models.CharField(max_length=255, blank=False, null=False)
 
-    # just in case, save the (last, if multiple caused) 
+    # just in case, save the (last, if multiple caused)
     # transaction hash that triggered this alert
     trigger_transaction_hash = models.CharField(max_length=255, blank=True, null=True)
 
@@ -66,7 +67,6 @@ class Notification(BaseMixin):
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.PENDING
     )
-
 
     def __str__(self):
         return f"{self.alert.smart_contract.address} - {self.sent_to}"
