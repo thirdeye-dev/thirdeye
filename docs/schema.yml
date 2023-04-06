@@ -113,9 +113,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
-  /monitoring/get_ioc_config:
+  /monitoring/alerts:
     get:
-      operationId: monitoring_get_ioc_config_retrieve
+      operationId: monitoring_alerts_list
       tags:
       - monitoring
       security:
@@ -127,11 +127,47 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IOC'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlertsAPI'
           description: ''
-  /monitoring/set_ioc_alert:
     post:
-      operationId: monitoring_set_ioc_alert_create
+      operationId: monitoring_alerts_create
+      tags:
+      - monitoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+  /monitoring/alerts/{id}:
+    get:
+      operationId: monitoring_alerts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this alerts.
+        required: true
       tags:
       - monitoring
       security:
@@ -140,6 +176,95 @@ paths:
       - jwtAuth: []
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+    put:
+      operationId: monitoring_alerts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this alerts.
+        required: true
+      tags:
+      - monitoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+    patch:
+      operationId: monitoring_alerts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this alerts.
+        required: true
+      tags:
+      - monitoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertsAPI'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertsAPI'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertsAPI'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+    delete:
+      operationId: monitoring_alerts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this alerts.
+        required: true
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
           description: No response body
   /organizations/{organization_id}/invite:
     post:
@@ -501,23 +626,37 @@ paths:
           description: No response body
 components:
   schemas:
-    IOC:
+    AlertsAPI:
       type: object
       properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        alert_yaml:
+          type: string
         name:
           type: string
-        entrypoint:
-          type: string
+          maxLength: 255
         description:
           type: string
-        params:
-          type: object
-          additionalProperties: {}
+          nullable: true
+        smart_contract:
+          type: integer
       required:
-      - description
-      - entrypoint
+      - alert_yaml
+      - created_at
+      - id
       - name
-      - params
+      - smart_contract
+      - updated_at
     Invitation:
       type: object
       properties:
@@ -613,6 +752,30 @@ components:
       - memberships
       - name
       - updated_at
+    PatchedAlertsAPI:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        alert_yaml:
+          type: string
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        smart_contract:
+          type: integer
     PatchedOrganization:
       type: object
       properties:
@@ -651,6 +814,10 @@ components:
           type: string
         network:
           type: string
+        owner_organization:
+          type: string
+          format: uuid
+          writeOnly: true
         created_at:
           type: string
           format: date-time
@@ -664,9 +831,6 @@ components:
           maxLength: 100
         active:
           type: boolean
-        owner:
-          type: integer
-          readOnly: true
     SmartContract:
       type: object
       properties:
@@ -679,6 +843,10 @@ components:
           type: string
         network:
           type: string
+        owner_organization:
+          type: string
+          format: uuid
+          writeOnly: true
         created_at:
           type: string
           format: date-time
@@ -692,9 +860,6 @@ components:
           maxLength: 100
         active:
           type: boolean
-        owner:
-          type: integer
-          readOnly: true
       required:
       - address
       - chain
@@ -702,7 +867,7 @@ components:
       - id
       - name
       - network
-      - owner
+      - owner_organization
       - updated_at
     TokenRefresh:
       type: object
