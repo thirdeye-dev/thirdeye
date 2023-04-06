@@ -29,7 +29,8 @@ jobs:
         --ignore-init-module-imports 
         --max-line-length 92 
         --exclude Dockerfile,docker-compose*,venv,docs,migrations,virtualenv,.envc 
-        --ignore-import-errors W503,E231,W605 .
+        --ignore-import-errors W503,E231,W605 
+        --files .
         
     - name: Format code with isort
       run: isort .
