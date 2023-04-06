@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from api_app.monitoring import tasks
-from api_app.monitoring.models import MonitoringTasks
+from api_app.monitoring.models import MonitoringTasks, Notification
 from api_app.smartcontract.models import SmartContract
 
 
@@ -28,6 +28,15 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
         instance.task_status = MonitoringTasks.TaskStatus.RUNNING
         instance.task_id = task.id
 
+        instance.save()
+
+
+@receiver(post_save, sender=Notification)
+def notification_post_save(sender, instance, created, **kwargs):
+    if created:
+        task = tasks.send_webhook.delay(instance.id)
+
+        instance.task_id = task.id
         instance.save()
 
 

@@ -1,4 +1,5 @@
 import json
+import requests
 from datetime import datetime
 
 import websocket
@@ -7,7 +8,7 @@ from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import Alerts, MonitoringTasks
+from api_app.monitoring.models import Alerts, MonitoringTasks, Notification
 from backend.celery import app
 
 from .serializers import BlockchainAlertRunner
@@ -15,6 +16,45 @@ from .serializers import BlockchainAlertRunner
 logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
+
+@app.task(bind=True, max_retries=3)
+def send_webhook(self, notification_id):
+    notification = Notification.objects.filter(id=notification_id).first()
+
+    if not notification:
+        error_msg = f"Notification with id {notification_id} not found"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
+    # just in case, we don't 
+    # want to send the same notification twice
+    if notification.status == Notification.Status.SENT:
+        return
+    
+    webhook_url = notification.notification_target
+    webhook_body = notification.notification_body
+
+    try:
+        response = requests.post(webhook_url, data=webhook_body)
+        notification.meta_logs = {
+            "timestamp": datetime.now().isoformat(),
+            "response": response.text,
+            "response_code": response.status_code,
+        }
+
+    except Exception as e:
+        notification.status = Notification.Status.FAILED
+        notification.meta_logs = {
+            "timestamp": datetime.now().isoformat(),
+            "response": response.text,
+            "response_code": response.status_code,
+        }
+        error_msg = f"Webhook failed with error {e}"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
+    notification.save()
+
 
 """
 The main monitior task!

@@ -3,7 +3,7 @@ import logging
 import yaml
 from rest_framework import serializers as rfs
 
-from api_app.monitoring.models import Alerts
+from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class Transaction:
 
 class NotificationType(rfs.ChoiceField):
     def __init__(self, **kwargs):
-        super().__init__(choices=["send_email", "send_sms"], **kwargs)
+        super().__init__(choices=["send_email", "send_sms", "send_webhook"], **kwargs)
 
 
 class AlertSerializer(rfs.Serializer):
@@ -39,6 +39,9 @@ class AlertSerializer(rfs.Serializer):
     operator = rfs.ChoiceField(choices=["<", "<=", ">", ">=", "==", "!="])
     value = rfs.FloatField()
     notifications = rfs.ListField(child=NotificationType())
+
+    # optional webhook field, only used if notification_type is "send_webhook"
+    webhook_url = rfs.URLField(required=False)
 
     @staticmethod
     def check_operator(attribute_value, operator, value):
@@ -95,15 +98,16 @@ class AlertsAPISerializer(rfs.ModelSerializer):
 
 
 class BlockchainAlertRunner:
-    def __init__(self, config_data, transaction_data):
-        self.validated_data = validate_configuration(config_data)
+    def __init__(self, Alert: Alerts, transaction_data: dict):
+        self.Alert = Alert
+        self.validated_data = validate_configuration(Alert.alert_yaml)
         self.transaction = Transaction(transaction_data)
 
     def run(self):
         for contract_address in self.validated_data["blockchain_alerts"]:
             for alert_name, alert in contract_address["alerts"].items():
                 if self.check_alert_condition(alert):
-                    self.trigger_notifications(alert["notifications"])
+                    self.trigger_notifications(alert)
 
     def check_alert_condition(self, alert):
         attribute_key = (
@@ -117,19 +121,38 @@ class BlockchainAlertRunner:
             return False
         return True
 
-    def trigger_notifications(self, notifications):
-        for notification in notifications:
-            if notification == "send_email":
-                self.send_email()
-            elif notification == "send_sms":
-                self.send_sms()
 
-    # I am thinking of using signals here
-    # for the notifications logic.
-    def send_email(self):
-        # Implement email sending logic here
+    def trigger_notifications(self, alert_data):
+        notifications = alert_data["notifications"]
+        for notification in notifications:
+            {
+                "send_email": self.send_email,
+                "send_sms": self.send_sms,
+                "send_webhook": self.send_webhook,
+            }.get(notification)(alert_data)
+
+    # all these methods (should) use django signals
+    # to trigger the notification
+    def send_email(self, alert_data):
+        # add an email notification here
         print("Email notification triggered.")
 
-    def send_sms(self):
+    def send_sms(self, alert_data):
         # Implement SMS sending logic here
         print("SMS notification triggered.")
+
+    def send_webhook(self, alert_data):
+        webhook_url = alert_data.get("webhook_url")
+        alert_body = {
+            "message": f"Alert {self.alert.name} triggered for transaction.",
+            "transaction": self.transaction.__dict__,
+        }
+
+        notification = Notification.objects.create(
+            alert=self.alert,
+            notification_type="send_webhook",
+            notification_body=alert_body,
+            notification_target=webhook_url,
+            trigger_notification_hash=self.transaction.hash,
+        )
+        notification.save()

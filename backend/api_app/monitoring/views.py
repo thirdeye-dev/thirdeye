@@ -15,6 +15,6 @@ class AlertViewSet(viewsets.ModelViewSet):
     permission_classes = [CanAccessSmartContract]
 
     def get_queryset(self):
-        smart_contract = self.request.data.get("smart_contract")
+        smart_contract = self.request.params.get("smart_contract")
         queryset = Alerts.objects.filter(smart_contract=smart_contract)
         return queryset
