@@ -1,74 +1,135 @@
 import logging
 
+import yaml
 from rest_framework import serializers as rfs
 
-from api_app.core.serializers import IOCSerializer
-from api_app.monitoring.models import IoC
-from api_app.smartcontract.models import SmartContract
+from api_app.monitoring.models import Alerts
 
 logger = logging.getLogger(__name__)
 
 
-class SetIoCSerializer(rfs.ModelSerializer):
-    ioc_name = rfs.CharField(required=True)
-    ioc_params = rfs.JSONField(required=True)
-    smart_contract_id = rfs.CharField(required=True)
+# new code. This is the new serializer.
+# Transaction class to map transaction attributes
+class Transaction:
+    def __init__(self, transaction_data):
+        self.hash = transaction_data.get("hash")
+        self.nonce = transaction_data.get("nonce")
+        self.blockHash = transaction_data.get("blockHash")
+        self.blockNumber = transaction_data.get("blockNumber")
+        self.transactionIndex = transaction_data.get("transactionIndex")
+        self.from_address = transaction_data.get("from")
+        self.to = transaction_data.get("to")
+        self.value = transaction_data.get("value")
+        self.gas = transaction_data.get("gas")
+        self.gasPrice = transaction_data.get("gasPrice")
+        self.input = transaction_data.get("input")
+        self.v = transaction_data.get("v")
+        self.r = transaction_data.get("r")
+        self.s = transaction_data.get("s")
+        self.timestamp = transaction_data.get("timestamp")
 
-    # make alert_types a choice field that only accepts the values in the alert_types
-    alert_types = rfs.ListField(
-        child=rfs.CharField(),
-        required=False,
-    )
-    alert_url = rfs.CharField(required=False)
 
+class NotificationType(rfs.ChoiceField):
+    def __init__(self, **kwargs):
+        super().__init__(choices=["send_email", "send_sms"], **kwargs)
+
+
+class AlertSerializer(rfs.Serializer):
+    attribute = rfs.CharField()
+    operator = rfs.ChoiceField(choices=["<", "<=", ">", ">=", "==", "!="])
+    value = rfs.FloatField()
+    notifications = rfs.ListField(child=NotificationType())
+
+    @staticmethod
+    def check_operator(attribute_value, operator, value):
+        attribute_value = float(attribute_value)
+
+        return {
+            "<": attribute_value < value,
+            "<=": attribute_value <= value,
+            ">": attribute_value > value,
+            ">=": attribute_value >= value,
+            "==": attribute_value == value,
+            "!=": attribute_value != value,
+        }.get(operator, False)
+
+
+class AlertDescriptiveSerializer(rfs.Serializer):
+    # later on, I want to add for "every_transaction" and
+    # every x amount of time: "moment_of_day", where
+    # i can expect a validated cron expression
+    alert_type = rfs.ChoiceField(choices=["every_transaction"])
+    alerts = rfs.DictField(child=AlertSerializer())
+
+
+class BlockchainAlertsSerializer(rfs.Serializer):
+    blockchain_alerts = AlertDescriptiveSerializer(many=True)
+
+
+def parse_yaml_file(file_path):
+    with open(file_path, "r") as yaml_file:
+        yaml_data = yaml.safe_load(yaml_file)
+    return yaml_data
+
+
+def validate_configuration(yaml_data):
+    serializer = BlockchainAlertsSerializer(data=yaml_data)
+    serializer.is_valid(raise_exception=True)
+    return serializer.validated_data
+
+
+class AlertsAPISerializer(rfs.ModelSerializer):
     class Meta:
-        model = IoC
-        fields = (
-            "ioc_name",
-            "ioc_params",
-            "smart_contract_id",
-            "alert_types",
-            "alert_url",
+        model = Alerts
+        fields = "__all__"
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def validate_alert_yaml(self, configuration):
+        try:
+            yaml_to_json = yaml.safe_load(configuration)
+            configuration = validate_configuration(yaml_to_json)
+        except Exception as e:
+            logger.error(e)
+            raise rfs.ValidationError(e)
+        return configuration
+
+
+class BlockchainAlertRunner:
+    def __init__(self, config_data, transaction_data):
+        self.validated_data = validate_configuration(config_data)
+        self.transaction = Transaction(transaction_data)
+
+    def run(self):
+        for contract_address in self.validated_data["blockchain_alerts"]:
+            for alert_name, alert in contract_address["alerts"].items():
+                if self.check_alert_condition(alert):
+                    self.trigger_notifications(alert["notifications"])
+
+    def check_alert_condition(self, alert):
+        attribute_key = (
+            alert["attribute"].replace("{{ $transaction.", "").replace(" }}", "")
         )
+        attribute_value = getattr(self.transaction, attribute_key)
+        operator = alert["operator"]
+        value = alert["value"]
 
-    def validate(self, attrs):
-        type_map = {
-            "int": int,
-            "str": str,
-            "float": float,
-            # add more types as we go
-        }
-        smart_contract = SmartContract.objects.get(pk=attrs.get("smart_contract_id"))
+        if not AlertSerializer.check_operator(attribute_value, operator, value):
+            return False
+        return True
 
-        if not smart_contract.user == self.context["request"].user:
-            raise rfs.ValidationError(
-                "You do not have permission to set an alert for this contract."
-            )
+    def trigger_notifications(self, notifications):
+        for notification in notifications:
+            if notification == "send_email":
+                self.send_email()
+            elif notification == "send_sms":
+                self.send_sms()
 
-        attrs = super().validate(attrs)
+    # I am thinking of using signals here
+    # for the notifications logic.
+    def send_email(self):
+        # Implement email sending logic here
+        print("Email notification triggered.")
 
-        iocs = IOCSerializer.read_and_verify_config()
-        ioc_name = attrs.get("ioc_name")
-        ioc = iocs.get(ioc_name)
-
-        if not ioc:
-            raise rfs.ValidationError(f"IOC {ioc_name} not found.")
-
-        ioc_params = attrs.get("ioc_params")
-        for params in ioc_params:
-            param = ioc_params.get(params)
-            if not param:
-                raise rfs.ValidationError(f"IOC {ioc_name} value not found.")
-
-            if type(param) != type_map.get(ioc.get("params").get(param)):
-                raise rfs.ValidationError(f"IOC {ioc_name} value type not found.")
-
-        attrs["SmartContract"] = SmartContract.objects.get(
-            pk=attrs.get("smart_contract_id")
-        )
-        attrs["threshold"] = ioc_params.get("threshold")
-        attrs["threshold_currency"] = ioc_params.get("threshold_currency")
-        attrs["alert_types"] = attrs.get("alert_types")
-        attrs["alert_url"] = attrs.get("alert_url")
-
-        return attrs
+    def send_sms(self):
+        # Implement SMS sending logic here
+        print("SMS notification triggered.")

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from api_app.core.models import BaseMixin
+from authentication.organizations.models import Organization
 
 User = get_user_model()
 
@@ -25,8 +26,11 @@ class SmartContract(BaseMixin):
     network = models.CharField(
         max_length=100, choices=Network.choices, default=Network.MAINNET
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
     active = models.BooleanField(default=True)
+
+    # support for organisational scoping coming soon
+    owner_organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

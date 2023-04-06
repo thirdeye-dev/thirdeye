@@ -1,28 +1,38 @@
-from rest_framework import permissions, viewsets
+from rest_framework import status as Status
+from rest_framework import viewsets
+from rest_framework.response import Response
+
+from authentication.organizations.models import Membership, Organization
+from authentication.organizations.permissions import IsMember
 
 from .models import SmartContract
 from .serializers import SmartContractSerializer
 
 
-class IsOwner(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        # user should be authenticated and the owner of the object
-        return obj.owner == request.user and request.user.is_authenticated
-
-
 # add permissions later
 class SmartContractViewSet(viewsets.ModelViewSet):
     serializer_class = SmartContractSerializer
-
-    def get_permissions(self):
-        if self.action == "create":
-            permission_classes = [permissions.IsAuthenticated]
-        else:
-            permission_classes = [IsOwner]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsMember]
 
     def get_queryset(self):
-        return SmartContract.objects.filter(owner=self.request.user)
+        owner_owner_organization = self.request.data.get("owner_organization")
+
+        owner_organization = Organization.objects.get(id=owner_owner_organization)
+
+        return SmartContract.objects.filter(owner_organization=owner_organization)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        owner_owner_organization = self.request.data.get("owner_organization")
+
+        owner_organization = Organization.objects.get(id=owner_owner_organization)
+
+        is_member = Membership.is_member(self.request.user, owner_organization)
+
+        if is_member:
+            serializer.save(owner_organization=owner_organization)
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.data, status=Status.HTTP_201_CREATED)
+        raise Response(
+            {"error": "User is not a member of the organization"},
+            status=Status.HTTP_400_BAD_REQUEST,
+        )

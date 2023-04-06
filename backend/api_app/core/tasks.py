@@ -1,8 +1,7 @@
 from celery import signals
 from celery.utils.log import get_task_logger
 
-from api_app.monitoring import tasks
-from api_app.monitoring.models import IoC, IOCAlert, MonitoringTasks
+from api_app.monitoring.models import MonitoringTasks
 from api_app.smartcontract.models import SmartContract
 from backend.celery import app
 

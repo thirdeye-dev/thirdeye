@@ -1,4 +1,4 @@
-from celery.signals import task_success, task_failure
+from celery.signals import task_failure, task_success
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
