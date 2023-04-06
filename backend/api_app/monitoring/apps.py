@@ -6,4 +6,4 @@ class MonitoringConfig(AppConfig):
     name = "api_app.monitoring"
 
     def ready(self):
-        import api_app.monitoring.signals
+        pass

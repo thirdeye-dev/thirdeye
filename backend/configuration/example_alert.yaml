@@ -1,14 +1,11 @@
 # Example alert configuration file
 blockchain_alerts:
-  - blockchain_name: "Ethereum"
-    network: "mainnet"
-    alert_type: "every_transaction"
-    contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
+  - alert_type: "every_transaction"
     alerts:
       nameA:
-        attribute: "{{ $transaction.TIMESTAMP }}"
+        attribute: "{{ $transaction.gas }}"
         operator: ">="
-        value: "2023-03-11T12:00:00Z"
+        value: 100000
         notifications:
           - send_email
           - send_sms
@@ -16,17 +13,14 @@ blockchain_alerts:
 
 # Another type
 blockchain_alerts:
-  - blockchain_name: "Ethereum"
-    network: "mainnet"
-    alert_type: "time_based"
-    contract_addresses: ["0x1234567890abcdef1234567890abcdef12345678"]
+  - alert_type: "moment_of_day"
+    every: "1h"
+    cron: "0 0 * * *" # either cron or every is valid.
     alerts:
       nameA:
-        time: 30 # miliseconds
-        attribute: "{{ $transactions.FAILED }}"
+        attribute: "{{ $transaction.gas }}"
         operator: ">="
-        value: 5
+        value: 100000
         notifications:
-          - send_email:
-              attribute: "Failed transactions were more than {{ $transactions.FAILED }} times!"
-
+          - send_email
+          - send_sms

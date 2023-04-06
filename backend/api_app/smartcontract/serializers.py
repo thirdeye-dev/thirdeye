@@ -2,6 +2,8 @@ import re
 
 from rest_framework import serializers
 
+from authentication.organizations.models import Organization
+
 from .models import SmartContract
 
 
@@ -15,14 +17,19 @@ class SmartContractSerializer(serializers.ModelSerializer):
     address = serializers.CharField(validators=[smart_contract_validator])
     chain = serializers.CharField(required=True)
     network = serializers.CharField(required=True)
+    owner_organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=True,
+        write_only=True,
+        source="owner_organization.id",
+    )
 
     class Meta:
         model = SmartContract
         fields = "__all__"
-        read_only_fields = ("id", "owner")
+        read_only_fields = ("id",)
 
     def create(self, validated_data):
-        validated_data["owner"] = self.context["request"].user
         return super().create(validated_data)
 
     def validate(self, data):

@@ -1,10 +1,8 @@
 import logging
 import os
 
-import requests
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
-from django.contrib.auth import get_user_model
 from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import redirect
 from rest_framework import generics, permissions, status

@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -53,6 +52,10 @@ class Membership(BaseMixin):
     class Meta:
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
+
+    @classmethod
+    def is_member(cls, user, organization):
+        return cls.objects.filter(user=user, organization=organization).exists()
 
 
 class Invitation(BaseMixin):
