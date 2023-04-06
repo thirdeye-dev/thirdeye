@@ -32,8 +32,7 @@ class MonitoringTasks(BaseMixin):
 class Alerts(BaseMixin):
     smart_contract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
     alert_yaml = YAMLField()
-
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

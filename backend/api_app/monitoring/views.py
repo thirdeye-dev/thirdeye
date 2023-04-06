@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.organizations.permissions import IsMember
+from api_app.smartcontract.permissions import CanAccessSmartContract
 
 from .models import Alerts
 from .serializers import AlertsAPISerializer
@@ -14,20 +14,13 @@ from .serializers import AlertsAPISerializer
 logger = logging.getLogger(__name__)
 
 
-# write a simple viewset to set alerts
-# for an organisation that the user is a member of
-# and if he is of none, then he can set alerts
 class AlertViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsMember]
-    serializer = AlertsAPISerializer
+    serializer_class = AlertsAPISerializer
+    permission_classes = [CanAccessSmartContract]
 
     def get_queryset(self):
-        owner_organization = self.request.data.get("owner_organization")
+        smart_contract = self.request.data.get("smart_contract")
         queryset = Alerts.objects.filter(
-            smart_contract__owner_organization=owner_organization
+            smart_contract=smart_contract
         )
         return queryset
-
-    def perform_create(self, serializer):
-        owner_organization = self.request.data.get("owner_organization")
-        serializer.save(owner_organization=owner_organization)
