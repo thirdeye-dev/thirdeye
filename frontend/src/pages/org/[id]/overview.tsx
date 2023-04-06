@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import AlertGraph from "@/components/overview/AlertGraph";
 
 export default function Overview() {
   return (
@@ -16,7 +17,9 @@ export default function Overview() {
       <Box w="60%" h="100%">
         <Paper withBorder w="100%" h="100%">
           <Stack p="md" justify="space-between" h="100%">
-            <Paper withBorder h="65%"></Paper>
+            <Paper h="65%">
+              <AlertGraph />
+            </Paper>
             <Paper withBorder h="35%"></Paper>
           </Stack>
         </Paper>
