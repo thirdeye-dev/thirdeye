@@ -14,12 +14,11 @@ import { useEffect, useRef, useState } from "react";
 import { fetchOrganizations } from "@/services/organizations";
 import { Organization } from "@/models/organization";
 
-export default function HeaderComponent() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+function OrganizationSelector() {
   const router = useRouter();
 
-  const shouldShowOrganizationSelector =
-    router.pathname.includes("/org") ?? false;
+  const currentOrgId = router.query.id;
+  const selectRef = useRef<HTMLInputElement>(null);
 
   const orgs = useRef<Array<Organization>>([]);
   const [orgEntries, setOrgEntries] = useState<Array<string>>([]);
@@ -33,18 +32,45 @@ export default function HeaderComponent() {
   };
 
   useEffect(() => {
-    if (!shouldShowOrganizationSelector) return;
-
     assignOrgs();
-  }, [shouldShowOrganizationSelector]);
+  }, []);
+
+  useEffect(() => {
+    if (!currentOrgId) return;
+
+    const currentOrgName = orgs.current.find((org) => org.id === currentOrgId);
+
+    selectRef.current!.value = currentOrgName?.name ?? "";
+  }, [currentOrgId]);
 
   const onOrganizationChange = (orgName: string) => {
     if (!orgName) return;
 
     const org = orgs.current.find((org) => org.name === orgName);
+    if (!org || org.id === currentOrgId) return; // don't do anything if the org is the same or doesn't exist
 
     router.push(`/org/${org?.id}`);
   };
+
+  return (
+    <Select
+      ref={selectRef}
+      placeholder="Organization"
+      data={orgEntries}
+      w="40%"
+      // @ts-ignore
+      onSelect={(e) => onOrganizationChange(e.target.value)}
+    />
+  );
+}
+
+export default function HeaderComponent() {
+  const router = useRouter();
+
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  const shouldShowOrganizationSelector =
+    router.pathname.includes("/org") ?? false;
 
   return (
     <Header height={"5rem"} fixed>
@@ -62,14 +88,7 @@ export default function HeaderComponent() {
           </Link>
 
           <Divider orientation="vertical" />
-          {shouldShowOrganizationSelector && (
-            <Select
-              placeholder="Organization"
-              data={orgEntries}
-              w="40%"
-              onSelect={(e) => onOrganizationChange(e.target.value)}
-            />
-          )}
+          {shouldShowOrganizationSelector && <OrganizationSelector />}
         </Group>
 
         <Group>
