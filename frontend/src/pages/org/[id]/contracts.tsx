@@ -18,21 +18,28 @@ import Contract from "@/models/contract";
 import { fetchContracts } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
 import ContractCard from "@/components/contracts/ContractCard";
+import { useRouter } from "next/router";
 
 export default function Contracts() {
+  const router = useRouter();
+
   const [contracts, setContracts] = useState<Array<Contract>>([]);
   const [isAddModalOpened, { open: openAddModal, close: closeAddModal }] =
     useDisclosure(false);
 
-  const assignContracts = async () => {
-    const contracts = await fetchContracts();
+  const organizationId = router.query.id as string;
+
+  const assignContracts = async (organizationId: string) => {
+    const contracts = await fetchContracts(organizationId);
 
     setContracts(contracts);
   };
 
   useEffect(() => {
-    assignContracts();
-  }, []);
+    if (!organizationId) return;
+
+    assignContracts(organizationId);
+  }, [organizationId]);
 
   const onClickAdd = () => {
     openAddModal();
@@ -47,7 +54,7 @@ export default function Contracts() {
       color: "green",
       icon: <AiFillCheckCircle />,
     });
-    assignContracts();
+    assignContracts(organizationId);
   };
 
   return (
@@ -58,7 +65,10 @@ export default function Contracts() {
         title="Add Contract"
         centered
       >
-        <AddContractForm afterSuccess={afterFormSuccess} />
+        <AddContractForm
+          organizationId={organizationId}
+          afterSuccess={afterFormSuccess}
+        />
       </Modal>
 
       <Container size="xl">

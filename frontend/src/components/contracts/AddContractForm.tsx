@@ -3,8 +3,10 @@ import { Button, Input, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 export default function AddContractForm({
+  organizationId,
   afterSuccess,
 }: {
+  organizationId: string;
   afterSuccess: () => void;
 }) {
   const chains = ["ETH", "POLYGON"];
@@ -20,7 +22,7 @@ export default function AddContractForm({
   });
 
   const handleOnSubmit = async (values: Record<string, unknown>) => {
-    const response = await createContract(values);
+    const response = await createContract(values, organizationId);
 
     if (response) {
       afterSuccess();
