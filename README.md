@@ -18,7 +18,7 @@ yarn install
 yarn run dev
 ```
 
-# pgadmin setup
+## pgadmin setup
 
 ```
 cd docker/
@@ -26,7 +26,7 @@ cp .pgadmin.env.template .pgadmin.env
 docker-compose -f docker-compose.yml pgadmin.override.yml up
 ```
 
-# flower setup
+## flower setup
 
 Still to be finished. Breaks celery at the moment.
 

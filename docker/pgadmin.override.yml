@@ -8,6 +8,11 @@ services:
       - .pgadmin.env
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
     networks:
       default:
       internal:
+
+volumes:
+  pgadmin:
