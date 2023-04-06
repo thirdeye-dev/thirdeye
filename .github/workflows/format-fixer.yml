@@ -24,13 +24,14 @@ jobs:
       # run: autoflake --remove-unused-variables --remove-all-unused-imports --ignore-init-module-imports --max-line-length 92 --exclude Dockerfile,docker-compose*,venv,docs,migrations,virtualenv,.envc --ignore-import-errors W503,E231,W605 {{path_to_directory_or_file}}
       # use multiple lines for better readability
       run: |
-        autoflake --remove-unused-variables 
+        autoflake 
+        --remove-unused-variables 
         --remove-all-unused-imports 
         --ignore-init-module-imports 
         --max-line-length 92 
         --exclude Dockerfile,docker-compose*,venv,docs,migrations,virtualenv,.envc 
-        --ignore-import-errors W503,E231,W605 
-        --files .
+        --expand-star-imports --in-place --recursive .
+
         
     - name: Format code with isort
       run: isort .
