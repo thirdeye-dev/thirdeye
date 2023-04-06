@@ -5,6 +5,8 @@ djangorestframework-jwt
 djangorestframework
 djangorestframework-swagger
 flower==1.2.0
+django-yamlfield
+pyYAML==5.4.1
 django-postgres-extra
 django-cache-memoize
 django_extensions
