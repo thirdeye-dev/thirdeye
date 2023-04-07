@@ -128,6 +128,11 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
+            requests.post(
+                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                data=json.dumps(response),
+            )
+
             if "result" in response and response.get("id") == 1:
                 subscription_id = response["result"]
             elif (
@@ -142,16 +147,39 @@ def monitor_contract(self, monitoring_task_id):
                 alerts = Alerts.objects.filter(
                     smart_contract=monitoring_task.SmartContract
                 )
+
+                requests.post(
+                    "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                    data=json.dumps(transaction),
+                )
                 for alert in alerts:
                     # TODO: I want to check later in the YAML
                     # if the alert is checked every_transaction
                     # or every x amount of time.
-                    alert_runner = BlockchainAlertRunner(alert.alert_yaml, transaction)
+                    alert_runner = BlockchainAlertRunner(alert, transaction)
                     alert_runner.run()
 
-        except websocket.WebSocketConnectionClosedException:
+        except websocket.WebSocketConnectionClosedException as e:
+            data = {
+                "timestamp": datetime.now().timestamp(),
+                "message": "Websocket connection closed",
+                "error": str(e)
+            }
+            requests.post(
+                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                data=data
+            )
             break
-        except Exception:
-            break
+        # except Exception as e:
+        #     data = {
+        #         "timestamp": datetime.now().timestamp(),
+        #         "message": "Websocket connection closed",
+        #         "error": str(e)
+        #     }
+        #     requests.post(
+        #         "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+        #         data=data
+        #     )
+        #     break
 
     ws.close()
