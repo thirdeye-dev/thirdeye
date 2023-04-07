@@ -6,9 +6,11 @@ blockchain_alerts:
         attribute: "{{ $transaction.gas }}"
         operator: ">="
         value: 100000
+        webhook_url: "https://eot0jnzvvvbvr8j.m.pipedream.net/alerts"
         notifications:
           - send_email
           - send_sms
+          - send_webhook
 
 
 # Another type

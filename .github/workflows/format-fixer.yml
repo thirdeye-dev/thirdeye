@@ -2,7 +2,9 @@ name: Auto-Format Python Code
 
 on:
   push:
-  pull_request:
+    branches:
+      - dev
+      - master
   
 jobs:
   format:
@@ -21,7 +23,7 @@ jobs:
         pip install black isort flake8 autoflake
       
     - name: Remove unused imports with autoflake
-      run: autoflake --in-place --remove-all-unused-imports --remove-unused-variables --recursive .
+      run: autoflake --in-place --remove-all-unused-imports --remove-unused-variables --recursive . --exclude apps.py
 
     - name: Format code with isort
       run: isort .

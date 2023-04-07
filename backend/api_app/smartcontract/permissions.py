@@ -19,7 +19,11 @@ class CanAccessSmartContract(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        smart_contract_id = request.data.get("smart_contract", None)
+        smart_contract_id = request.data.get("smart_contract")
+
+        if request.method == "GET":
+            smart_contract_id = request.query_params.get("smart_contract")
+
         if smart_contract_id is None:
             return False
 

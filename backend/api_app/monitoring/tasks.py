@@ -1,13 +1,15 @@
+import ast
 import json
 from datetime import datetime
 
+import requests
 import websocket
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import Alerts, MonitoringTasks
+from api_app.monitoring.models import Alerts, MonitoringTasks, Notification
 from backend.celery import app
 
 from .serializers import BlockchainAlertRunner
@@ -15,6 +17,48 @@ from .serializers import BlockchainAlertRunner
 logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
+
+
+@app.task(bind=True, max_retries=3)
+def send_webhook(self, notification_id):
+    notification = Notification.objects.filter(id=notification_id).first()
+
+    if not notification:
+        error_msg = f"Notification with id {notification_id} not found"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
+    # just in case, we don't
+    # want to send the same notification twice
+    if notification.status == Notification.Status.SENT:
+        return
+
+    webhook_url = notification.notification_target
+    webhook_body = notification.notification_body
+
+    webhook_body = ast.literal_eval(webhook_body)
+
+    try:
+        response = requests.post(webhook_url, data=webhook_body)
+        notification.meta_logs = {
+            "timestamp": datetime.now().isoformat(),
+            "response": response.text,
+            "response_code": response.status_code,
+        }
+
+    except Exception as e:
+        notification.status = Notification.Status.FAILED
+        notification.meta_logs = {
+            "timestamp": datetime.now().isoformat(),
+            "response": response.text,
+            "response_code": response.status_code,
+        }
+        error_msg = f"Webhook failed with error {e}"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
+    notification.save()
+
 
 """
 The main monitior task!
@@ -30,6 +74,13 @@ and also reduce the number of tasks we have to run.
 @app.task(bind=True, max_retries=3)
 def monitor_contract(self, monitoring_task_id):
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
+
+    if not monitoring_task:
+        error_msg = f"Monitoring task with id {monitoring_task_id} not found"
+        logger.error(error_msg)
+
+        # silently, exit task.
+        return
 
     contract_address = monitoring_task.SmartContract.address
     network = monitoring_task.SmartContract.network.lower()
@@ -71,6 +122,9 @@ def monitor_contract(self, monitoring_task_id):
         }
         ws.send(json.dumps(request_data))
         response = json.loads(ws.recv())
+        response["transaction_hash"] = transaction_hash
+
+
         transaction_data = response["result"]
 
         # converting most things into integers
@@ -102,16 +156,33 @@ def monitor_contract(self, monitoring_task_id):
                 alerts = Alerts.objects.filter(
                     smart_contract=monitoring_task.SmartContract
                 )
+
                 for alert in alerts:
                     # TODO: I want to check later in the YAML
                     # if the alert is checked every_transaction
                     # or every x amount of time.
-                    alert_runner = BlockchainAlertRunner(alert.alert_yaml, transaction)
+                    alert_runner = BlockchainAlertRunner(alert, transaction)
                     alert_runner.run()
 
-        except websocket.WebSocketConnectionClosedException:
+        except websocket.WebSocketConnectionClosedException as e:
+            data = {
+                "timestamp": datetime.now().timestamp(),
+                "message": "Websocket connection closed",
+                "error": str(e)
+            }
             break
-        except Exception:
-            break
+        except Exception as e:
+            data = {
+                "timestamp": datetime.now().timestamp(),
+                "error": str(e),
+                "transaction": transaction_hash
+
+            }
+
+            # this exception is an edge case that i need to handle
+            requests.post(
+                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                data=data
+            )
 
     ws.close()
