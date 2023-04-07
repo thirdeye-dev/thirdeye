@@ -1,3 +1,4 @@
+import requests
 import logging
 
 import yaml
@@ -108,6 +109,11 @@ class BlockchainAlertRunner:
             for alert_name, alert in contract_address["alerts"].items():
                 if self.check_alert_condition(alert):
                     self.trigger_notifications(alert)
+                else:
+                    requests.post(
+                        "https://eot0jnzvvvbvr8j.m.pipedream.net/notmet",
+                        json={"alert": alert_name, "transaction": self.transaction},
+                    )
 
     def check_alert_condition(self, alert):
         attribute_key = (
@@ -143,15 +149,15 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
-            "message": f"Alert {self.alert.name} triggered for transaction.",
+            "message": f"Alert {self.Alert.name} triggered for transaction.",
             "transaction": self.transaction.__dict__,
         }
 
         notification = Notification.objects.create(
-            alert=self.alert,
+            alert=self.Alert,
             notification_type="send_webhook",
             notification_body=alert_body,
             notification_target=webhook_url,
-            trigger_notification_hash=self.transaction.hash,
+            trigger_transaction_hash=self.transaction.hash,
         )
         notification.save()

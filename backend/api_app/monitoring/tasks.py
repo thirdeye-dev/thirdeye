@@ -72,6 +72,11 @@ and also reduce the number of tasks we have to run.
 def monitor_contract(self, monitoring_task_id):
     monitoring_task = MonitoringTasks.objects.filter(id=monitoring_task_id).first()
 
+    if not monitoring_task:
+        error_msg = f"Monitoring task with id {monitoring_task_id} not found"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
     contract_address = monitoring_task.SmartContract.address
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
@@ -114,11 +119,6 @@ def monitor_contract(self, monitoring_task_id):
         response = json.loads(ws.recv())
         response["transaction_hash"] = transaction_hash
         
-        requests.post(
-            "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-            data=json.dumps(response),
-        )
-
         transaction_data = response["result"]
 
         # converting most things into integers
@@ -136,11 +136,6 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            requests.post(
-                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-                data=json.dumps(response),
-            )
-
             if "result" in response and response.get("id") == 1:
                 subscription_id = response["result"]
             elif (
@@ -173,10 +168,6 @@ def monitor_contract(self, monitoring_task_id):
                 "message": "Websocket connection closed",
                 "error": str(e)
             }
-            requests.post(
-                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-                data=data
-            )
             break
         # except Exception as e:
         #     data = {
