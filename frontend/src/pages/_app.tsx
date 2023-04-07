@@ -12,6 +12,7 @@ import { ReactElement, ReactNode, useEffect, useState } from "react";
 import RootLayout from "@/layouts/RootLayout";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
+import { RouterTransition } from "@/components/RouterTransition";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -72,10 +73,11 @@ export default function App(props: AppPropsWithLayout) {
         toggleColorScheme={toggleColorScheme}
       >
         <MantineProvider withGlobalStyles withNormalizeCSS theme={mantineTheme}>
+          <RouterTransition />
+          <Notifications />
+
           <ModalsProvider>
             <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
-
-            <Notifications />
           </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
