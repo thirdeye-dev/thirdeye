@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 # Transaction class to map transaction attributes
 class Transaction:
     def __init__(self, transaction_data):
+        self.transaction_data = transaction_data
+
         self.hash = transaction_data.get("hash")
         self.nonce = transaction_data.get("nonce")
         self.blockHash = transaction_data.get("blockHash")
@@ -27,6 +29,25 @@ class Transaction:
         self.r = transaction_data.get("r")
         self.s = transaction_data.get("s")
         self.timestamp = transaction_data.get("timestamp")
+
+    def compile_to_dict(self):
+        return {
+            "hash": self.hash,
+            "nonce": self.nonce,
+            "blockHash": self.blockHash,
+            "blockNumber": self.blockNumber,
+            "transactionIndex": self.transactionIndex,
+            "from": self.from_address,
+            "to": self.to,
+            "value": self.value,
+            "gas": self.gas,
+            "gasPrice": self.gasPrice,
+            "input": self.input,
+            "v": self.v,
+            "r": self.r,
+            "s": self.s,
+            "timestamp": self.timestamp,
+        }
 
 
 class NotificationType(rfs.ChoiceField):
@@ -108,19 +129,27 @@ class BlockchainAlertRunner:
             for alert_name, alert in contract_address["alerts"].items():
                 if self.check_alert_condition(alert):
                     self.trigger_notifications(alert)
+                else:
+                    # condition not met
+                    pass
 
     def check_alert_condition(self, alert):
         attribute_key = (
             alert["attribute"].replace("{{ $transaction.", "").replace(" }}", "")
         )
-        attribute_value = getattr(self.transaction, attribute_key)
+
+        transaction_dict = self.transaction.compile_to_dict()
+        if attribute_key not in transaction_dict:
+            raise Exception(f"attribute {attribute_key} not found in transaction")
+
+        # test this properly
+        attribute_value = transaction_dict.get(attribute_key, None)
         operator = alert["operator"]
         value = alert["value"]
 
         if not AlertSerializer.check_operator(attribute_value, operator, value):
             return False
         return True
-
 
     def trigger_notifications(self, alert_data):
         notifications = alert_data["notifications"]
@@ -144,15 +173,15 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
-            "message": f"Alert {self.alert.name} triggered for transaction.",
-            "transaction": self.transaction.__dict__,
+            "message": f"Alert {self.Alert.name} triggered for transaction.",
+            "transaction": self.transaction.compile_to_dict(),
         }
 
         notification = Notification.objects.create(
-            alert=self.alert,
+            alert=self.Alert,
             notification_type="send_webhook",
             notification_body=alert_body,
             notification_target=webhook_url,
-            trigger_notification_hash=self.transaction.hash,
+            trigger_transaction_hash=self.transaction.hash,
         )
         notification.save()

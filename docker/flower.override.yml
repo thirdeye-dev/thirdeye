@@ -4,13 +4,21 @@ services:
   flower:
     image: mher/flower
     container_name: flower_app_thirdeye
+    command: celery flower --persisten=True
     networks:
       default:
       internal:
     depends_on:
+      - redis
       - rabbit
     ports:
       - "5555:5555"
     environment:
-      - BROKER_URL=amqp://admin:mypass@rabbit:5672//
+      - CELERY_BROKER_URL=amqp://admin:mypass@rabbit:5672//
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - FLOWER_BROKER_API_URL=http://admin:mypass@rabbit:5672/api
+    volumes:
+      - flower_data:/data
+
+volumes:
+ flower_data:
