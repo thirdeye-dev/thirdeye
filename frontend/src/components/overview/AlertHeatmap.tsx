@@ -1,6 +1,32 @@
 import dynamic from "next/dynamic";
 
 import dayjs from "dayjs";
+import { Button, Flex, Stack, Text, Tooltip } from "@mantine/core";
+
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+
+function HeatmapControls() {
+  return (
+    <Flex justify="space-evenly" align="center">
+      <Tooltip label="Previous year" color="gray">
+        <Button variant="light">
+          <AiOutlineLeft />
+        </Button>
+      </Tooltip>
+
+      <Text color="dimmed">
+        {dayjs("2022-01-01").format("MMM")} -{" "}
+        {dayjs("2022-12-01").add(365, "day").format("MMM")} (2022)
+      </Text>
+
+      <Tooltip label="Next year" color="gray">
+        <Button variant="light">
+          <AiOutlineRight />
+        </Button>
+      </Tooltip>
+    </Flex>
+  );
+}
 
 // TODO: Find a better heatmap library, temporary solution right now
 export default function AlertHeatmap() {
@@ -44,5 +70,11 @@ export default function AlertHeatmap() {
   };
 
   // @ts-ignore
-  return <CalendarHeatmap {...chartCfg} />;
+  return (
+    <Stack justify="center" h="100%" p="md">
+      <CalendarHeatmap {...chartCfg} />
+
+      <HeatmapControls />
+    </Stack>
+  );
 }

@@ -1,4 +1,5 @@
 import Contract from "@/models/contract";
+import { deleteContract } from "@/services/contracts";
 import {
   Avatar,
   Button,
@@ -16,7 +17,13 @@ import { AiFillCopy } from "react-icons/ai";
 import { FaEthereum, FaTrash } from "react-icons/fa";
 import { TbPolygon } from "react-icons/tb";
 
-export default function ContractCard({ contract }: { contract: Contract }) {
+export default function ContractCard({
+  contract,
+  handleDelete: handleDelete,
+}: {
+  contract: Contract;
+  handleDelete: () => void;
+}) {
   const router = useRouter();
 
   const copyToClipboard = (text: string) => {
@@ -36,7 +43,6 @@ export default function ContractCard({ contract }: { contract: Contract }) {
   const onClickManage = () => {
     router.push(`/org/${router.query.id}/contracts/${contract.id}`);
   };
-  const onClickDelete = () => {};
 
   return (
     <Card
@@ -123,7 +129,7 @@ export default function ContractCard({ contract }: { contract: Contract }) {
               color="red"
               size="sm"
               p="xs"
-              onClick={onClickDelete}
+              onClick={handleDelete}
             >
               <FaTrash />
             </Button>
