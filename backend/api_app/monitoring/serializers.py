@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 # Transaction class to map transaction attributes
 class Transaction:
     def __init__(self, transaction_data):
+        self.transaction_data = transaction_data
+
         self.hash = transaction_data.get("hash")
         self.nonce = transaction_data.get("nonce")
         self.blockHash = transaction_data.get("blockHash")
@@ -150,7 +152,7 @@ class BlockchainAlertRunner:
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
             "message": f"Alert {self.Alert.name} triggered for transaction.",
-            "transaction": self.transaction.__dict__,
+            "transaction": self.transaction.transaction_data,
         }
 
         notification = Notification.objects.create(

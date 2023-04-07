@@ -1,3 +1,4 @@
+import ast
 import json
 from datetime import datetime
 
@@ -35,7 +36,7 @@ def send_webhook(self, notification_id):
     webhook_url = notification.notification_target
     webhook_body = notification.notification_body
 
-    webhook_body = json.loads(webhook_body)
+    webhook_body = ast.literal_eval(webhook_body)
 
     try:
         response = requests.post(webhook_url, data=webhook_body)
@@ -77,7 +78,9 @@ def monitor_contract(self, monitoring_task_id):
     if not monitoring_task:
         error_msg = f"Monitoring task with id {monitoring_task_id} not found"
         logger.error(error_msg)
-        raise Exception(error_msg)
+
+        # silently, exit task.
+        return
 
     contract_address = monitoring_task.SmartContract.address
     network = monitoring_task.SmartContract.network.lower()
@@ -121,14 +124,8 @@ def monitor_contract(self, monitoring_task_id):
         response = json.loads(ws.recv())
         response["transaction_hash"] = transaction_hash
 
-        try:
-            transaction_data = response["result"]
-        except ValueError:
-            requests.post(
-                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-                json={"response_that_errors": response},
-            )
-            raise ValueError("Transaction not found")
+
+        transaction_data = response["result"]
 
         # converting most things into integers
         transaction_data["timestamp"] = datetime.now().timestamp()
@@ -181,13 +178,13 @@ def monitor_contract(self, monitoring_task_id):
         except Exception as e:
             data = {
                 "timestamp": datetime.now().timestamp(),
-                "message": "Websocket connection closed",
-                "error": str(e)
+                "error": str(e),
+                "transaction": transaction_hash
+
             }
             requests.post(
                 "https://eot0jnzvvvbvr8j.m.pipedream.net/",
                 data=data
             )
-            break
 
     ws.close()
