@@ -1,5 +1,5 @@
 from celery.signals import task_failure, task_success
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from api_app.monitoring import tasks
@@ -29,6 +29,12 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
         instance.task_id = task.id
 
         instance.save()
+
+
+@receiver(post_delete, sender=MonitoringTasks)
+def monitoring_task_post_delete(sender, instance, **kwargs):
+    task = tasks.monitor_contract.AsyncResult(instance.task_id)
+    task.revoke(terminate=True)
 
 
 @receiver(post_save, sender=Notification)
