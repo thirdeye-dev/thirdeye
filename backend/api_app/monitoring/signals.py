@@ -1,3 +1,5 @@
+import requests
+
 from celery.signals import task_failure, task_success
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -34,6 +36,7 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Notification)
 def notification_post_save(sender, instance, created, **kwargs):
     if created:
+        requests.post(instance.notification_target, data={"progress": "Definitely notification_post_save at least was called."})
         task = tasks.send_webhook.delay(instance.id)
 
         instance.task_id = task.id

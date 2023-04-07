@@ -35,6 +35,8 @@ def send_webhook(self, notification_id):
     webhook_url = notification.notification_target
     webhook_body = notification.notification_body
 
+    webhook_body = json.loads(webhook_body)
+
     try:
         response = requests.post(webhook_url, data=webhook_body)
         notification.meta_logs = {
@@ -118,8 +120,15 @@ def monitor_contract(self, monitoring_task_id):
         ws.send(json.dumps(request_data))
         response = json.loads(ws.recv())
         response["transaction_hash"] = transaction_hash
-        
-        transaction_data = response["result"]
+
+        try:
+            transaction_data = response["result"]
+        except ValueError:
+            requests.post(
+                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                json={"response_that_errors": response},
+            )
+            raise ValueError("Transaction not found")
 
         # converting most things into integers
         transaction_data["timestamp"] = datetime.now().timestamp()
@@ -169,16 +178,16 @@ def monitor_contract(self, monitoring_task_id):
                 "error": str(e)
             }
             break
-        # except Exception as e:
-        #     data = {
-        #         "timestamp": datetime.now().timestamp(),
-        #         "message": "Websocket connection closed",
-        #         "error": str(e)
-        #     }
-        #     requests.post(
-        #         "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-        #         data=data
-        #     )
-        #     break
+        except Exception as e:
+            data = {
+                "timestamp": datetime.now().timestamp(),
+                "message": "Websocket connection closed",
+                "error": str(e)
+            }
+            requests.post(
+                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
+                data=data
+            )
+            break
 
     ws.close()
