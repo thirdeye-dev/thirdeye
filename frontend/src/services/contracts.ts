@@ -26,3 +26,13 @@ export async function createContract(
 
   return response.data;
 }
+
+export async function fetchContract(contractId: string, orgId: string) {
+  const response = await axios.get<Contract>(`/smart/contract/${contractId}`, {
+    params: {
+      owner_organization: orgId,
+    },
+  });
+
+  return response.data;
+}
