@@ -92,6 +92,7 @@ export default function NavbarMinimal({
   activeLink?: string;
 }) {
   const router = useRouter();
+  const organizationId = router.query.id as string;
 
   const user = useCurrentUser();
 
@@ -100,7 +101,7 @@ export default function NavbarMinimal({
     label?: string;
     name: any;
   }) => {
-    router.push(`/org/${router.query.id}/${link.name}`);
+    router.push(`/org/${organizationId}/${link.name}`);
   };
 
   const links = navLinks.map((link, index) => (
@@ -113,7 +114,7 @@ export default function NavbarMinimal({
   ));
 
   const onClickSettings = () => {
-    router.push(`/org/${router.query.id}/settings`);
+    router.push(`/org/${organizationId}/settings`);
   };
 
   const onClickLogout = () => {
