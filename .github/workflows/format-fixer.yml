@@ -21,7 +21,7 @@ jobs:
         pip install black isort flake8 autoflake
       
     - name: Remove unused imports with autoflake
-      run: autoflake --in-place --remove-all-unused-imports --remove-unused-variables --recursive .
+      run: autoflake --in-place --remove-all-unused-imports --remove-unused-variables --recursive . --exclude api_app/monitoring/__init__.py
 
     - name: Format code with isort
       run: isort .
