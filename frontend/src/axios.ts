@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { getAccessToken } from "@/cookies";
+import { getAccessToken, removeUserCookie } from "@/cookies";
 import Router from "next/router";
 
 const instance = axios.create({
@@ -27,6 +27,7 @@ instance.interceptors.response.use(
 
     // If we get a 401 or 403, redirect to the login page.
     if (response.status === 401 || response.status === 403) {
+      removeUserCookie();
       Router.push("/login");
     }
   }
