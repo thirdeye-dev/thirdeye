@@ -2,10 +2,20 @@ name: Auto-Format Python Code
 
 on:
   push:
-  pull_request:
+    branches:
+      - dev
+      - master
+  issue_comment:
+    types: [created]
   
 jobs:
   format:
+    if: >-
+      github.event_name != 'issue_comment' || 
+      (github.event_name == 'issue_comment' &&
+      github.event.comment.body == 'lint' &&
+      github.event.issue.pull_request)
+
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
