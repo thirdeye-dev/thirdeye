@@ -124,7 +124,6 @@ def monitor_contract(self, monitoring_task_id):
         response = json.loads(ws.recv())
         response["transaction_hash"] = transaction_hash
 
-
         transaction_data = response["result"]
 
         # converting most things into integers
@@ -168,21 +167,17 @@ def monitor_contract(self, monitoring_task_id):
             data = {
                 "timestamp": datetime.now().timestamp(),
                 "message": "Websocket connection closed",
-                "error": str(e)
+                "error": str(e),
             }
             break
         except Exception as e:
             data = {
                 "timestamp": datetime.now().timestamp(),
                 "error": str(e),
-                "transaction": transaction_hash
-
+                "transaction": transaction_hash,
             }
 
             # this exception is an edge case that i need to handle
-            requests.post(
-                "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-                data=data
-            )
+            requests.post("https://eot0jnzvvvbvr8j.m.pipedream.net/", data=data)
 
     ws.close()

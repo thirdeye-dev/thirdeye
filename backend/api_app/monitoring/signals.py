@@ -1,5 +1,3 @@
-import requests
-
 from celery.signals import task_failure, task_success
 from celery.utils.log import get_task_logger
 from django.db.models.signals import post_save
@@ -10,6 +8,7 @@ from api_app.monitoring.models import MonitoringTasks, Notification
 from api_app.smartcontract.models import SmartContract
 
 logger = get_task_logger(__name__)
+
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
@@ -38,7 +37,7 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Notification)
 def notification_post_save(sender, instance, created, **kwargs):
     if created:
-        #task = tasks.send_webhook.delay(instance.id)
+        # task = tasks.send_webhook.delay(instance.id)
         # use async_to_sync to make it work
         task = tasks.send_webhook.apply_async(args=[instance.id])
         instance.task_id = task.id
