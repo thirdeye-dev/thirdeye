@@ -121,7 +121,6 @@ class BlockchainAlertRunner:
             return False
         return True
 
-
     def trigger_notifications(self, alert_data):
         notifications = alert_data["notifications"]
         for notification in notifications:
