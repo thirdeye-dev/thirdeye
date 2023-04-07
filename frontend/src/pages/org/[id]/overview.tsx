@@ -10,6 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import AlertGraph from "@/components/overview/AlertGraph";
+import AlertHeatmap from "@/components/overview/AlertHeatmap";
 
 export default function Overview() {
   return (
@@ -20,7 +21,9 @@ export default function Overview() {
             <Paper h="65%">
               <AlertGraph />
             </Paper>
-            <Paper withBorder h="35%"></Paper>
+            <Paper withBorder h="35%">
+              <AlertHeatmap />
+            </Paper>
           </Stack>
         </Paper>
       </Box>
