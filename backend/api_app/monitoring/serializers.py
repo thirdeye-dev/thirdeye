@@ -31,6 +31,25 @@ class Transaction:
         self.s = transaction_data.get("s")
         self.timestamp = transaction_data.get("timestamp")
 
+    def compile_to_dict(self):
+        return {
+            "hash": self.hash,
+            "nonce": self.nonce,
+            "blockHash": self.blockHash,
+            "blockNumber": self.blockNumber,
+            "transactionIndex": self.transactionIndex,
+            "from": self.from_address,
+            "to": self.to,
+            "value": self.value,
+            "gas": self.gas,
+            "gasPrice": self.gasPrice,
+            "input": self.input,
+            "v": self.v,
+            "r": self.r,
+            "s": self.s,
+            "timestamp": self.timestamp,
+        }
+
 
 class NotificationType(rfs.ChoiceField):
     def __init__(self, **kwargs):
@@ -112,16 +131,20 @@ class BlockchainAlertRunner:
                 if self.check_alert_condition(alert):
                     self.trigger_notifications(alert)
                 else:
-                    requests.post(
-                        "https://eot0jnzvvvbvr8j.m.pipedream.net/notmet",
-                        json={"alert": alert_name, "transaction": self.transaction},
-                    )
+                    # condition not met
+                    pass
 
     def check_alert_condition(self, alert):
         attribute_key = (
             alert["attribute"].replace("{{ $transaction.", "").replace(" }}", "")
         )
-        attribute_value = getattr(self.transaction, attribute_key)
+
+        transaction_dict = self.transaction.compile_to_dict()
+        if attribute_key not in transaction_dict:
+            raise Exception(f"attribute {attribute_key} not found in transaction")
+
+        # test this properly
+        attribute_value = transaction_dict.get(attribute_key, None)
         operator = alert["operator"]
         value = alert["value"]
 
@@ -152,7 +175,7 @@ class BlockchainAlertRunner:
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
             "message": f"Alert {self.Alert.name} triggered for transaction.",
-            "transaction": self.transaction.transaction_data,
+            "transaction": self.transaction.compile_to_dict(),
         }
 
         notification = Notification.objects.create(

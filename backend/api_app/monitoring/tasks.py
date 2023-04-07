@@ -157,10 +157,6 @@ def monitor_contract(self, monitoring_task_id):
                     smart_contract=monitoring_task.SmartContract
                 )
 
-                requests.post(
-                    "https://eot0jnzvvvbvr8j.m.pipedream.net/",
-                    data=json.dumps(transaction),
-                )
                 for alert in alerts:
                     # TODO: I want to check later in the YAML
                     # if the alert is checked every_transaction
@@ -182,6 +178,8 @@ def monitor_contract(self, monitoring_task_id):
                 "transaction": transaction_hash
 
             }
+
+            # this exception is an edge case that i need to handle
             requests.post(
                 "https://eot0jnzvvvbvr8j.m.pipedream.net/",
                 data=data
