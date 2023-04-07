@@ -1,4 +1,4 @@
-import { getCookie } from "cookies-next";
+import { getCookie, deleteCookie } from "cookies-next";
 
 export function getAccessToken(): string | null {
   try {
@@ -8,4 +8,8 @@ export function getAccessToken(): string | null {
   } catch (error) {
     return null;
   }
+}
+
+export function removeUserCookie() {
+  deleteCookie("user");
 }

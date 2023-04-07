@@ -8,6 +8,11 @@ const nextConfig = {
         destination: "/auth/login",
         permanent: true,
       },
+      {
+        source: "/logout",
+        destination: "/auth/logout",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
