@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import AlertGraph from "@/components/overview/AlertGraph";
 import AlertHeatmap from "@/components/overview/AlertHeatmap";
+import LiveFeed from "@/components/overview/LiveFeed";
 
 export default function Overview() {
   return (
@@ -30,20 +31,7 @@ export default function Overview() {
 
       <Box w="40%" h="100%">
         <Paper withBorder h="100%" w="100%">
-          <Stack p="md" h="100%">
-            <Text size="2em" weight="bold" align="center" color="orange">
-              Live Alerts
-            </Text>
-            <Divider />
-
-            <ScrollArea mah="100%" w="100%">
-              {Array.from({ length: 100 }).map((_, i) => (
-                <Box key={i} p="md">
-                  <Text size="lg">Alert {i}</Text>
-                </Box>
-              ))}
-            </ScrollArea>
-          </Stack>
+          <LiveFeed />
         </Paper>
       </Box>
     </Flex>
