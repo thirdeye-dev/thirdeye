@@ -9,10 +9,14 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useRouter } from "next/router";
+
 import { AiFillAlert, AiFillEye, AiFillHome } from "react-icons/ai";
 import { FaFileContract } from "react-icons/fa";
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
+
+import useCurrentUser from "@/hooks/use-current-user";
+import UserAvatar from "./UserAvatar";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -89,6 +93,8 @@ export default function NavbarMinimal({
 }) {
   const router = useRouter();
 
+  const user = useCurrentUser();
+
   const onClickLink = (link: {
     icon?: IconType;
     label?: string;
@@ -117,10 +123,7 @@ export default function NavbarMinimal({
   return (
     <Navbar height={"92vh"} width={{ base: 80 }} p="md">
       <Center>
-        <Avatar
-          src="https://avatars.githubusercontent.com/u/25126241?v=4"
-          radius={36}
-        />
+        <UserAvatar src={user?.avatar} />
       </Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={0}>
