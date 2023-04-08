@@ -177,7 +177,7 @@ class BlockchainAlertRunner:
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
             "message": f"Alert {self.Alert.name} triggered for transaction {self.transaction.hash}",
-            "transaction": str(self.transaction.compile_to_dict()),
+            "transaction": self.transaction.compile_to_dict(),
         }
 
         notification = Notification.objects.create(
