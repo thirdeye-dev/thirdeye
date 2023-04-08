@@ -50,7 +50,7 @@ class Notification(BaseMixin):
     notification_type = models.CharField(
         max_length=16, choices=NotificationType.choices, default=NotificationType.EMAIL
     )
-    notification_body = models.TextField(blank=True, null=True)
+    notification_body = models.JSONField(blank=True, null=True)
 
     # this can be email, phone number, or webhook url
     notification_target = models.CharField(max_length=255, blank=False, null=False)

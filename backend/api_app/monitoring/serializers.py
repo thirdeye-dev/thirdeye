@@ -31,7 +31,7 @@ class Transaction:
         self.timestamp = transaction_data.get("timestamp")
 
     def compile_to_dict(self):
-        return {
+        dict_normal = {
             "hash": self.hash,
             "nonce": self.nonce,
             "blockHash": self.blockHash,
@@ -48,6 +48,9 @@ class Transaction:
             "s": self.s,
             "timestamp": self.timestamp,
         }
+
+        dict_with_str = {str(x): y for x, y in dict_normal.items()}
+        return dict_with_str
 
 
 class NotificationType(rfs.ChoiceField):
@@ -173,8 +176,8 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
-            "message": f"Alert {self.Alert.name} triggered for transaction.",
-            "transaction": self.transaction.compile_to_dict(),
+            "message": f"Alert {self.Alert.name} triggered for transaction {self.transaction.hash}",
+            "transaction": str(self.transaction.compile_to_dict()),
         }
 
         notification = Notification.objects.create(

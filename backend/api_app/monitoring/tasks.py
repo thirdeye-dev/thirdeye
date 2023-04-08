@@ -1,4 +1,3 @@
-import ast
 import json
 import requests
 from datetime import datetime
@@ -34,9 +33,7 @@ def send_webhook(self, notification_id):
         return
 
     webhook_url = notification.notification_target
-    webhook_body = notification.notification_body
-
-    webhook_body = ast.literal_eval(webhook_body)
+    webhook_body = json.loads(notification.notification_body.replace("\'", "\""))
 
     try:
         response = requests.post(webhook_url, data=webhook_body)
