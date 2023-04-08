@@ -23,12 +23,13 @@ class CanAccessSmartContract(permissions.BasePermission):
             smart_contract_id = view.kwargs.get("pk")
 
         if smart_contract_id is None:
+            self.message = "smart contract id is required"
             return False
         
         # check if smart_contract of the id exists
         smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
         if smart_contract is None:
-            # API must give better feedback?
+            self.message = "smart contract of that id does not exist"
             return False
 
         # check if smart_contract of the id exists
