@@ -1,9 +1,6 @@
 from rest_framework import status as Status
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
-from api_app.smartcontract.permissions import CanAccessSmartContract
 
 from api_app.smartcontract.permissions import CanAccessSmartContract
 from authentication.organizations.models import Membership, Organization

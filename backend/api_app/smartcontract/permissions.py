@@ -1,6 +1,7 @@
 from rest_framework import permissions
 
 from authentication.organizations.models import Membership
+
 from .models import SmartContract
 
 
@@ -10,9 +11,7 @@ class CanAccessSmartContract(permissions.BasePermission):
     if the user is a member of the organization
     """
 
-    message = (
-        "You are not a member of the organization that owns this smart contract."
-    )
+    message = "You are not a member of the organization that owns this smart contract."
 
     def has_permission(self, request, view):
         smart_contract_id = request.data.get("smart_contract")
@@ -25,7 +24,7 @@ class CanAccessSmartContract(permissions.BasePermission):
         if smart_contract_id is None:
             self.message = "smart contract id is required"
             return False
-        
+
         # check if smart_contract of the id exists
         smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
         if smart_contract is None:
@@ -42,4 +41,3 @@ class CanAccessSmartContract(permissions.BasePermission):
         organization = smart_contract.owner_organization
 
         return Membership.is_member(user=request.user, organization=organization)
-

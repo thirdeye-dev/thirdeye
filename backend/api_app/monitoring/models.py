@@ -35,6 +35,7 @@ class Alerts(BaseMixin):
     def __str__(self):
         return f"{self.smart_contract.address} - {self.name}"
 
+
 class Notification(BaseMixin):
     class NotificationType(models.TextChoices):
         EMAIL = "EMAIL"

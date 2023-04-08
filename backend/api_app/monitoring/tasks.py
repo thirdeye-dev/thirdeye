@@ -1,5 +1,4 @@
 import json
-import requests
 from datetime import datetime
 
 import requests
@@ -17,6 +16,7 @@ from .serializers import BlockchainAlertRunner
 logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
+
 
 @app.task(bind=True, max_retries=3)
 def send_webhook(self, notification_id):
