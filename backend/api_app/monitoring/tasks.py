@@ -1,5 +1,5 @@
-import ast
 import json
+import requests
 from datetime import datetime
 
 import requests
@@ -18,7 +18,6 @@ logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
 
-
 @app.task(bind=True, max_retries=3)
 def send_webhook(self, notification_id):
     notification = Notification.objects.filter(id=notification_id).first()
@@ -34,9 +33,7 @@ def send_webhook(self, notification_id):
         return
 
     webhook_url = notification.notification_target
-    webhook_body = notification.notification_body
-
-    webhook_body = ast.literal_eval(webhook_body)
+    webhook_body = json.loads(notification.notification_body.replace("\'", "\""))
 
     try:
         response = requests.post(webhook_url, data=webhook_body)

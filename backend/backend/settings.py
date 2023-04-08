@@ -101,8 +101,8 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "AUTH_HEADER_TYPES": ("JWT",),
-    "UPDATE_LAST_LOGIN": False,
-    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=5),
+    "UPDATE_LAST_LOGIN": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=1),
 }
 
 REST_FRAMEWORK = {
