@@ -31,11 +31,14 @@ class CanAccessSmartContract(permissions.BasePermission):
             # API must give better feedback?
             return False
 
+        # check if smart_contract of the id exists
+        smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
+        if smart_contract is None:
+            # API must give better feedback?
+            return False
+
         # check owner_organization of smart contract
-        organization = (
-            smart_contract
-            .owner_organization
-        )
+        organization = smart_contract.owner_organization
 
         return Membership.is_member(user=request.user, organization=organization)
 
