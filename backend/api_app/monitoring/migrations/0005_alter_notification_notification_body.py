@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('monitoring', '0004_auto_20230406_2358'),
+        ("monitoring", "0004_auto_20230406_2358"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='notification',
-            name='notification_body',
+            model_name="notification",
+            name="notification_body",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

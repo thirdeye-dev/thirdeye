@@ -1,5 +1,3 @@
-import requests
-
 from rest_framework import permissions
 
 from authentication.organizations.models import Membership
@@ -26,7 +24,7 @@ class CanAccessSmartContract(permissions.BasePermission):
 
         if smart_contract_id is None:
             return False
-        
+
         # check if smart_contract of the id exists
         smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
         if smart_contract is None:
@@ -34,10 +32,6 @@ class CanAccessSmartContract(permissions.BasePermission):
             return False
 
         # check owner_organization of smart contract
-        organization = (
-            smart_contract
-            .owner_organization
-        )
+        organization = smart_contract.owner_organization
 
         return Membership.is_member(user=request.user, organization=organization)
-
