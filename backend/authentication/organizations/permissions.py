@@ -11,7 +11,7 @@ class IsMember(permissions.BasePermission):
     """
 
     message = (
-        "You are not a member of the organization. " 
+        "You are not a member of the organization. "
         "Try checking owner_organization is right."
     )
 
