@@ -10,6 +10,11 @@ class IsMember(permissions.BasePermission):
     Custom permission to only allow members of an organization.
     """
 
+    message = (
+        "You are not a member of the organization. " 
+        "Try checking owner_organization is right."
+    )
+
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
@@ -44,6 +49,8 @@ class IsAdminOrReadOnly(permissions.BasePermission):
     Custom permission to only allow admin users to edit an organization.
     """
 
+    message = "You are not an admin of the organization to write to it."
+
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
@@ -57,6 +64,8 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     """
     Custom permission to only allow owners or admin users to edit an organization.
     """
+
+    message = "You are not an owner or admin of the organization to access."
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:

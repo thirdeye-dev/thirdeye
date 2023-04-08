@@ -1,9 +1,6 @@
-import requests
-
 from rest_framework import permissions
 
 from authentication.organizations.models import Membership
-
 from .models import SmartContract
 
 
@@ -13,10 +10,11 @@ class CanAccessSmartContract(permissions.BasePermission):
     if the user is a member of the organization
     """
 
-    def has_permission(self, request, view):
-        if not request.user.is_authenticated:
-            return False
+    message = (
+        "You are not a member of the organization that owns this smart contract."
+    )
 
+    def has_permission(self, request, view):
         smart_contract_id = request.data.get("smart_contract")
         if request.method == "GET":
             smart_contract_id = request.query_params.get("smart_contract")
