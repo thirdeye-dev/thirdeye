@@ -1,8 +1,11 @@
 import logging
 
 import yaml
+
+from simpleeval import simple_eval
 from rest_framework import serializers as rfs
 
+from api_app.monitoring.exceptions import ConditionResultError
 from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
@@ -30,8 +33,7 @@ class Transaction:
         self.s = transaction_data.get("s")
         self.timestamp = transaction_data.get("timestamp")
 
-    def compile_to_dict(self):
-        dict_normal = {
+        self.to_dict = {
             "hash": self.hash,
             "nonce": self.nonce,
             "blockHash": self.blockHash,
@@ -49,7 +51,16 @@ class Transaction:
             "timestamp": self.timestamp,
         }
 
+    def compile_to_dict(self):
+        dict_normal = self.to_dict
+
         dict_with_str = {str(x): y for x, y in dict_normal.items()}
+        return dict_with_str
+    
+    def compile_to_dict_with_prefix(self, prefix: str = "txn_"):
+        dict_normal = self.to_dict
+
+        dict_with_str = {str(prefix + x): y for x, y in dict_normal.items()}
         return dict_with_str
 
 
@@ -59,27 +70,11 @@ class NotificationType(rfs.ChoiceField):
 
 
 class AlertSerializer(rfs.Serializer):
-    attribute = rfs.CharField()
-    operator = rfs.ChoiceField(choices=["<", "<=", ">", ">=", "==", "!="])
-    value = rfs.FloatField()
+    condition = rfs.CharField()
     notifications = rfs.ListField(child=NotificationType())
 
     # optional webhook field, only used if notification_type is "send_webhook"
     webhook_url = rfs.URLField(required=False)
-
-    @staticmethod
-    def check_operator(attribute_value, operator, value):
-        attribute_value = float(attribute_value)
-
-        return {
-            "<": attribute_value < value,
-            "<=": attribute_value <= value,
-            ">": attribute_value > value,
-            ">=": attribute_value >= value,
-            "==": attribute_value == value,
-            "!=": attribute_value != value,
-        }.get(operator, False)
-
 
 class AlertDescriptiveSerializer(rfs.Serializer):
     # later on, I want to add for "every_transaction" and
@@ -137,22 +132,28 @@ class BlockchainAlertRunner:
                     pass
 
     def check_alert_condition(self, alert):
-        attribute_key = (
-            alert["attribute"].replace("{{ $transaction.", "").replace(" }}", "")
-        )
+        variables = self.transaction.compile_to_dict_with_prefix()
+        condition = alert.get("condition")
+        if condition is None:
+            # make this a more custom exception
+            raise ConditionResultError("Condition not found in alert.")
 
-        transaction_dict = self.transaction.compile_to_dict()
-        if attribute_key not in transaction_dict:
-            raise Exception(f"attribute {attribute_key} not found in transaction")
+        try:
+            result: bool = simple_eval(condition, names=variables)
+        except Exception as e:
+            raise ConditionResultError(e)
 
-        # test this properly
-        attribute_value = transaction_dict.get(attribute_key, None)
-        operator = alert["operator"]
-        value = alert["value"]
+        if isinstance(result, bool):
+            return result
 
-        if not AlertSerializer.check_operator(attribute_value, operator, value):
-            return False
-        return True
+        raise ConditionResultError("Condition didn't return a boolean.")
+    
+    def run_dummy_check(self):
+        # implement this later
+        # should be used to check if the condition given
+        # by user runs.
+        pass
+
 
     def trigger_notifications(self, alert_data):
         notifications = alert_data["notifications"]
