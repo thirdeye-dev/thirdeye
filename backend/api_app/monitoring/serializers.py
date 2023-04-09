@@ -1,9 +1,8 @@
 import logging
 
 import yaml
-
-from simpleeval import simple_eval
 from rest_framework import serializers as rfs
+from simpleeval import simple_eval
 
 from api_app.monitoring.exceptions import ConditionResultError
 from api_app.monitoring.models import Alerts, Notification
@@ -56,7 +55,7 @@ class Transaction:
 
         dict_with_str = {str(x): y for x, y in dict_normal.items()}
         return dict_with_str
-    
+
     def compile_to_dict_with_prefix(self, prefix: str = "txn_"):
         dict_normal = self.to_dict
 
@@ -75,6 +74,7 @@ class AlertSerializer(rfs.Serializer):
 
     # optional webhook field, only used if notification_type is "send_webhook"
     webhook_url = rfs.URLField(required=False)
+
 
 class AlertDescriptiveSerializer(rfs.Serializer):
     # later on, I want to add for "every_transaction" and
@@ -147,13 +147,12 @@ class BlockchainAlertRunner:
             return result
 
         raise ConditionResultError("Condition didn't return a boolean.")
-    
+
     def run_dummy_check(self):
         # implement this later
         # should be used to check if the condition given
         # by user runs.
         pass
-
 
     def trigger_notifications(self, alert_data):
         notifications = alert_data["notifications"]
