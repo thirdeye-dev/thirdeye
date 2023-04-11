@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { fetchOrganizations } from "@/services/organizations";
-import { Organization } from "@/models/organization";
+import Organization from "@/models/organization";
 
 function OrganizationSelector() {
   const router = useRouter();

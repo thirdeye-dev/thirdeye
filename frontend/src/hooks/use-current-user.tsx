@@ -1,4 +1,4 @@
-import { User } from "@/models/user";
+import User from "@/models/user";
 import { fetchCurrentUser } from "@/services/user";
 import { useEffect, useState } from "react";
 

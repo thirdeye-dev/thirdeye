@@ -1,4 +1,4 @@
-import { Organization } from "@/models/organization";
+import Organization from "@/models/organization";
 import axios from "@/axios";
 
 export async function createOrganization(organization: { name: string }) {
