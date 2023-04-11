@@ -101,16 +101,28 @@ export default function Contracts() {
           </Tooltip>
         </Flex>
 
-        <Paper radius="md" p="xl" withBorder mih="80vh">
-          <SimpleGrid cols={2}>
-            {contracts.map((contract, idx) => (
-              <ContractCard
-                key={idx}
-                contract={contract}
-                handleDelete={() => handleContractDelete(contract)}
-              />
-            ))}
-          </SimpleGrid>
+        <Paper radius="md" p="xl" mih="80vh" withBorder>
+          {contracts.length === 0 ? (
+            // FIXME: improve the feedback
+            <Flex direction="column" justify="center" align="center" h="70vh">
+              <Text color="gray.7" size="2.5em" weight="bold" align="center">
+                No contracts found
+              </Text>
+              <Text size="1.5em" weight="lighter" align="center">
+                Add or import contracts to get started.
+              </Text>
+            </Flex>
+          ) : (
+            <SimpleGrid cols={2}>
+              {contracts.map((contract, idx) => (
+                <ContractCard
+                  key={idx}
+                  contract={contract}
+                  handleDelete={() => handleContractDelete(contract)}
+                />
+              ))}
+            </SimpleGrid>
+          )}
         </Paper>
       </Container>
     </>
