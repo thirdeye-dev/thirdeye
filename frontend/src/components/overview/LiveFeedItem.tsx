@@ -78,9 +78,16 @@ export default function LiveFeedItem({ alert }: any) {
   const [contract, setContract] = useState<Contract | null>(null);
 
   const assignContract = async () => {
-    const contract = await fetchContract(alert.contract_id, organizationId);
+    // FIXME: uncomment this when the API is ready, and remove the dummy data
+    // const contract = await fetchContract(alert.contract_id, organizationId);
 
-    setContract(contract);
+    setContract({
+      id: 1,
+      name: "My Contract",
+      address: "0x1234567890",
+      chain: "eth",
+      network: "mainnet",
+    });
   };
 
   useEffect(() => {
