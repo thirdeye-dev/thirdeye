@@ -36,3 +36,13 @@ export async function fetchContract(contractId: string, orgId: string) {
 
   return response.data;
 }
+
+export async function deleteContract(contractId: number, orgId: string) {
+  const response = await axios.delete(`/smart/contract/${contractId}`, {
+    params: {
+      owner_organization: orgId,
+    },
+  });
+
+  return response.data;
+}

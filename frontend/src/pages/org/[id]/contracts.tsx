@@ -15,7 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
 import Contract from "@/models/contract";
-import { fetchContracts } from "@/services/contracts";
+import { deleteContract, fetchContracts } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
 import ContractCard from "@/components/contracts/ContractCard";
 import { useRouter } from "next/router";
@@ -43,6 +43,18 @@ export default function Contracts() {
 
   const onClickAdd = () => {
     openAddModal();
+  };
+
+  const handleContractDelete = async (contract: Contract) => {
+    await deleteContract(contract.id, organizationId);
+
+    notifications.show({
+      title: "Success",
+      message: "Contract deleted successfully",
+      color: "green",
+      icon: <AiFillCheckCircle />,
+    });
+    assignContracts(organizationId);
   };
 
   const afterFormSuccess = () => {
@@ -92,7 +104,11 @@ export default function Contracts() {
         <Paper radius="md" p="xl" withBorder mih="80vh">
           <SimpleGrid cols={2}>
             {contracts.map((contract, idx) => (
-              <ContractCard key={idx} contract={contract} />
+              <ContractCard
+                key={idx}
+                contract={contract}
+                handleDelete={() => handleContractDelete(contract)}
+              />
             ))}
           </SimpleGrid>
         </Paper>
