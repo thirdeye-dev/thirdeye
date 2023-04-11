@@ -20,7 +20,7 @@ class IsMember(permissions.BasePermission):
             return False
 
         owner_organization = None
-        if request.method == "GET":
+        if request.method == "GET" or request.method == "DELETE":
             owner_organization = request.query_params.get("owner_organization")
 
         if request.method == "POST":
