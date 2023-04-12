@@ -69,11 +69,10 @@ export default function AlertHeatmap() {
     },
   };
 
-  // @ts-ignore
   return (
     <Stack justify="center" h="100%" p="md">
+      {/* @ts-ignore */}
       <CalendarHeatmap {...chartCfg} />
-
       <HeatmapControls />
     </Stack>
   );

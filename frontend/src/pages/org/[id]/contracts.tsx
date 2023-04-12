@@ -15,7 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
 import Contract from "@/models/contract";
-import { fetchContracts } from "@/services/contracts";
+import { deleteContract, fetchContracts } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
 import ContractCard from "@/components/contracts/ContractCard";
 import { useRouter } from "next/router";
@@ -43,6 +43,18 @@ export default function Contracts() {
 
   const onClickAdd = () => {
     openAddModal();
+  };
+
+  const handleContractDelete = async (contract: Contract) => {
+    await deleteContract(contract.id, organizationId);
+
+    notifications.show({
+      title: "Success",
+      message: "Contract deleted successfully",
+      color: "green",
+      icon: <AiFillCheckCircle />,
+    });
+    assignContracts(organizationId);
   };
 
   const afterFormSuccess = () => {
@@ -89,12 +101,28 @@ export default function Contracts() {
           </Tooltip>
         </Flex>
 
-        <Paper radius="md" p="xl" withBorder mih="80vh">
-          <SimpleGrid cols={2}>
-            {contracts.map((contract, idx) => (
-              <ContractCard key={idx} contract={contract} />
-            ))}
-          </SimpleGrid>
+        <Paper radius="md" p="xl" mih="80vh" withBorder>
+          {contracts.length === 0 ? (
+            // FIXME: improve the feedback
+            <Flex direction="column" justify="center" align="center" h="70vh">
+              <Text color="gray.7" size="2.5em" weight="bold" align="center">
+                No contracts found
+              </Text>
+              <Text size="1.5em" weight="lighter" align="center">
+                Add or import contracts to get started.
+              </Text>
+            </Flex>
+          ) : (
+            <SimpleGrid cols={2}>
+              {contracts.map((contract, idx) => (
+                <ContractCard
+                  key={idx}
+                  contract={contract}
+                  handleDelete={() => handleContractDelete(contract)}
+                />
+              ))}
+            </SimpleGrid>
+          )}
         </Paper>
       </Container>
     </>

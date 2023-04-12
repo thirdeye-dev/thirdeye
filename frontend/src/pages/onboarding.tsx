@@ -1,4 +1,4 @@
-import { Organization } from "@/models/organization";
+import Organization from "@/models/organization";
 import { createOrganization } from "@/services/organizations";
 import {
   Button,
