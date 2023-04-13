@@ -3,6 +3,7 @@ import logging
 import yaml
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
+from collections import OrderedDict
 
 from api_app.monitoring.exceptions import ConditionResultError
 from api_app.monitoring.models import Alerts, Notification
@@ -101,6 +102,22 @@ def validate_configuration(yaml_data):
 
 
 class AlertsAPISerializer(rfs.ModelSerializer):
+    class YAMLField(rfs.Field):
+        @classmethod
+        def represent_ordereddict(cls, dumper, data):
+            return dumper.represent_dict(data.items())
+
+        def to_representation(self, value):
+            yaml.add_representer(OrderedDict, self.represent_ordereddict)
+            return yaml.dump(value)
+    
+    def __init__(self, *args, include_alert_yaml=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if include_alert_yaml:
+            self.fields['alert_yaml'] = self.YAMLField()
+        else:
+            self.fields.pop('alert_yaml', None)
+
     class Meta:
         model = Alerts
         fields = "__all__"
