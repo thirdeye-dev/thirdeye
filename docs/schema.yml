@@ -113,9 +113,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
-  /monitoring/alerts:
+  /monitoring/alerts/{id}:
     get:
-      operationId: monitoring_alerts_list
+      operationId: monitoring_alerts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+  /monitoring/contract/{id}/alerts:
+    get:
+      operationId: monitoring_contract_alerts_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
       tags:
       - monitoring
       security:
@@ -131,43 +159,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/AlertsAPI'
           description: ''
-    post:
-      operationId: monitoring_alerts_create
-      tags:
-      - monitoring
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-        required: true
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertsAPI'
-          description: ''
-  /monitoring/alerts/{id}:
+  /monitoring/organization/alerts:
     get:
-      operationId: monitoring_alerts_retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this alerts.
-        required: true
+      operationId: monitoring_organization_alerts_list
       tags:
       - monitoring
       security:
@@ -179,93 +173,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AlertsAPI'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlertsAPI'
           description: ''
-    put:
-      operationId: monitoring_alerts_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this alerts.
-        required: true
-      tags:
-      - monitoring
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-        required: true
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertsAPI'
-          description: ''
-    patch:
-      operationId: monitoring_alerts_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this alerts.
-        required: true
-      tags:
-      - monitoring
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAlertsAPI'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAlertsAPI'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAlertsAPI'
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertsAPI'
-          description: ''
-    delete:
-      operationId: monitoring_alerts_destroy
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this alerts.
-        required: true
-      tags:
-      - monitoring
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '204':
-          description: No response body
   /organizations/{organization_id}/invite:
     post:
       operationId: organizations_invite_create
@@ -527,7 +438,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this smart contract.
         required: true
       tags:
       - smart
@@ -752,30 +664,6 @@ components:
       - memberships
       - name
       - updated_at
-    PatchedAlertsAPI:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-        alert_yaml:
-          type: string
-        name:
-          type: string
-          maxLength: 255
-        description:
-          type: string
-          nullable: true
-        smart_contract:
-          type: integer
     PatchedOrganization:
       type: object
       properties:

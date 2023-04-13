@@ -1,11 +1,13 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
-from .views import AlertViewSet
-
-router = DefaultRouter(trailing_slash=False)
-router.register(r"alerts", AlertViewSet, basename="alerts")
+from .views import (
+    SmartContractAlertListViewSet, 
+    OrganizationAlertListViewSet,
+    AlertRetrieveAPIView
+)
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("contract/<int:pk>/alerts", SmartContractAlertListViewSet.as_view()),
+    path("organization/alerts", OrganizationAlertListViewSet.as_view()),
+    path("alerts/<int:pk>", AlertRetrieveAPIView.as_view()),
 ]

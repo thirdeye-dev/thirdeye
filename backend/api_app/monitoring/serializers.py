@@ -131,11 +131,10 @@ class BlockchainAlertRunner:
                     # condition not met
                     pass
 
-    def check_alert_condition(self, alert):
+    def check_alert_condition(self, alert) -> bool:
         variables = self.transaction.compile_to_dict_with_prefix()
         condition = alert.get("condition")
         if condition is None:
-            # make this a more custom exception
             raise ConditionResultError("Condition not found in alert.")
 
         try:
@@ -176,7 +175,8 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
         alert_body = {
-            "message": f"Alert {self.Alert.name} triggered for transaction {self.transaction.hash}",
+            # "message": f"Alert {self.Alert.name} triggered for transaction {self.transaction.hash}",
+            "message": f"Alert 'Important' triggered for transaction {self.transaction.hash}",
             "transaction": self.transaction.compile_to_dict(),
         }
 
