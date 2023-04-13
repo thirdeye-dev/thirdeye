@@ -9,6 +9,8 @@ class CanAccessSmartContract(permissions.BasePermission):
     """
     Custom permission to check by smart contract id
     if the user is a member of the organization
+
+    Made for ModelViewSets.
     """
 
     message = "You are not a member of the organization that owns this smart contract."
