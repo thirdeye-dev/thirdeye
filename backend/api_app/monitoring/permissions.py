@@ -28,7 +28,7 @@ class AlertCanBeAccessedPermissions(permissions.BasePermission):
 
         return Membership.is_member(
             user=request.user,
-            organization=alert.owner_organization,
+            organization=alert.smart_contract.owner_organization,
         )
 
 class SmartContractAlertPermissions(permissions.BasePermission):
