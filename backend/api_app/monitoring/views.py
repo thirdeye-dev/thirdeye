@@ -1,12 +1,8 @@
 import logging
 
-from rest_framework import viewsets
-
 from api_app.smartcontract.permissions import CanAccessSmartContract
 from authentication.organizations.permissions import IsMember
 
-from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import Alerts
@@ -32,7 +28,6 @@ class OrganizationAlertListViewSet(ListAPIView):
         organization = self.request.query_params.get("owner_organization")
         queryset = Alerts.objects.filter(organization=organization)
         return queryset
-
 
 class AlertRetrieveAPIView(RetrieveAPIView):
     serializer_class = AlertsAPISerializer
