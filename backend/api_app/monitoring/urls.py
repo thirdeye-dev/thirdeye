@@ -1,9 +1,9 @@
 from django.urls import path
 
 from .views import (
-    SmartContractAlertListViewSet, 
+    AlertRetrieveAPIView,
     OrganizationAlertListViewSet,
-    AlertRetrieveAPIView
+    SmartContractAlertListViewSet,
 )
 
 urlpatterns = [

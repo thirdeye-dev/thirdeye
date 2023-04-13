@@ -135,9 +135,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/AlertsAPI'
           description: ''
-  /monitoring/contract/alerts:
+  /monitoring/contract/{id}/alerts:
     get:
       operationId: monitoring_contract_alerts_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
       tags:
       - monitoring
       security:
@@ -432,7 +438,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this smart contract.
         required: true
       tags:
       - smart
