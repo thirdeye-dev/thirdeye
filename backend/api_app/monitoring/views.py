@@ -7,7 +7,7 @@ from rest_framework import status
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
-from .permissions import SmartContractAlertPermissions
+from .permissions import SmartContractAlertPermissions, AlertCanBeAccessedPermissions
 from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
