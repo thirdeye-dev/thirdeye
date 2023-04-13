@@ -7,7 +7,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("contract/alerts", SmartContractAlertListViewSet.as_view()),
+    path("contract/<int:pk>/alerts", SmartContractAlertListViewSet.as_view()),
     path("organization/alerts", OrganizationAlertListViewSet.as_view()),
     path("alerts/<int:pk>", AlertRetrieveAPIView.as_view()),
 ]

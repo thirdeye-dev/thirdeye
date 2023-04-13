@@ -6,6 +6,7 @@ from authentication.organizations.permissions import IsMember
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import Alerts
+from .permissions import SmartContractAlertPermissions
 from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
@@ -13,11 +14,14 @@ logger = logging.getLogger(__name__)
 
 class SmartContractAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer
-    permission_classes = [CanAccessSmartContract]
+    permission_classes = [SmartContractAlertPermissions]
 
     def get_queryset(self):
-        smart_contract = self.request.query_params.get("smart_contract")
-        queryset = Alerts.objects.filter(smart_contract=smart_contract)
+        smart_contract_id = self.kwargs.get("pk")
+        if smart_contract_id is None:
+            return super().get_queryset()
+
+        queryset = Alerts.objects.filter(smart_contract=smart_contract_id)
         return queryset
 
 class OrganizationAlertListViewSet(ListAPIView):

@@ -2,10 +2,9 @@ from rest_framework import status as Status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from api_app.smartcontract.permissions import (
-    CanAccessSmartContract, 
-    IsMember
-)
+from api_app.smartcontract.permissions import CanAccessSmartContract
+from authentication.organizations.permissions import IsMember
+
 from authentication.organizations.models import (
     Membership, 
     Organization
@@ -25,6 +24,9 @@ class SmartContractViewSet(viewsets.ModelViewSet):
         return [IsMember()]
 
     def get_queryset(self):
+        if self.action =="retrieve":
+            return SmartContract.objects.all()
+
         owner_owner_organization = self.request.query_params.get("owner_organization")
 
         owner_organization = Organization.objects.get(id=owner_owner_organization)
