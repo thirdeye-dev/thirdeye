@@ -3,12 +3,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api_app.smartcontract.permissions import CanAccessSmartContract
+from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
-
-from authentication.organizations.models import (
-    Membership, 
-    Organization
-)
 
 from .models import SmartContract
 from .serializers import SmartContractSerializer

@@ -1,13 +1,13 @@
 import logging
 
+from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
-from rest_framework import status
 
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
-from .permissions import SmartContractAlertPermissions, AlertCanBeAccessedPermissions
+from .permissions import AlertCanBeAccessedPermissions, SmartContractAlertPermissions
 from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ class AlertRetrieveAPIView(RetrieveAPIView):
         queryset = Alerts.objects.all()
         return queryset
 
+
 class OrganizationAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer
     permission_classes = [IsMember]
@@ -52,6 +53,7 @@ class OrganizationAlertListViewSet(ListAPIView):
         organization = self.request.query_params.get("owner_organization")
         queryset = Alerts.objects.filter(organization=organization)
         return queryset
+
 
 class AlertRetrieveAPIView(RetrieveAPIView):
     serializer_class = AlertsAPISerializer
