@@ -27,10 +27,11 @@ export default function Contracts() {
   const [isAddModalOpened, { open: openAddModal, close: closeAddModal }] =
     useDisclosure(false);
 
-  const organizationId = router.query.id as string;
+  const organizationId = router.query.orgId as string;
 
   const assignContracts = async (organizationId: string) => {
     const contracts = await fetchContracts(organizationId);
+    console.log(contracts, "contracts");
 
     setContracts(contracts);
   };

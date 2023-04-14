@@ -25,6 +25,7 @@ export default function ContractCard({
   handleDelete: () => void;
 }) {
   const router = useRouter();
+  const organizationId = router.query.orgId as string;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -38,10 +39,10 @@ export default function ContractCard({
   };
 
   const onClickAddAlert = () => {
-    router.push(`/org/${router.query.id}/alerts#add`);
+    router.push(`/org/${organizationId}/alerts#add`);
   };
   const onClickManage = () => {
-    router.push(`/org/${router.query.id}/contracts/${contract.id}`);
+    router.push(`/org/${organizationId}/contracts/${contract.id}`);
   };
 
   return (

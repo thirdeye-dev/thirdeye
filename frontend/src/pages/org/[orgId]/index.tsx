@@ -5,11 +5,11 @@ import { DEFAULT_ACTIVE_DASHBOARD_TAB } from "@/constants";
 
 export default function Organization() {
   const router = useRouter();
-  const { id } = router.query;
+  const organizationId = router.query.orgId;
 
   useEffect(() => {
-    router.push(`/org/${id}/${DEFAULT_ACTIVE_DASHBOARD_TAB}`);
-  }, [id, router]);
+    router.push(`/org/${organizationId}/${DEFAULT_ACTIVE_DASHBOARD_TAB}`);
+  }, [organizationId, router]);
 
   return null;
 }

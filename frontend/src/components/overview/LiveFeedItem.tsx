@@ -73,7 +73,7 @@ function AlertInfoHoverCard({
 export default function LiveFeedItem({ alert }: any) {
   const router = useRouter();
 
-  const organizationId = router.query.id as string;
+  const organizationId = router.query.orgId as string;
 
   const [contract, setContract] = useState<Contract | null>(null);
 
