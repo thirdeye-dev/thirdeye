@@ -83,7 +83,7 @@ const LogoutIcon = () => {
 const navLinks = [
   { icon: AiFillEye, label: "Overview", name: "overview" },
   { icon: FaFileContract, label: "Smart Contracts", name: "contracts" },
-  { icon: AiFillAlert, label: "Alerts", name: "alerts" },
+  // { icon: AiFillAlert, label: "Alerts", name: "alerts" }, # FIXME: Add alerts back in
 ];
 
 export default function NavbarMinimal({

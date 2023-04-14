@@ -39,7 +39,7 @@ export default function ContractCard({
   };
 
   const onClickAddAlert = () => {
-    router.push(`/org/${organizationId}/alerts#add`);
+    router.push(`/org/${organizationId}/contracts/${contract.id}#add-alert`);
   };
   const onClickManage = () => {
     router.push(`/org/${organizationId}/contracts/${contract.id}`);
