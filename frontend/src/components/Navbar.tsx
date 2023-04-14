@@ -92,7 +92,7 @@ export default function NavbarMinimal({
   activeLink?: string;
 }) {
   const router = useRouter();
-  const organizationId = router.query.id as string;
+  const organizationId = router.query.orgId as string;
 
   const user = useCurrentUser();
 

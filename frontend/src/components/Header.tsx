@@ -17,7 +17,7 @@ import Organization from "@/models/organization";
 function OrganizationSelector() {
   const router = useRouter();
 
-  const currentOrgId = router.query.id;
+  const currentOrgId = router.query.orgId;
   const selectRef = useRef<HTMLInputElement>(null);
 
   const orgs = useRef<Array<Organization>>([]);
