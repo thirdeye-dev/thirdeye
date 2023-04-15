@@ -6,6 +6,7 @@ from .views import (
     NotificationListViewSet,
     OrganizationAlertListViewSet,
     SmartContractAlertListViewSet,
+    get_pre_written_alerts
 )
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
     path("alerts/<int:pk>", AlertRetrieveAPIView.as_view(), name="alert-retrieve"),
     path("alerts", AlertCreateAPIView.as_view(), name="alert-create"),
     path("notifications", NotificationListViewSet.as_view(), name="notification-list"),
+    path("pre-written-alerts", get_pre_written_alerts, name="pre-written-alerts"),
 ]

@@ -1,10 +1,22 @@
 {
     "GAS_PRICE_THRESHOLD": {
-        "entrypoint": "add_to_gas_price_entrypoint",
+        "name": "GAS_PRICE_THRESHOLD",
+        "description": "Gas price threshold for sending transactions",
+        "alert_yaml": "GAS_PRICE_THRESHOLD.yaml",
         "params": {
-            "threshold": "float",
-            "smart_contract_address": "str"
-        },
-        "description": "Gas price threshold crossing by constant monitoring"
+            "gas_price_threshold": {
+                "name": "gas_price_threshold",
+                "description": "Gas price threshold for sending transactions",
+                "type": "int",
+                "default": 1000000000,
+                "optional": false
+            },
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str",
+                "optional": true
+            }
+        }
     }
 }
