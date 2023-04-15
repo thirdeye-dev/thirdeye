@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
-from .permissions import AlertCanBeAccessedPermissions, SmartContractAlertPermissions
+from .permissions import AlertCanBeAccessedPermissions, SmartContractAlertPermissions, AlertCanBeCreatedForContractPermissions
 from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
         if self.request.method == "GET":
             permission_classes = [AlertCanBeAccessedPermissions]
         else:
-            permission_classes = [IsMember]
+            permission_classes = [AlertCanBeCreatedForContractPermissions]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
