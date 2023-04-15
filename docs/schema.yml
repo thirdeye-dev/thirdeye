@@ -114,21 +114,6 @@ paths:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
   /monitoring/alerts:
-    get:
-      operationId: monitoring_alerts_retrieve
-      tags:
-      - monitoring
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertsAPI'
-          description: ''
     post:
       operationId: monitoring_alerts_create
       tags:
@@ -158,7 +143,7 @@ paths:
           description: ''
   /monitoring/alerts/{id}:
     get:
-      operationId: monitoring_alerts_retrieve_2
+      operationId: monitoring_alerts_retrieve
       parameters:
       - in: path
         name: id
@@ -173,39 +158,6 @@ paths:
       - jwtAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AlertsAPI'
-          description: ''
-    post:
-      operationId: monitoring_alerts_create_2
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - monitoring
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AlertsAPI'
-        required: true
-      security:
-      - cookieAuth: []
-      - tokenAuth: []
-      - jwtAuth: []
-      responses:
-        '201':
           content:
             application/json:
               schema:
