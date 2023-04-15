@@ -1,0 +1,8 @@
+blockchain_alerts:
+  - alert_type: 'every_transaction'
+    alerts:
+      nameA:
+        condition: "txn_gasPrice  >= ${GAS_PRICE_THRESHOLD}"
+        webhook_url: '${WEBHOOK_URL}'
+        notifications:
+          - send_webhook
