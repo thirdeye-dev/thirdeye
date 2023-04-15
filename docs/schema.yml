@@ -163,6 +163,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/AlertsAPI'
           description: ''
+    post:
+      operationId: monitoring_alerts_create_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - monitoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AlertsAPI'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsAPI'
+          description: ''
   /monitoring/contract/{id}/alerts:
     get:
       operationId: monitoring_contract_alerts_list
@@ -186,6 +219,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AlertsAPI'
+          description: ''
+  /monitoring/notifications:
+    get:
+      operationId: monitoring_notifications_list
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationAPI'
           description: ''
   /monitoring/organization/alerts:
     get:
@@ -656,6 +707,61 @@ components:
       - organization
       - updated_at
       - user
+    NotificationAPI:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        notification_body:
+          type: object
+          additionalProperties: {}
+          nullable: true
+        notification_target:
+          type: string
+          maxLength: 255
+        trigger_transaction_hash:
+          type: string
+          nullable: true
+          maxLength: 255
+        task_id:
+          type: string
+          nullable: true
+          maxLength: 255
+        meta_logs:
+          type: object
+          additionalProperties: {}
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        alert:
+          type: integer
+      required:
+      - alert
+      - created_at
+      - id
+      - notification_target
+      - updated_at
+    NotificationTypeEnum:
+      enum:
+      - EMAIL
+      - SMS
+      - WEBHOOK
+      type: string
+      description: |-
+        * `EMAIL` - Email
+        * `SMS` - Sms
+        * `WEBHOOK` - Webhook
     Organization:
       type: object
       properties:
@@ -782,6 +888,16 @@ components:
       - network
       - owner_organization
       - updated_at
+    StatusEnum:
+      enum:
+      - PENDING
+      - SENT
+      - FAILED
+      type: string
+      description: |-
+        * `PENDING` - Pending
+        * `SENT` - Sent
+        * `FAILED` - Failed
     TokenRefresh:
       type: object
       properties:
