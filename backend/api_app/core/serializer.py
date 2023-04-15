@@ -1,11 +1,11 @@
-import os
-import sys
+import hashlib
 import json
 import logging
-import hashlib
+import os
+import sys
 
-from django.conf import settings
 from cache_memoize import cache_memoize
+from django.conf import settings
 from rest_framework import serializers as rfs
 
 logger = logging.getLogger(__name__)
@@ -39,12 +39,11 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             buffer = fp.read().encode("utf-8")
             md5hash = hashlib.md5(buffer).hexdigest()
         return md5hash
-    
     @classmethod
     def _verify_params(cls, params):
         for param in params:
             param_dict = params.get(param)
-            if param_dict.get('type') not in ["int", "str", "float"]:
+            if param_dict.get("type") not in ["int", "str", "float"]:
                 raise rfs.ValidationError(
                     f"Invalid type {param_dict.get('type')} for param {param_dict.get('name')}"
                 )

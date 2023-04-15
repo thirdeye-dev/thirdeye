@@ -1,10 +1,13 @@
 import logging
 
 from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 
+from api_app.core.serializer import PreWrittenAlertsSerializer
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
@@ -23,6 +26,13 @@ def get_pre_written_alerts(request):
     serializer_class = PreWrittenAlertsSerializer()
     data = serializer_class.read_and_verify_config()
     return Response(data, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_pre_written_alerts(request):
+    serializer_class = PreWrittenAlertsSerializer()
+    data = serializer_class.read_and_verify_config()
+    return Response(data, status=status.HTTP_200_OK)
+
 
 class SmartContractAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer

@@ -6,7 +6,7 @@ from .views import (
     NotificationListViewSet,
     OrganizationAlertListViewSet,
     SmartContractAlertListViewSet,
-    get_pre_written_alerts
+    get_pre_written_alerts,
 )
 
 urlpatterns = [
