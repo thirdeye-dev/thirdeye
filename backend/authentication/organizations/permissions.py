@@ -27,6 +27,7 @@ class IsMember(permissions.BasePermission):
             owner_organization = request.data.get("owner_organization")
 
         if owner_organization is None:
+            self.message = "owner_organization is not provided."
             return False
 
         # check if owner_organization is a well formed uuid

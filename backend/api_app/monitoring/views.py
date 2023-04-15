@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.response import Response
 
 from authentication.organizations.permissions import IsMember
@@ -35,16 +35,6 @@ class OrganizationAlertListViewSet(ListAPIView):
         queryset = Alerts.objects.filter(organization=organization)
         return queryset
 
-
-class AlertRetrieveAPIView(RetrieveAPIView):
-    serializer_class = AlertsAPISerializer
-    permission_classes = [IsMember]
-
-    def get_queryset(self):
-        queryset = Alerts.objects.all()
-        return queryset
-
-
 class OrganizationAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer
     permission_classes = [IsMember]
@@ -55,9 +45,15 @@ class OrganizationAlertListViewSet(ListAPIView):
         return queryset
 
 
-class AlertRetrieveAPIView(RetrieveAPIView):
+class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
     serializer_class = AlertsAPISerializer
-    permission_classes = [AlertCanBeAccessedPermissions]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            permission_classes = [AlertCanBeAccessedPermissions]
+        else:
+            permission_classes = [IsMember]
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         queryset = Alerts.objects.all()
@@ -67,3 +63,9 @@ class AlertRetrieveAPIView(RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, include_alert_yaml=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, include_alert_yaml=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

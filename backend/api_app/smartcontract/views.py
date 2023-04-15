@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from api_app.smartcontract.permissions import CanAccessSmartContract
 from authentication.organizations.models import Membership, Organization
-from authentication.organizations.permissions import IsMember
 
 from .models import SmartContract
 from .serializers import SmartContractSerializer
@@ -13,11 +12,7 @@ from .serializers import SmartContractSerializer
 # add permissions later
 class SmartContractViewSet(viewsets.ModelViewSet):
     serializer_class = SmartContractSerializer
-
-    def get_permissions(self):
-        if self.action == "retrieve":
-            return [CanAccessSmartContract()]
-        return [IsMember()]
+    permission_classes = [CanAccessSmartContract]
 
     def get_queryset(self):
         if self.action == "retrieve":
