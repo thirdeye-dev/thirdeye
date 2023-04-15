@@ -29,7 +29,8 @@ class AlertCanBeAccessedPermissions(permissions.BasePermission):
             user=request.user,
             organization=alert.smart_contract.owner_organization,
         )
-    
+
+
 class AlertCanBeCreatedForContractPermissions(permissions.BasePermission):
     """
     Custom permission to only allow members of an organization to create alerts.
