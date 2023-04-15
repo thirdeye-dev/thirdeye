@@ -104,7 +104,7 @@ def validate_configuration(yaml_data):
 class NotificationAPISerializer(rfs.ModelSerializer):
     class Meta:
         model = Notification
-        fields = "__all__"
+        exclude = ["task_id"]
 
 class AlertsAPISerializer(rfs.ModelSerializer):
     class CustomYAMLField(rfs.Field):
