@@ -47,13 +47,7 @@ class OrganizationAlertListViewSet(ListAPIView):
 
 class AlertRetrieveAPIView(RetrieveAPIView):
     serializer_class = AlertsAPISerializer
-
-    def get_permissions(self):
-        permission_classes = []
-        if self.request.method == "GET":
-            permission_classes = [AlertCanBeAccessedPermissions]
-
-        return [permission() for permission in permission_classes]
+    permission_classes = [AlertCanBeAccessedPermissions]
 
     def get_queryset(self):
         queryset = Alerts.objects.all()
