@@ -2,6 +2,7 @@ import logging
 from collections import OrderedDict
 
 import yaml
+from yamlfield.fields import YAMLField
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
 
@@ -106,6 +107,9 @@ class AlertsAPISerializer(rfs.ModelSerializer):
         @classmethod
         def represent_ordereddict(cls, dumper, data):
             return dumper.represent_dict(data.items())
+        
+        def to_internal_value(self, data):
+            return data
 
         def to_internal_value(self, data):
             return data
@@ -114,7 +118,12 @@ class AlertsAPISerializer(rfs.ModelSerializer):
             yaml.add_representer(OrderedDict, self.represent_ordereddict)
             return yaml.dump(value)
 
-    def __init__(self, *args, include_alert_yaml=False, **kwargs):
+    def __init__(
+            self, 
+            *args, 
+            include_alert_yaml=False,
+            **kwargs
+        ):
         super().__init__(*args, **kwargs)
         if include_alert_yaml:
             self.fields["alert_yaml"] = self.CustomYAMLField()
