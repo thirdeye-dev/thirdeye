@@ -111,6 +111,9 @@ class AlertsAPISerializer(rfs.ModelSerializer):
         def to_internal_value(self, data):
             return data
 
+        def to_internal_value(self, data):
+            return data
+
         def to_representation(self, value):
             yaml.add_representer(OrderedDict, self.represent_ordereddict)
             return yaml.dump(value)
