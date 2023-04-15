@@ -7,11 +7,7 @@ from rest_framework.response import Response
 from authentication.organizations.permissions import IsMember
 
 from .models import Alerts
-from .permissions import (
-    AlertCanBeAccessedPermissions,
-    AlertCanBeCreatedForContractPermissions,
-    SmartContractAlertPermissions,
-)
+from .permissions import AlertCanBeAccessedPermissions, SmartContractAlertPermissions, AlertCanBeCreatedForContractPermissions
 from .serializers import AlertsAPISerializer
 
 logger = logging.getLogger(__name__)
@@ -39,7 +35,6 @@ class OrganizationAlertListViewSet(ListAPIView):
         queryset = Alerts.objects.filter(organization=organization)
         return queryset
 
-
 class OrganizationAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer
     permission_classes = [IsMember]
@@ -50,15 +45,9 @@ class OrganizationAlertListViewSet(ListAPIView):
         return queryset
 
 
-class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
+class AlertRetrieveAPIView(RetrieveAPIView):
     serializer_class = AlertsAPISerializer
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            permission_classes = [AlertCanBeAccessedPermissions]
-        else:
-            permission_classes = [AlertCanBeCreatedForContractPermissions]
-        return [permission() for permission in permission_classes]
+    permission_classes = [AlertCanBeAccessedPermissions]
 
     def get_queryset(self):
         queryset = Alerts.objects.all()
@@ -68,6 +57,17 @@ class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, include_alert_yaml=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AlertCreateAPIView(CreateAPIView):
+    serializer_class = AlertsAPISerializer
+
+    def get_permissions(self):
+        permission_classes = [AlertCanBeCreatedForContractPermissions()]
+        return permission_classes
+    
+    def get_queryset(self):
+        queryset = Alerts.objects.all()
+        return queryset
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, include_alert_yaml=True)

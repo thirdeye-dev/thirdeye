@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import (
-    AlertCreateRetrieveAPIView,
+    AlertRetrieveAPIView,
+    AlertCreateAPIView,
     OrganizationAlertListViewSet,
     SmartContractAlertListViewSet,
 )
@@ -10,7 +11,7 @@ urlpatterns = [
     path("contract/<int:pk>/alerts", SmartContractAlertListViewSet.as_view()),
     path("organization/alerts", OrganizationAlertListViewSet.as_view()),
     path(
-        "alerts/<int:pk>", AlertCreateRetrieveAPIView.as_view(), name="alert-retrieve"
+        "alerts/<int:pk>", AlertRetrieveAPIView.as_view(), name="alert-retrieve"
     ),
-    path("alerts", AlertCreateRetrieveAPIView.as_view(), name="alert-create"),
+    path("alerts", AlertCreateAPIView.as_view(), name="alert-create"),
 ]
