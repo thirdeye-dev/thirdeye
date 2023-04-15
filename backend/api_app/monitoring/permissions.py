@@ -31,7 +31,7 @@ class AlertCanBeAccessedPermissions(permissions.BasePermission):
         )
 
 
-class AlertCanBeCreatedForContractPermissions(permissions.BasePermission):
+class SmartContractNotificationAndAlertsPermissions(permissions.BasePermission):
     """
     Custom permission to only allow members of an organization to create alerts.
     """
@@ -45,7 +45,11 @@ class AlertCanBeCreatedForContractPermissions(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        smart_contract_id = request.data.get("smart_contract")
+        if request.method == "POST":
+            smart_contract_id = request.data.get("smart_contract")
+        else:
+            smart_contract_id = request.query_params.get("smart_contract")
+
         if smart_contract_id is None:
             self.message = "smart_contract is required."
             return False

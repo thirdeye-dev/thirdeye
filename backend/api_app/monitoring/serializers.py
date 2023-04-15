@@ -101,15 +101,16 @@ def validate_configuration(yaml_data):
     serializer.is_valid(raise_exception=True)
     return serializer.validated_data
 
+class NotificationAPISerializer(rfs.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = "__all__"
 
 class AlertsAPISerializer(rfs.ModelSerializer):
     class CustomYAMLField(rfs.Field):
         @classmethod
         def represent_ordereddict(cls, dumper, data):
             return dumper.represent_dict(data.items())
-        
-        def to_internal_value(self, data):
-            return data
 
         def to_internal_value(self, data):
             return data

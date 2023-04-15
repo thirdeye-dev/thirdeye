@@ -9,10 +9,10 @@ from authentication.organizations.permissions import IsMember
 from .models import Alerts
 from .permissions import (
     AlertCanBeAccessedPermissions,
-    AlertCanBeCreatedForContractPermissions,
+    SmartContractNotificationAndAlertsPermissions,
     SmartContractAlertPermissions,
 )
-from .serializers import AlertsAPISerializer
+from .serializers import AlertsAPISerializer, NotificationAPISerializer
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class OrganizationAlertListViewSet(ListAPIView):
         return queryset
 
 
-class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
+class AlertRetrieveAPIView(RetrieveAPIView, CreateAPIView):
     serializer_class = AlertsAPISerializer
 
     def get_permissions(self):
@@ -71,10 +71,7 @@ class AlertCreateRetrieveAPIView(RetrieveAPIView, CreateAPIView):
 
 class AlertCreateAPIView(CreateAPIView):
     serializer_class = AlertsAPISerializer
-
-    def get_permissions(self):
-        permission_classes = [AlertCanBeCreatedForContractPermissions()]
-        return permission_classes
+    permission_classes = [SmartContractNotificationAndAlertsPermissions]
 
     def get_queryset(self):
         queryset = Alerts.objects.all()
@@ -85,3 +82,11 @@ class AlertCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class NotificationListViewSet(ListAPIView):
+    serializer_class = NotificationAPISerializer
+    permission_classes = [SmartContractNotificationAndAlertsPermissions]
+
+    def get_queryset(self):
+        queryset = self.serializer_class.Meta.model.objects.all()
+        return queryset
