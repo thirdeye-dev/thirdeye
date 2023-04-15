@@ -3,9 +3,9 @@ from django.urls import path
 from .views import (
     AlertCreateAPIView,
     AlertRetrieveAPIView,
+    NotificationListViewSet,
     OrganizationAlertListViewSet,
     SmartContractAlertListViewSet,
-    NotificationListViewSet
 )
 
 urlpatterns = [

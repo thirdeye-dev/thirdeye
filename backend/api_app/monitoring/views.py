@@ -9,8 +9,8 @@ from authentication.organizations.permissions import IsMember
 from .models import Alerts
 from .permissions import (
     AlertCanBeAccessedPermissions,
-    SmartContractNotificationAndAlertsPermissions,
     SmartContractAlertPermissions,
+    SmartContractNotificationAndAlertsPermissions,
 )
 from .serializers import AlertsAPISerializer, NotificationAPISerializer
 
@@ -38,6 +38,7 @@ class OrganizationAlertListViewSet(ListAPIView):
         organization = self.request.query_params.get("owner_organization")
         queryset = Alerts.objects.filter(organization=organization)
         return queryset
+
 
 class OrganizationAlertListViewSet(ListAPIView):
     serializer_class = AlertsAPISerializer
@@ -82,6 +83,7 @@ class AlertCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class NotificationListViewSet(ListAPIView):
     serializer_class = NotificationAPISerializer
