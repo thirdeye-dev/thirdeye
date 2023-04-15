@@ -1,9 +1,10 @@
+import yaml
 import logging
 from collections import OrderedDict
 
-import yaml
-from rest_framework import serializers as rfs
 from simpleeval import simple_eval
+from rest_framework import serializers as rfs
+
 
 from api_app.monitoring.exceptions import ConditionResultError
 from api_app.monitoring.models import Alerts, Notification
