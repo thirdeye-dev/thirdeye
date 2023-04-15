@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { AiFillCopy } from "react-icons/ai";
 import { FaEthereum, FaTrash } from "react-icons/fa";
 import { TbPolygon } from "react-icons/tb";
+import CopyToClipboard from "../CopyToClipboard";
 
 export default function ContractCard({
   contract,
@@ -26,17 +27,6 @@ export default function ContractCard({
 }) {
   const router = useRouter();
   const organizationId = router.query.orgId as string;
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-
-    notifications.show({
-      title: "Copied",
-      message: "Address copied to clipboard",
-      color: "green",
-      icon: <AiFillCopy />,
-    });
-  };
 
   const onClickAddAlert = () => {
     router.push(`/org/${organizationId}/contracts/${contract.id}#add-alert`);
@@ -85,24 +75,7 @@ export default function ContractCard({
           </Group>
         </Flex>
 
-        <Paper withBorder radius="md" shadow="sm" p="md" my="md" w="100%">
-          <Flex justify={"space-between"} align="center">
-            <Text size="sm" weight={500} ff="monospace">
-              {contract.address}
-            </Text>
-
-            <Tooltip label="Add to clipboard" color="gray">
-              <Button
-                size="xs"
-                variant="subtle"
-                color="green"
-                onClick={() => copyToClipboard(contract.address)}
-              >
-                <AiFillCopy size={"1rem"} />
-              </Button>
-            </Tooltip>
-          </Flex>
-        </Paper>
+        <CopyToClipboard textToCopy={contract.address} />
 
         <Flex justify={"space-between"}>
           <Group position="center">
