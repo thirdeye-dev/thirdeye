@@ -734,10 +734,6 @@ components:
           type: string
           nullable: true
           maxLength: 255
-        task_id:
-          type: string
-          nullable: true
-          maxLength: 255
         meta_logs:
           type: object
           additionalProperties: {}
