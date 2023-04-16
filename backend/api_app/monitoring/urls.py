@@ -7,7 +7,7 @@ from .views import (
     OrganizationAlertListViewSet,
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
-    set_pre_written_alerts
+    set_pre_written_alerts,
 )
 
 urlpatterns = [
@@ -17,5 +17,7 @@ urlpatterns = [
     path("alerts", AlertCreateAPIView.as_view(), name="alert-create"),
     path("notifications", NotificationListViewSet.as_view(), name="notification-list"),
     path("pre-written-alerts", get_pre_written_alerts, name="pre-written-alerts"),
-    path("set-pre-written-alerts", set_pre_written_alerts, name="set_pre_written_alerts"),
+    path(
+        "set-pre-written-alerts", set_pre_written_alerts, name="set_pre_written_alerts"
+    ),
 ]

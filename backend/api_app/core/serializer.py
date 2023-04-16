@@ -27,6 +27,10 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         return os.path.join(settings.BASE_DIR, "configuration/yaml", yaml_path)
 
     @classmethod
+    def _get_yaml_path(cls, yaml_path) -> str:
+        return os.path.join(settings.BASE_DIR, "configuration/yaml", yaml_path)
+
+    @classmethod
     def _read_config(cls):
         config_path = cls._get_config_path()
         with open(config_path) as f:
@@ -105,6 +109,74 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         yaml_content = cls._get_alert_yaml(name)
         for param in compiled_parameters:
             yaml_content = yaml_content.replace(f"${{{param}}}", str(compiled_parameters.get(param)))
+
+        return yaml_content
+
+    @classmethod
+    def _get_alert_yaml(cls, name):
+        config_dict = cls._read_config()
+        name_of_alert = config_dict.get(name)
+        if name_of_alert is None:
+            raise rfs.ValidationError(f"Invalid alert name {name}")
+
+        yaml_file_path = name_of_alert.get("alert_yaml")
+        yaml_path = cls._get_yaml_path(yaml_file_path)
+        with open(yaml_path) as f:
+            yaml_content = f.read()
+        return yaml_content
+
+    @classmethod
+    def verify_parameters_given(cls, name: str, param_values: dict):
+        # data contains the name of the values of the parameters
+        # check if the parameters are valid
+        config_dict = cls.read_and_verify_config()
+        alert_config = config_dict.get(name)
+        if alert_config is None:
+            raise rfs.ValidationError(f"Invalid alert name {name}")
+
+        compiled_parameters = {}
+
+        params = alert_config.get("params")
+        for param in params:
+            param_dict = params.get(param)
+            if param not in param_values:
+                param_default = param_dict.get("default")
+                if param_default is not None:
+                    compiled_parameters[param] = param_default
+                    continue
+                raise rfs.ValidationError(f"Missing parameter {param}")
+
+            param_type = param_dict.get("type")
+            param_value = param_values.get(param)
+
+            type_checked_value = {"int": int, "str": str, "float": float}.get(
+                param_type, None
+            )
+
+            if type_checked_value is None:
+                raise rfs.ValidationError(
+                    f"Invalid type {param_type} for parameter {param}"
+                )
+
+            try:
+                type_checked_value(param_value)
+            except ValueError:
+                raise rfs.ValidationError(
+                    f"Invalid value {param_value} for parameter {param}"
+                )
+
+            compiled_parameters[param] = param_value
+
+        return compiled_parameters
+
+    @classmethod
+    def create_yaml(cls, name: str, param_values: dict):
+        compiled_parameters = cls.verify_parameters_given(name, param_values)
+        yaml_content = cls._get_alert_yaml(name)
+        for param in compiled_parameters:
+            yaml_content = yaml_content.replace(
+                f"${{{param}}}", str(compiled_parameters.get(param))
+            )
 
         return yaml_content
 

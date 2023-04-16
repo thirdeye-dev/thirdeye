@@ -1,6 +1,9 @@
 import logging
 
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -39,19 +42,18 @@ def set_pre_written_alerts(request):
     params = data.get("params")
     if name is None or params is None:
         return Response(
-            {"error": "name and params are required fields"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "name and params are required fields"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-    
+
     if not isinstance(params, dict):
         return Response(
             {"error": "params must be a dictionary"}, status=status.HTTP_400_BAD_REQUEST
         )
-    
     try:
         result = serializer_class.create_yaml(name, params)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
     name = config.get(name).get("name")
     description = config.get(name).get("description")
 
@@ -70,12 +72,10 @@ def set_pre_written_alerts(request):
     smart_contract = response_data.pop("smart_contract")
     response_data["smart_contract"] = {
         "id": smart_contract.id,
-        "name": smart_contract.name
+        "name": smart_contract.name,
     }
 
     return Response(response_data, status=status.HTTP_200_OK)
-
-
 
 
 class SmartContractAlertListViewSet(ListAPIView):
