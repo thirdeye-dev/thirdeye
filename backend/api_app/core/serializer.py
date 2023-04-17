@@ -217,7 +217,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         return yaml_content
     
     @classmethod
-    def return_in_frontend_format(cls):
+    def _in_frontend_format(cls):
         config_dict = cls.read_and_verify_config()
         frontend_format = []
         for key, config in config_dict.items():
@@ -225,6 +225,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             params_list = []
             for param in params:
                 param_dict = params.get(param)
+                param_dict["type"] = param_dict.get("type", "str").upper()
                 params_list.append(param_dict)
             config["params"] = params_list
             frontend_format.append({"name": key, **config})
