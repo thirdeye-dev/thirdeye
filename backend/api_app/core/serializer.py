@@ -10,6 +10,7 @@ from rest_framework import serializers as rfs
 
 logger = logging.getLogger(__name__)
 
+
 class PreWrittenAlertsSerializer(rfs.Serializer):
     name = rfs.CharField(required=True)
     description = rfs.CharField(required=True)
@@ -21,7 +22,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
     @classmethod
     def _get_config_path(cls) -> str:
         return os.path.join(settings.BASE_DIR, "configuration", cls.CONFIG_FILE_NAME)
-    
+
     @classmethod
     def _get_yaml_path(cls, yaml_path) -> str:
         return os.path.join(settings.BASE_DIR, "configuration/yaml", yaml_path)
@@ -52,7 +53,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
                 raise rfs.ValidationError(
                     f"Invalid type {param_dict.get('type')} for param {param_dict.get('name')}"
                 )
-            
+
     @classmethod
     def verify_parameters_given(cls, name: str, param_values: dict):
         # data contains the name of the values of the parameters
@@ -61,7 +62,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         alert_config = config_dict.get(name)
         if alert_config is None:
             raise rfs.ValidationError(f"Invalid alert name {name}")
-        
+
         compiled_parameters = {}
 
         params = alert_config.get("params")
@@ -73,15 +74,11 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
                     compiled_parameters[param] = param_default
                 else:
                     raise rfs.ValidationError(f"Missing parameter {param}")
-            
+
             param_type = param_dict.get("type")
             param_value = param_values.get(param)
 
-            _type = {
-                "int": int,
-                "str": str,
-                "float": float
-            }.get(param_type, None)
+            _type = {"int": int, "str": str, "float": float}.get(param_type, None)
 
             if _type is None:
                 raise rfs.ValidationError(
@@ -94,17 +91,19 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
                 raise rfs.ValidationError(
                     f"Invalid value {param_value} for parameter {param}"
                 )
-            
+
             compiled_parameters[param] = param_value
-        
+
         return compiled_parameters
-        
+
     @classmethod
     def create_yaml(cls, name: str, param_values: dict):
         compiled_parameters = cls.verify_parameters_given(name, param_values)
         yaml_content = cls._get_alert_yaml(name)
         for param in compiled_parameters:
-            yaml_content = yaml_content.replace(f"${{{param}}}", str(compiled_parameters.get(param)))
+            yaml_content = yaml_content.replace(
+                f"${{{param}}}", str(compiled_parameters.get(param))
+            )
 
         return yaml_content
 
@@ -215,7 +214,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         with open(yaml_path) as f:
             yaml_content = f.read()
         return yaml_content
-    
+
     @classmethod
     def _in_frontend_format(cls):
         config_dict = cls.read_and_verify_config()
