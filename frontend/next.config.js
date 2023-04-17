@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const removeImports = require("next-remove-imports")();
-
-const nextConfig = removeImports({
+const nextConfig = {
   experimental: {
     esmExternals: true,
   },
@@ -29,6 +27,6 @@ const nextConfig = removeImports({
       },
     ];
   },
-});
+};
 
 module.exports = nextConfig;
