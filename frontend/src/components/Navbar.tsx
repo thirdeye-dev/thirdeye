@@ -80,10 +80,22 @@ const LogoutIcon = () => {
   return <FiLogOut />;
 };
 
-const navLinks = [
-  { icon: AiFillEye, label: "Overview", name: "overview" },
-  { icon: FaFileContract, label: "Smart Contracts", name: "contracts" },
-  // { icon: AiFillAlert, label: "Alerts", name: "alerts" }, # FIXME: Add alerts back in
+interface NavLink {
+  icon?: IconType;
+  label?: string;
+  name: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
+  { icon: AiFillEye, label: "Overview", name: "overview", href: "overview" },
+  {
+    icon: FaFileContract,
+    label: "Smart Contracts",
+    name: "contracts",
+    href: "contracts",
+  },
+  { icon: AiFillAlert, label: "Alerts", name: "alerts", href: "alerts/create" }, // TODO: Change this to alerts when the page is created
 ];
 
 export default function NavbarMinimal({
@@ -96,12 +108,8 @@ export default function NavbarMinimal({
 
   const user = useCurrentUser();
 
-  const onClickLink = (link: {
-    icon?: IconType;
-    label?: string;
-    name: any;
-  }) => {
-    router.push(`/org/${organizationId}/${link.name}`);
+  const onClickLink = (link: NavLink) => {
+    router.push(`/org/${organizationId}/${link.href}`);
   };
 
   const links = navLinks.map((link, index) => (

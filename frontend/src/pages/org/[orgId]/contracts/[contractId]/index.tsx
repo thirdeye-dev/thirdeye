@@ -4,7 +4,7 @@ import AppShellLayout from "@/layouts/AppShellLayout";
 import Alert from "@/models/alert";
 import Contract from "@/models/contract";
 import { fetchContract } from "@/services/contracts";
-import { Box, Breadcrumbs, Flex, Paper, Stack } from "@mantine/core";
+import { Box, Breadcrumbs, Flex, Modal, Paper, Stack } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
@@ -61,7 +61,9 @@ export default function ContractDetailed() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organizationId, contractId]);
 
-  const addNewAlert = () => {};
+  const addNewAlert = () => {
+    router.push(`/org/${organizationId}/alerts/create`);
+  };
 
   return (
     <Stack>

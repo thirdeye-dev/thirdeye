@@ -43,8 +43,13 @@ export default function ContractAlertTable({
             <th>Updated At</th>
             <th>
               <Flex justify="flex-end">
-                <Button color="green" variant="gradient" p={"xs"}>
-                  Add Alert
+                <Button
+                  onClick={addNewAlert}
+                  color="green"
+                  variant="gradient"
+                  p="xs"
+                >
+                  Create Alert
                 </Button>
               </Flex>
             </th>

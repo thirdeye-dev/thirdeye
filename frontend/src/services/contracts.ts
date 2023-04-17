@@ -2,7 +2,7 @@ import axios from "@/axios";
 import Contract from "@/models/contract";
 
 export async function fetchContracts(orgId: string) {
-  const response = await axios.get<Contract[]>("/smart/contract", {
+  const response = await axios.get<Contract[]>("/smartcontract/my", {
     params: {
       owner_organization: orgId,
     },
@@ -20,7 +20,7 @@ export async function createContract(
   contract.owner_organization = orgId;
 
   const response = await axios.post<Contract>(
-    "/smart/contract",
+    "/smartcontract",
     JSON.stringify(contract)
   );
 
@@ -28,17 +28,20 @@ export async function createContract(
 }
 
 export async function fetchContract(contractId: string, orgId: string) {
-  const response = await axios.get<Contract>(`/smart/contract/${contractId}`, {
-    params: {
-      owner_organization: orgId,
-    },
-  });
+  const response = await axios.get<Contract>(
+    `/smartcontract/my/${contractId}`,
+    {
+      params: {
+        owner_organization: orgId,
+      },
+    }
+  );
 
   return response.data;
 }
 
 export async function deleteContract(contractId: number, orgId: string) {
-  const response = await axios.delete(`/smart/contract/${contractId}`, {
+  const response = await axios.delete(`/smartcontract/my/${contractId}`, {
     params: {
       owner_organization: orgId,
     },
