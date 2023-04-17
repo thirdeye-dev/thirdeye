@@ -8,7 +8,7 @@
                 "name": "GAS_PRICE_THRESHOLD",
                 "description": "Gas price threshold for sending transactions",
                 "type": "float",
-                "default": 100000
+                "default": 100000.0
             },
             "WEBHOOK_URL": {
                 "name": "WEBHOOK_URL",

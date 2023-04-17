@@ -27,16 +27,7 @@ logger = logging.getLogger(__name__)
 @permission_classes([IsAuthenticated])
 def get_pre_written_alerts(request):
     serializer_class = PreWrittenAlertsSerializer()
-    data = serializer_class.read_and_verify_config()
-    for key in data:
-        item = data.get(key)
-        params = item.get("params")
-        param_list = []
-        for param in params:
-            param_dict = params.get(param)
-            param_list.append(param_dict)
-        
-        item["params"] = param_list
+    data = serializer_class.return_in_frontend_format()
 
     return Response(data, status=status.HTTP_200_OK)
 

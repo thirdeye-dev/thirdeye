@@ -27,10 +27,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         return os.path.join(settings.BASE_DIR, "configuration/yaml", yaml_path)
 
     @classmethod
-    def _get_yaml_path(cls, yaml_path) -> str:
-        return os.path.join(settings.BASE_DIR, "configuration/yaml", yaml_path)
-
-    @classmethod
     def _read_config(cls):
         config_path = cls._get_config_path()
         with open(config_path) as f:
@@ -75,25 +71,25 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
                 param_default = param_dict.get("default")
                 if param_default is not None:
                     compiled_parameters[param] = param_default
-                    continue
-                raise rfs.ValidationError(f"Missing parameter {param}")
+                else:
+                    raise rfs.ValidationError(f"Missing parameter {param}")
             
             param_type = param_dict.get("type")
             param_value = param_values.get(param)
 
-            type_checked_value = {
+            _type = {
                 "int": int,
                 "str": str,
                 "float": float
             }.get(param_type, None)
 
-            if type_checked_value is None:
+            if _type is None:
                 raise rfs.ValidationError(
                     f"Invalid type {param_type} for parameter {param}"
                 )
 
             try:
-                type_checked_value(param_value)
+                _type(param_value)
             except ValueError:
                 raise rfs.ValidationError(
                     f"Invalid value {param_value} for parameter {param}"
@@ -110,19 +106,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         for param in compiled_parameters:
             yaml_content = yaml_content.replace(f"${{{param}}}", str(compiled_parameters.get(param)))
 
-        return yaml_content
-
-    @classmethod
-    def _get_alert_yaml(cls, name):
-        config_dict = cls._read_config()
-        name_of_alert = config_dict.get(name)
-        if name_of_alert is None:
-            raise rfs.ValidationError(f"Invalid alert name {name}")
-
-        yaml_file_path = name_of_alert.get("alert_yaml")
-        yaml_path = cls._get_yaml_path(yaml_file_path)
-        with open(yaml_path) as f:
-            yaml_content = f.read()
         return yaml_content
 
     @classmethod
@@ -149,17 +132,17 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             param_type = param_dict.get("type")
             param_value = param_values.get(param)
 
-            type_checked_value = {"int": int, "str": str, "float": float}.get(
+            _type = {"int": int, "str": str, "float": float}.get(
                 param_type, None
             )
 
-            if type_checked_value is None:
+            if _type is None:
                 raise rfs.ValidationError(
                     f"Invalid type {param_type} for parameter {param}"
                 )
 
             try:
-                type_checked_value(param_value)
+                _type(param_value)
             except ValueError:
                 raise rfs.ValidationError(
                     f"Invalid value {param_value} for parameter {param}"
@@ -168,17 +151,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             compiled_parameters[param] = param_value
 
         return compiled_parameters
-
-    @classmethod
-    def create_yaml(cls, name: str, param_values: dict):
-        compiled_parameters = cls.verify_parameters_given(name, param_values)
-        yaml_content = cls._get_alert_yaml(name)
-        for param in compiled_parameters:
-            yaml_content = yaml_content.replace(
-                f"${{{param}}}", str(compiled_parameters.get(param))
-            )
-
-        return yaml_content
 
     @classmethod
     def _get_alert_yaml(cls, name):
@@ -192,6 +164,20 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         with open(yaml_path) as f:
             yaml_content = f.read()
         return yaml_content
+    
+    @classmethod
+    def return_in_frontend_format(cls):
+        config_dict = cls.read_and_verify_config()
+        frontend_format = []
+        for key, config in config_dict.items():
+            params = config.get("params")
+            params_list = []
+            for param in params:
+                param_dict = params.get(param)
+                params_list.append(param_dict)
+            config["params"] = params_list
+            frontend_format.append({"name": key, **config})
+        return frontend_format
 
     @classmethod
     @cache_memoize(
