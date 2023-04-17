@@ -5,9 +5,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 
 from api_app.core.serializer import PreWrittenAlertsSerializer
 from authentication.organizations.permissions import IsMember
@@ -19,9 +16,9 @@ from .permissions import (
     SmartContractNotificationAndAlertsPermissions,
 )
 from .serializers import AlertsAPISerializer, NotificationAPISerializer
-from api_app.core.serializer import PreWrittenAlertsSerializer
 
 logger = logging.getLogger(__name__)
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
