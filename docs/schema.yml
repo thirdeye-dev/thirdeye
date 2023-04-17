@@ -489,11 +489,11 @@ paths:
       responses:
         '204':
           description: No response body
-  /smart/contract:
+  /smartcontract/my:
     get:
-      operationId: smart_contract_list
+      operationId: smartcontract_my_list
       tags:
-      - smart
+      - smartcontract
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -508,9 +508,9 @@ paths:
                   $ref: '#/components/schemas/SmartContract'
           description: ''
     post:
-      operationId: smart_contract_create
+      operationId: smartcontract_my_create
       tags:
-      - smart
+      - smartcontract
       requestBody:
         content:
           application/json:
@@ -534,9 +534,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SmartContract'
           description: ''
-  /smart/contract/{id}:
+  /smartcontract/my/{id}:
     get:
-      operationId: smart_contract_retrieve
+      operationId: smartcontract_my_retrieve
       parameters:
       - in: path
         name: id
@@ -545,7 +545,7 @@ paths:
         description: A unique integer value identifying this smart contract.
         required: true
       tags:
-      - smart
+      - smartcontract
       security:
       - cookieAuth: []
       - tokenAuth: []
@@ -558,7 +558,7 @@ paths:
                 $ref: '#/components/schemas/SmartContract'
           description: ''
     put:
-      operationId: smart_contract_update
+      operationId: smartcontract_my_update
       parameters:
       - in: path
         name: id
@@ -566,7 +566,7 @@ paths:
           type: string
         required: true
       tags:
-      - smart
+      - smartcontract
       requestBody:
         content:
           application/json:
@@ -591,7 +591,7 @@ paths:
                 $ref: '#/components/schemas/SmartContract'
           description: ''
     patch:
-      operationId: smart_contract_partial_update
+      operationId: smartcontract_my_partial_update
       parameters:
       - in: path
         name: id
@@ -599,7 +599,7 @@ paths:
           type: string
         required: true
       tags:
-      - smart
+      - smartcontract
       requestBody:
         content:
           application/json:
@@ -623,7 +623,7 @@ paths:
                 $ref: '#/components/schemas/SmartContract'
           description: ''
     delete:
-      operationId: smart_contract_destroy
+      operationId: smartcontract_my_destroy
       parameters:
       - in: path
         name: id
@@ -631,7 +631,7 @@ paths:
           type: string
         required: true
       tags:
-      - smart
+      - smartcontract
       security:
       - cookieAuth: []
       - tokenAuth: []
