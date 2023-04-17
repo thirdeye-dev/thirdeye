@@ -54,101 +54,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
                 )
 
     @classmethod
-    def verify_parameters_given(cls, name: str, param_values: dict):
-        # data contains the name of the values of the parameters
-        # check if the parameters are valid
-        config_dict = cls.read_and_verify_config()
-        alert_config = config_dict.get(name)
-        if alert_config is None:
-            raise rfs.ValidationError(f"Invalid alert name {name}")
-
-        compiled_parameters = {}
-
-        params = alert_config.get("params")
-        for param in params:
-            param_dict = params.get(param)
-            if param not in param_values:
-                param_default = param_dict.get("default")
-                if param_default is not None:
-                    compiled_parameters[param] = param_default
-                else:
-                    raise rfs.ValidationError(f"Missing parameter {param}")
-
-            param_type = param_dict.get("type")
-            param_value = param_values.get(param)
-
-            _type = {"int": int, "str": str, "float": float}.get(param_type, None)
-
-            if _type is None:
-                raise rfs.ValidationError(
-                    f"Invalid type {param_type} for parameter {param}"
-                )
-
-            try:
-                _type(param_value)
-            except ValueError:
-                raise rfs.ValidationError(
-                    f"Invalid value {param_value} for parameter {param}"
-                )
-
-            compiled_parameters[param] = param_value
-
-        return compiled_parameters
-
-    @classmethod
-    def create_yaml(cls, name: str, param_values: dict):
-        compiled_parameters = cls.verify_parameters_given(name, param_values)
-        yaml_content = cls._get_alert_yaml(name)
-        for param in compiled_parameters:
-            yaml_content = yaml_content.replace(
-                f"${{{param}}}", str(compiled_parameters.get(param))
-            )
-
-        return yaml_content
-
-    @classmethod
-    def verify_parameters_given(cls, name: str, param_values: dict):
-        # data contains the name of the values of the parameters
-        # check if the parameters are valid
-        config_dict = cls.read_and_verify_config()
-        alert_config = config_dict.get(name)
-        if alert_config is None:
-            raise rfs.ValidationError(f"Invalid alert name {name}")
-
-        compiled_parameters = {}
-
-        params = alert_config.get("params")
-        for param in params:
-            param_dict = params.get(param)
-            if param not in param_values:
-                param_default = param_dict.get("default")
-                if param_default is not None:
-                    compiled_parameters[param] = param_default
-                else:
-                    raise rfs.ValidationError(f"Missing parameter {param}")
-
-            param_type = param_dict.get("type")
-            param_value = param_values.get(param)
-
-            _type = {"int": int, "str": str, "float": float}.get(param_type, None)
-
-            if _type is None:
-                raise rfs.ValidationError(
-                    f"Invalid type {param_type} for parameter {param}"
-                )
-
-            try:
-                _type(param_value)
-            except ValueError:
-                raise rfs.ValidationError(
-                    f"Invalid value {param_value} for parameter {param}"
-                )
-
-            compiled_parameters[param] = param_value
-
-        return compiled_parameters
-
-    @classmethod
     def create_yaml(cls, name: str, param_values: dict):
         compiled_parameters = cls.verify_parameters_given(name, param_values)
         yaml_content = cls._get_alert_yaml(name)
@@ -202,6 +107,9 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         return compiled_parameters
 
     @classmethod
+    @cache_memoize(
+        timeout=sys.maxsize,
+    )
     def _get_alert_yaml(cls, name):
         config_dict = cls._read_config()
         name_of_alert = config_dict.get(name)
@@ -224,20 +132,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             for param in params:
                 param_dict = params.get(param)
                 param_dict["type"] = param_dict.get("type", "str").upper()
-                params_list.append(param_dict)
-            config["params"] = params_list
-            frontend_format.append({"name": key, **config})
-        return frontend_format
-
-    @classmethod
-    def return_in_frontend_format(cls):
-        config_dict = cls.read_and_verify_config()
-        frontend_format = []
-        for key, config in config_dict.items():
-            params = config.get("params")
-            params_list = []
-            for param in params:
-                param_dict = params.get(param)
                 params_list.append(param_dict)
             config["params"] = params_list
             frontend_format.append({"name": key, **config})

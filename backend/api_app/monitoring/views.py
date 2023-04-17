@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 def get_pre_written_alerts(request):
     serializer_class = PreWrittenAlertsSerializer()
     data = serializer_class._in_frontend_format()
-
     return Response(data, status=status.HTTP_200_OK)
 
 
