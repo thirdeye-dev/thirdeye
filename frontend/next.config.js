@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const removeImports = require("next-remove-imports")();
+
+const nextConfig = removeImports({
+  experimental: {
+    esmExternals: true,
+  },
   reactStrictMode: true,
   async redirects() {
     return [
@@ -23,6 +29,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 module.exports = nextConfig;
