@@ -198,7 +198,6 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             if serializer.is_valid():
                 cls._verify_params(serializer.validated_data.get("params"))
                 config_dict[key] = serializer.data
-                config_dict[key].pop("alert_yaml")
             else:
                 serializer_errors[key] = serializer.errors
 
