@@ -256,6 +256,30 @@ paths:
                 items:
                   $ref: '#/components/schemas/AlertsAPI'
           description: ''
+  /monitoring/pre-written-alerts:
+    get:
+      operationId: monitoring_pre_written_alerts_retrieve
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /monitoring/set-pre-written-alerts:
+    post:
+      operationId: monitoring_set_pre_written_alerts_create
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /organizations/{organization_id}/invite:
     post:
       operationId: organizations_invite_create

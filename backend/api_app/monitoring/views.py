@@ -5,6 +5,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 
 from api_app.core.serializer import PreWrittenAlertsSerializer
 from authentication.organizations.permissions import IsMember
@@ -16,15 +19,16 @@ from .permissions import (
     SmartContractNotificationAndAlertsPermissions,
 )
 from .serializers import AlertsAPISerializer, NotificationAPISerializer
+from api_app.core.serializer import PreWrittenAlertsSerializer
 
 logger = logging.getLogger(__name__)
-
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_pre_written_alerts(request):
     serializer_class = PreWrittenAlertsSerializer()
-    data = serializer_class.read_and_verify_config()
+    data = serializer_class.return_in_frontend_format()
+
     return Response(data, status=status.HTTP_200_OK)
 
 
@@ -47,12 +51,10 @@ def set_pre_written_alerts(request):
         return Response(
             {"error": "params must be a dictionary"}, status=status.HTTP_400_BAD_REQUEST
         )
-
     try:
         result = serializer_class.create_yaml(name, params)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
     name = config.get(name).get("name")
     description = config.get(name).get("description")
 
