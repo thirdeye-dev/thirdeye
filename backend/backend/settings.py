@@ -30,8 +30,13 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DEBUGGING_WALLET = "0xEb87fcc7B227400D157dD976d1C4B18f42dC14fa"
+
 # INFURA_TOKEN
 INFURA_PROJECT_ID = os.environ.get("INFURA_PROJECT_ID", "")
+
+# INFURA HTTP goerli endpoint
+INFURA_HTTP_ENDPOINT = f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}"
 
 # mapping of URLs to different ethereum based chains and networks
 CHAINS_AND_NETWORKS = {

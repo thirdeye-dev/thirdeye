@@ -54,7 +54,6 @@ def set_pre_written_alerts(request):
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     name = config.get(name).get("name")
     description = config.get(name).get("description")
-    result_yaml = yaml.dump(data, default_flow_style=False)
 
     alert = {
         "name": name,
@@ -69,7 +68,6 @@ def set_pre_written_alerts(request):
 
     response_data = alert_data.validated_data
     response_data["id"] = alert_data.instance.id
-    response_data["alert_yaml"] = result_yaml
 
     smart_contract = response_data.pop("smart_contract")
     response_data["smart_contract"] = {
