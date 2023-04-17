@@ -34,11 +34,10 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
         return config_dict
 
     @classmethod
-    def _md5_config_file(cls) -> str:
+    def _md5_config_file(cls, fpath) -> str:
         """
         Returns md5sum of config file.
         """
-        fpath = cls._get_config_path()
         with open(fpath, "r") as fp:
             buffer = fp.read().encode("utf-8")
             md5hash = hashlib.md5(buffer).hexdigest()
@@ -248,7 +247,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
     @classmethod
     @cache_memoize(
         timeout=sys.maxsize,
-        args_rewrite=lambda cls: f"{cls.__name__}-{cls._md5_config_file()}",
+        args_rewrite=lambda cls: f"{cls.__name__}-{cls._md5_config_file(cls._get_config_path())}",
     )
     def read_and_verify_config(cls) -> dict:
         """
@@ -264,6 +263,7 @@ class PreWrittenAlertsSerializer(rfs.Serializer):
             if serializer.is_valid():
                 cls._verify_params(serializer.validated_data.get("params"))
                 config_dict[key] = serializer.data
+                config_dict[key]["alert_yaml"] = cls._get_alert_yaml(key)
             else:
                 serializer_errors[key] = serializer.errors
 
