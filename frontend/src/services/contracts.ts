@@ -20,7 +20,7 @@ export async function createContract(
   contract.owner_organization = orgId;
 
   const response = await axios.post<Contract>(
-    "/smartcontract",
+    "/smartcontract/my",
     JSON.stringify(contract)
   );
 
