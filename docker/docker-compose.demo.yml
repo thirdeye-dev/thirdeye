@@ -6,9 +6,9 @@ services:
     expose:
       - "8000"
     build:
-      context: ../
-      dockerfile: ./Dockerfile
-    entrypoint: /app/entrypoint.sh
+      context: ..
+      dockerfile: docker/Dockerfile
+    entrypoint: docker/entrypoint/entrypoint.sh
     ports:
       - "8000:8000"
     volumes:
@@ -16,5 +16,5 @@ services:
     env_file:
       - ./.env
     environment:
-      - DEMO_INSTANCE=true     
+      - DEMO_INSTANCE=true
   
