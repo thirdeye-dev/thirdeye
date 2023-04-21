@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from datetime import datetime
 
 import requests
@@ -22,7 +22,7 @@ CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
 @app.task(bind=True)
 def call_smart_contract_function(self, monitoring_task_id):
     # proper logging is required here.
-    public_key, private_key = os.environ.get('ETH_PUBLIC_KEY', None), os.environ.get(
+    public_key, private_key = os.environ.get("ETH_PUBLIC_KEY", None), os.environ.get(
         "ETH_PRIVATE_KEY", None
     )
 
@@ -30,7 +30,7 @@ def call_smart_contract_function(self, monitoring_task_id):
         error_msg = "Missing ETH_PUBLIC_KEY or ETH_PRIVATE_KEY environment variable"
         logger.error(error_msg)
         raise Exception(error_msg)
-    
+
     # continue from here
 
 

@@ -1,8 +1,8 @@
 from celery.signals import task_failure, task_success
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.conf import settings
 
 from api_app.monitoring import tasks
 from api_app.monitoring.models import MonitoringTasks, Notification

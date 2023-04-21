@@ -3,10 +3,9 @@ import os
 
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
+from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import redirect
-from django.conf import settings
-
 from rest_framework import generics, permissions, status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
