@@ -6,6 +6,8 @@ from api_app.smartcontract.permissions import CanAccessSmartContract
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
 
+from django.db import IntegrityError
+
 from .models import SmartContract
 from .serializers import SmartContractSerializer
 

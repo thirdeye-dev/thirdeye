@@ -2,6 +2,7 @@ from celery.signals import task_failure, task_success
 from celery.utils.log import get_task_logger
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 
 from api_app.monitoring import tasks
 from api_app.monitoring.models import MonitoringTasks, Notification
@@ -9,10 +10,12 @@ from api_app.smartcontract.models import SmartContract
 
 logger = get_task_logger(__name__)
 
+demo_instance = settings.DEMO_INSTANCE
+
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
-    if created:
+    if created and not demo_instance:
         # do on create
         monitoring_task = MonitoringTasks.objects.create(
             SmartContract=instance,

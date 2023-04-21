@@ -5,6 +5,8 @@ from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
 from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import redirect
+from django.conf import settings
+
 from rest_framework import generics, permissions, status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
@@ -146,6 +148,14 @@ class GithubLoginCallbackView(APIView):
         if not user_email and emails:
             user_email = emails[0].get("email")
 
+        if settings.DEMO_INSTANCE:
+            # In demo instance, we only allow a certain set of emails to login
+            allowed_emails = settings.DEMO_ALLOWED_EMAILS
+            if not (user_email not in allowed_emails):
+                raise AuthenticationFailed(
+                    "You are not allowed to login to this demo instance."
+                )
+
         try:
             user = User.objects.get(email=user_email)
             user.avatar = avatar
@@ -168,7 +178,6 @@ class GithubLoginCallbackView(APIView):
 
     def post(self, request):
         user = self.validate_and_return_user(request)
-        print(user)
 
         tokens = user.tokens()
         access_token = tokens.get("access")

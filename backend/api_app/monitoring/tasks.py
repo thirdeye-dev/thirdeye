@@ -1,3 +1,4 @@
+import os
 import json
 from datetime import datetime
 
@@ -16,6 +17,21 @@ from .serializers import BlockchainAlertRunner
 logger = get_task_logger(__name__)
 
 CHAINS_AND_NETWORKS = settings.CHAINS_AND_NETWORKS
+
+
+@app.task(bind=True)
+def call_smart_contract_function(self, monitoring_task_id):
+    # proper logging is required here.
+    public_key, private_key = os.environ.get('ETH_PUBLIC_KEY', None), os.environ.get(
+        "ETH_PRIVATE_KEY", None
+    )
+
+    if not public_key or not private_key:
+        error_msg = "Missing ETH_PUBLIC_KEY or ETH_PRIVATE_KEY environment variable"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+    
+    # continue from here
 
 
 @app.task(bind=True, max_retries=3)

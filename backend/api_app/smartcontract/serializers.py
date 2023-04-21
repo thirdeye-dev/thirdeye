@@ -29,9 +29,6 @@ class SmartContractSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("id",)
 
-    def create(self, validated_data):
-        return super().create(validated_data)
-
     def validate(self, data):
         if data["chain"] == "ETH":
             if data["network"] not in ["MAINNET", "SEPOLIA", "GOERLI"]:

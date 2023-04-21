@@ -20,7 +20,7 @@ class CanAccessSmartContract(permissions.BasePermission):
         if request.method == "GET":
             smart_contract_id = request.query_params.get("smart_contract")
 
-        if view.action == "retrieve":
+        if view.action in ["retrieve", "update", "partial_update", "destroy"]:
             smart_contract_id = view.kwargs.get("pk")
 
         if smart_contract_id is None:

@@ -10,16 +10,6 @@ app = Celery("backend")
 app.config_from_object("django.conf:settings")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-
-# use the following if needed
-# app.conf.beat_schedule = {
-#     "crontask": {
-#         "task": "",
-#         "schedule": crontab(minute=),
-#         "options": {"queue": "default"},
-#     },
-# }
-
 app.conf.update(
     task_default_queue="default",
     task_queues=[

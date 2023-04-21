@@ -21,15 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-r%z4q#ls(&#_au&_b$=p+whnq+6bj@0p$2vvr)9$vroz54hlj)",
-)
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 DEBUGGING_WALLET = "0xEb87fcc7B227400D157dD976d1C4B18f42dC14fa"
 
 # INFURA_TOKEN
@@ -157,6 +148,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 DEMO_INSTANCE = True if os.environ.get("DEMO_INSTANCE") == "true" else False
+
+DEMO_ALLOWED_EMAILS = [
+    "wolfwithahat@protonmail.com",
+    
+]
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-F%yn7%qtGeQFPm5v8N2Gu&7aFHxAqRPXFN24yX",
+)
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False if DEMO_INSTANCE else os.environ.get("DEBUG", "true") == "true"
 
 DATABASES = {
     "default": {
