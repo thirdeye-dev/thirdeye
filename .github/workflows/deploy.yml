@@ -31,6 +31,6 @@ jobs:
         HOST: ${{ secrets.SERVER_SSH_HOST }}
         CODE_PATH: ${{ secrets.CODE_PATH }}
       run: |
-        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${DEPLOY_USERSER}@${HOST}:${CODE_PATH}
+        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${DEPLOY_USER}@${HOST}:${CODE_PATH}
         ssh ${DEPLOY_USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
 
