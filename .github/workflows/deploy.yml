@@ -16,7 +16,7 @@ jobs:
     - name: Set up SSH key
       env:
         PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        USER: ${{ secrets.SERVER_SSH_USER }}
+        DEPLOY_USER: ${{ secrets.SERVER_SSH_USER }}
         HOST: ${{ secrets.SERVER_SSH_HOST }}
         CODE_PATH: ${{ secrets.CODE_PATH }}
 
@@ -28,6 +28,7 @@ jobs:
 
     - name: Deploy to server
       run: |
-        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${USER}@${HOST}:${CODE_PATH}
-        ssh ${USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
+        echo ${CODE_PATH} && echo ${DEPLOY_USER} && echo ${HOST}
+        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${UDEPLOY_USERSER}@${HOST}:${CODE_PATH}
+        ssh ${DEPLOY_USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
 
