@@ -1,9 +1,10 @@
 name: Deploy to server
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
 
 jobs:
   deploy:
@@ -31,6 +32,7 @@ jobs:
         HOST: ${{ secrets.SERVER_SSH_HOST }}
         CODE_PATH: ${{ secrets.CODE_PATH }}
       run: |
-        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${DEPLOY_USER}@${HOST}:${CODE_PATH}
-        ssh ${DEPLOY_USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
-
+        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} 
+        "docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io && 
+        cd ${CODE_PATH}/docker && docker pull ghcr.io/thirdeye-dev/thirdeye:latest
+        && docker-compose down && docker-compose -f docker-compose.demo.yml up -d"
