@@ -52,14 +52,17 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface NavbarLinkProps {
-  icon: React.FC<any>;
-  label: string;
+  icon?: React.FC<any>;
+  label?: string;
   active?: boolean;
   onClick?(): void;
 }
 
 function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   const { classes, cx } = useStyles();
+
+  Icon = Icon!; // fixes a weird typescript error
+
   return (
     <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
       <UnstyledButton
