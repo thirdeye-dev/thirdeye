@@ -153,6 +153,10 @@ DEMO_ALLOWED_EMAILS = [
     "wolfwithahat@protonmail.com",
 ]
 
+PROTOTYPE_URL = "https://thirdeye-prototype.vercel.app/"
+
+FRONTEND_URL = PROTOTYPE_URL if DEMO_INSTANCE else os.environ.get("FRONTEND_URL", "http://localhost:3000/")
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",

@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const backendUrl = process.env.BACKEND_URL || "http://0.0.0.0:8000/";
+
 const nextConfig = {
   experimental: {
     esmExternals: true,
@@ -23,7 +25,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:slug*",
-        destination: "http://0.0.0.0:8000/:slug*",
+        destination: `${backendUrl}:slug*`,
       },
     ];
   },
