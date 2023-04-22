@@ -9,7 +9,6 @@
     "lint": "next lint",
     "clean:cache": "rm -rf .next/cache"
   },
-  "proxy": "http://0.0.0.0:8000/",
   "dependencies": {
     "@antv/calendar-heatmap": "^1.1.2",
     "@emotion/react": "^11.10.6",

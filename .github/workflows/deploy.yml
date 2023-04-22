@@ -1,0 +1,33 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH key
+      env:
+        PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        USER: ${{ secrets.SERVER_SSH_USER }}
+        HOST: ${{ secrets.SERVER_SSH_HOST }}
+        CODE_PATH: ${{ secrets.CODE_PATH }}
+
+      run: |
+        mkdir -p ~/.ssh
+        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -t rsa ${HOST} >> ~/.ssh/known_hosts
+
+    - name: Deploy to server
+      run: |
+        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${USER}@${HOST}:${CODE_PATH}
+        ssh ${USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
+
