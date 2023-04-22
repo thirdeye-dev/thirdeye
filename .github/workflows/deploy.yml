@@ -16,9 +16,7 @@ jobs:
     - name: Set up SSH key
       env:
         PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        DEPLOY_USER: ${{ secrets.SERVER_SSH_USER }}
         HOST: ${{ secrets.SERVER_SSH_HOST }}
-        CODE_PATH: ${{ secrets.CODE_PATH }}
 
       run: |
         mkdir -p ~/.ssh
@@ -26,14 +24,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -t rsa ${HOST} >> ~/.ssh/known_hosts
 
-    - name: Debug
-      run: |
-        echo $DEPLOY_USER
-        echo $HOST
-        echo $CODE_PATH
-
     - name: Deploy to server
+      env:
+        PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        DEPLOY_USER: ${{ secrets.SERVER_SSH_USER }}
+        HOST: ${{ secrets.SERVER_SSH_HOST }}
+        CODE_PATH: ${{ secrets.CODE_PATH }}
       run: |
-        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${UDEPLOY_USERSER}@${HOST}:${CODE_PATH}
+        rsync -avz --delete --exclude='.git*' --exclude='.github*' --exclude='*.env' . ${DEPLOY_USERSER}@${HOST}:${CODE_PATH}
         ssh ${DEPLOY_USER}@${HOST} 'cd ${CODE_PATH}/docker && docker-compose down && docker-compose -f docker-compose.demo.yml  up -d'
 
