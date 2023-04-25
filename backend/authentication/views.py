@@ -1,6 +1,5 @@
-import os
 import logging
-import requests
+import os
 
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
