@@ -36,5 +36,6 @@ jobs:
         "cd ${CODE_PATH}/docker && 
         docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io && 
         docker pull ghcr.io/thirdeye-dev/thirdeye:latest && 
+        ls -la && pwd && # debug
         docker-compose down 
         && docker-compose -f demo.yml up -d"
