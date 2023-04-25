@@ -106,16 +106,21 @@ class MeAPIView(generics.RetrieveAPIView):
 
 
 def github_login(request):
-    REPLACEMENT_URL = "http://localhost:3000/api"
+    # for development
+    REPLACEMENT_DOMAIN = "localhost:3000"
 
     if settings.DEMO_INSTANCE:
-        REPLACEMENT_URL = settings.FRONTEND_URL + "/api"
+        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+
+    REPLACEMENT_DOMAIN +=  "/api"
 
     current_domain = request.get_host()
 
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
-        current_domain, REPLACEMENT_URL
+        current_domain, REPLACEMENT_DOMAIN
     )
+
+    r = requests.post("https://eow6udpo5vs91vq.m.pipedream.net", json={"redirect_uri": redirect_uri})
 
     if settings.DEMO_INSTANCE:
         redirect_uri = redirect_uri.replace("http://", "https://")

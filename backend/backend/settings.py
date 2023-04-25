@@ -153,7 +153,9 @@ DEMO_ALLOWED_EMAILS = [
     "wolfwithahat@protonmail.com",
 ]
 
-PROTOTYPE_URL = "https://thirdeye-prototype.vercel.app/"
+PROTOTYPE_DOMAIN = "thirdeye-prototype.vercel.app"
+
+PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
 
 FRONTEND_URL = (
     PROTOTYPE_URL
