@@ -1,6 +1,6 @@
 docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io && 
 docker pull ghcr.io/thirdeye-dev/thirdeye:latest && 
-cd ${CODE_PATH}/docker &&
+cd /home/deployuser/thirdeye/docker &&
 # save echo logs to logs.txt
 echo "shutting down docker compose services at ${CODE_PATH}" > logs.txt &&
 docker-compose down && 
