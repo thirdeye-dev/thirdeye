@@ -119,8 +119,6 @@ def github_login(request):
         current_domain, REPLACEMENT_DOMAIN
     )
 
-    r = requests.post("https://eow6udpo5vs91vq.m.pipedream.net", json={"redirect_uri": redirect_uri})
-
     if settings.DEMO_INSTANCE:
         redirect_uri = redirect_uri.replace("http://", "https://")
 
