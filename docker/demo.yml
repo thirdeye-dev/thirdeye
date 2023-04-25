@@ -10,7 +10,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - third_eye_backend:/app
+      - ../db.sqlite:/app/backend/db.sqlite
     env_file:
       - ./.env
     environment:
