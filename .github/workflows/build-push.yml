@@ -5,7 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'backend/**' # Only trigger for changes in the backend directory
+      - '**.py'
+      - '**.sh'
 
 jobs:
   build-push:
