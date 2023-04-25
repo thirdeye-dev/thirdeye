@@ -139,7 +139,9 @@ class GithubLoginCallbackView(APIView):
         ) as e:
             logger.error("OAuth authentication error: %s", e)
             # Not giving out the actual error as we risk exposing the client secret
-            raise AuthenticationFailed("OAuth authentication error.",)
+            raise AuthenticationFailed(
+                "OAuth authentication error.",
+            )
 
         resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
