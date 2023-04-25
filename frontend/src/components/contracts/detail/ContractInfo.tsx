@@ -29,10 +29,10 @@ function Features({ contract }: { contract: Contract }) {
   }) => (
     <>
       <Stack align="center">
-        <Text size="md" weight="bold">
+        <Text size="lg" weight="bold">
           {name}
         </Text>
-        <Text size="sm">{value}</Text>
+        <Text size="md">{value}</Text>
       </Stack>
 
       {renderDivider && <Divider orientation="vertical" />}
@@ -73,7 +73,7 @@ export default function ContractInfo({
       })}
     >
       <Stack>
-        <Text size="2em" weight="bold" color="yellow" align="center">
+        <Text size="2.5em" weight="bold" color="yellow" align="center">
           {contract.name}
         </Text>
 
