@@ -8,13 +8,72 @@ export default function InformationReviewStep({
   alertType,
   presetAlert,
   presetParams,
+  customName,
+  customDescription,
+  customYaml,
   contract,
 }: {
   alertType: AlertType;
   presetAlert: PresetAlert;
   presetParams: Record<string, any>;
+  customName: string;
+  customDescription: string;
+  customYaml: string;
   contract: Contract;
 }) {
+  const rows = [
+    {
+      key: "Alert Type",
+      value: alertType,
+    },
+    {
+      key: "Preset Name",
+      value: presetAlert?.name,
+      condition: alertType === AlertType.Preset,
+    },
+    {
+      key: "Preset Description",
+      value: presetAlert?.description,
+      condition: alertType === AlertType.Preset,
+    },
+    {
+      key: "Preset Params",
+      value: JSON.stringify(presetParams),
+      condition: alertType === AlertType.Preset,
+    },
+    {
+      key: "Custom Name",
+      value: customName,
+      condition: alertType === AlertType.Custom,
+    },
+    {
+      key: "Custom Description",
+      value: customDescription,
+      condition: alertType === AlertType.Custom,
+    },
+    {
+      key: "Custom YAML",
+      value: customYaml,
+      condition: alertType === AlertType.Custom,
+    },
+    {
+      key: "Contract Name",
+      value: contract?.name,
+    },
+    {
+      key: "Contract Address",
+      value: contract?.address,
+    },
+    {
+      key: "Contract Chain",
+      value: contract?.chain,
+    },
+    {
+      key: "Contract Network",
+      value: contract?.network,
+    },
+  ];
+
   return (
     <AlertCreateStepLayout title="Review Information">
       <Table>
@@ -26,38 +85,16 @@ export default function InformationReviewStep({
         </thead>
 
         <tbody>
-          <tr>
-            <td>Alert Type</td>
-            <td>{alertType}</td>
-          </tr>
-          <tr>
-            <td>Preset Name</td>
-            <td>{presetAlert?.name}</td>
-          </tr>
-          <tr>
-            <td>Preset Description</td>
-            <td>{presetAlert?.description}</td>
-          </tr>
-          <tr>
-            <td>Preset Params</td>
-            <td>{JSON.stringify(presetParams)}</td>
-          </tr>
-          <tr>
-            <td>Contract Name</td>
-            <td>{contract?.name}</td>
-          </tr>
-          <tr>
-            <td>Contract Address</td>
-            <td>{contract?.address}</td>
-          </tr>
-          <tr>
-            <td>Contract Chain</td>
-            <td>{contract?.chain}</td>
-          </tr>
-          <tr>
-            <td>Contract Network</td>
-            <td>{contract?.network}</td>
-          </tr>
+          {rows.map((row) => {
+            if (row.condition === false) return;
+
+            return (
+              <tr key={row.key}>
+                <td>{row.key}</td>
+                <td>{row.value}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
     </AlertCreateStepLayout>
