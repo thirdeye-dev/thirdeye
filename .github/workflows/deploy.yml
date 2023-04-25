@@ -32,6 +32,4 @@ jobs:
         HOST: ${{ secrets.SERVER_SSH_HOST }}
         CODE_PATH: ${{ vars.CODE_PATH }}
       run: |
-        echo "Deploying to server..."
-        echo $CODE_PATH
-        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "/home/deployuser/thirdeye/docker/deploy.sh"
+        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "deploy"
