@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'backend/**' # Only trigger for changes in the backend directory
 
 jobs:
   build-push:
