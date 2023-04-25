@@ -1,4 +1,4 @@
-docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io && 
+docker login -u ${ACTOR} -p ${TOKEN} ghcr.io && 
 cd /home/deployuser/thirdeye/docker &&
 echo "pulling latest docker images" >> logs.txt &&
 docker pull ghcr.io/thirdeye-dev/thirdeye:latest && 
