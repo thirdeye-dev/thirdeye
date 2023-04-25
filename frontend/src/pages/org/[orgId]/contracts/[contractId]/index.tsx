@@ -3,6 +3,7 @@ import ContractInfo from "@/components/contracts/detail/ContractInfo";
 import AppShellLayout from "@/layouts/AppShellLayout";
 import Alert from "@/models/alert";
 import Contract from "@/models/contract";
+import { fetchAlertsByContract } from "@/services/alerts";
 import { fetchContract } from "@/services/contracts";
 import { Box, Breadcrumbs, Flex, Modal, Paper, Stack } from "@mantine/core";
 import Link from "next/link";
@@ -38,18 +39,11 @@ export default function ContractDetailed() {
     setContract(contract);
   };
 
-  const assignAlerts = () => {
-    const alerts = Array(100);
-    for (let i = 0; i < 100; i++) {
-      alerts[i] = {
-        id: i,
-        name: `Alert ${i}`,
-        description: `Alert ${i} description`,
-        created_at: "2021-08-01T00:00:00.000Z",
-        updated_at: "2021-08-01T00:00:00.000Z",
-        alert_yaml: "alert: test",
-      };
-    }
+  const assignAlerts = async () => {
+    if (!contractId) return;
+
+    const alerts = await fetchAlertsByContract(parseInt(contractId));
+    console.log("alerts", alerts);
 
     setAlerts(alerts);
   };
