@@ -6,12 +6,16 @@ import ChoosePresetAlert from "@/components/alerts/create/ChoosePresetAlert";
 import TypeSelectionStep from "@/components/alerts/create/TypeSelectionStep";
 import InformationReviewStep from "@/components/alerts/create/InformationReviewStep";
 import { AlertType } from "@/models/alertType";
-import PresetAlert, { PresetAlertParam } from "@/models/presetAlert";
+import PresetAlert from "@/models/presetAlert";
 import SetupPresetAlert from "@/components/alerts/create/SetupPresetAlert";
 import { useRouter } from "next/router";
 import Contract from "@/models/contract";
 import { createPresetAlert } from "@/services/presetAlerts";
 import { notifications } from "@mantine/notifications";
+import CustomDetails from "@/components/alerts/create/CustomDetails";
+import { fetchContracts } from "@/services/contracts";
+import CustomBuildAlert from "@/components/alerts/create/CustomBuildAlert";
+import { createAlert } from "@/services/alerts";
 
 export default function CreateAlert() {
   const router = useRouter();
@@ -21,16 +25,41 @@ export default function CreateAlert() {
 
   const incStep = () =>
     setActiveStep((current) =>
-      current < steps.length ? current + 1 : current
+      current < getPossibleStepsLength() ? current + 1 : current
     );
 
   const decStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
 
+  const [contracts, setContracts] = useState<Contract[]>([]);
+
+  const assignContracts = async () => {
+    if (!orgId) return;
+
+    const contracts = await fetchContracts(orgId);
+
+    setContracts(contracts);
+  };
+
+  useEffect(() => {
+    assignContracts();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgId]);
+
   const [alertType, setAlertType] = useState<AlertType | null>(null);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(
+    null
+  );
+
+  // Preset
   const [presetAlert, setPresetAlert] = useState<PresetAlert | null>(null);
   const [presetParams, setPresetParams] = useState<Record<string, any>>({});
-  const [contract, setContract] = useState<Contract | null>(null);
+
+  // Custom
+  const [customName, setCustomName] = useState<string>("");
+  const [customDescription, setCustomDescription] = useState<string>("");
+  const [customYaml, setCustomYaml] = useState<string>("");
 
   const steps = [
     {
@@ -58,11 +87,30 @@ export default function CreateAlert() {
         <SetupPresetAlert
           presetAlert={presetAlert!}
           setParams={setPresetParams}
-          orgId={orgId}
-          setContract={setContract}
+          contracts={contracts}
+          setContract={setSelectedContract}
         />
       ),
       condition: alertType == AlertType.Preset,
+    },
+    {
+      label: "Set Details",
+      description: "Set name and description",
+      children: (
+        <CustomDetails
+          setName={setCustomName}
+          setDescription={setCustomDescription}
+          contracts={contracts}
+          setContract={setSelectedContract}
+        />
+      ),
+      condition: alertType == AlertType.Custom,
+    },
+    {
+      label: "Build Alert",
+      description: "Define your custom alert",
+      children: <CustomBuildAlert yaml={customYaml!} setYaml={setCustomYaml} />,
+      condition: alertType == AlertType.Custom,
     },
     // TODO: Implement this
     // {
@@ -78,50 +126,96 @@ export default function CreateAlert() {
           alertType={alertType!}
           presetAlert={presetAlert!}
           presetParams={presetParams}
-          contract={contract!}
+          contract={selectedContract!}
+          customName={customName!}
+          customDescription={customDescription!}
+          customYaml={customYaml!}
         />
       ),
     },
   ];
 
+  const getPossibleStepsLength = () => {
+    const possibleSteps = steps.filter((step) => step.condition !== false);
+
+    return possibleSteps.length;
+  };
+
   const performCreate = async () => {
-    await createPresetAlert(
-      {
-        name: presetAlert!.name,
-        // @ts-ignore FIXME: fix type
-        params: presetParams,
-      },
-      contract!.id
-    );
+    switch (alertType) {
+      case AlertType.Preset:
+        await createPresetAlert(
+          {
+            name: presetAlert!.name,
+            // @ts-ignore FIXME: fix type
+            params: presetParams,
+          },
+          selectedContract!.id
+        );
+        break;
+
+      case AlertType.Custom:
+        await createAlert(
+          {
+            name: customName,
+            description: customDescription,
+            alert_yaml: customYaml,
+          },
+          orgId,
+          selectedContract!.id
+        );
+        break;
+    }
 
     notifications.show({
       title: "Alert Created",
       message: "Your alert has been created",
       color: "teal",
     });
-    router.push(`/org/${orgId}/contracts/${contract!.id}`);
+    router.push(`/org/${orgId}/contracts/${selectedContract!.id}`);
   };
 
   const maybeMoveAheadOrCreate = () => {
-    if (activeStep === steps.length - 1) {
+    if (activeStep === getPossibleStepsLength() - 1) {
       performCreate();
     }
 
-    switch (activeStep) {
-      case 0:
-        if (alertType == null) return;
-        break;
-      case 1:
-        if (alertType == AlertType.Preset && presetAlert == null) return;
-        break;
-      case 2:
-        if (alertType !== AlertType.Preset) return;
+    const performCommonChecks = () => {
+      if (alertType === null) return false;
+    };
 
-        if (contract === null) return;
+    const performPresetChecks = () => {
+      if (activeStep === 1 && presetAlert == null) return false;
+
+      if (activeStep === 2) {
+        if (selectedContract === null) return false;
 
         for (const param of presetAlert!.params) {
-          if (!presetParams[param.name]) return;
+          if (!presetParams[param.name]) return false;
         }
+      }
+    };
+
+    const performCustomChecks = () => {
+      if (activeStep === 1) {
+        if (!customName) return false;
+        if (!selectedContract) return false;
+      }
+
+      if (activeStep === 2) {
+        if (!customYaml) return false;
+      }
+    };
+
+    if (performCommonChecks() === false) return;
+
+    switch (alertType) {
+      case AlertType.Preset:
+        if (performPresetChecks() === false) return;
+        break;
+
+      case AlertType.Custom:
+        if (performCustomChecks() === false) return;
         break;
     }
 
@@ -150,7 +244,7 @@ export default function CreateAlert() {
           }}
         >
           {steps.map((step, index) => {
-            if (step.condition === false) return null;
+            if (step.condition === false) return;
 
             return (
               <Stepper.Step
@@ -172,7 +266,7 @@ export default function CreateAlert() {
           )}
 
           <Button onClick={maybeMoveAheadOrCreate} color="green" size="lg">
-            {activeStep === steps.length - 1 ? "Create" : "Next"}
+            {activeStep === getPossibleStepsLength() - 1 ? "Create" : "Next"}
           </Button>
         </Flex>
       </Stack>

@@ -72,16 +72,14 @@ function ParamField({ param, ...props }: { param: PresetAlertParam }) {
 export default function SetupPresetAlert({
   presetAlert,
   setParams,
-  orgId,
+  contracts,
   setContract,
 }: {
   presetAlert: PresetAlert;
   setParams: (params: Record<string, any>) => void;
+  contracts: Contract[];
   setContract: (contract: Contract) => void;
-  orgId: string;
 }) {
-  const [contracts, setContracts] = useState<Contract[]>([]);
-
   const form = useForm({
     initialValues: presetAlert.params.reduce(
       (acc, param) => ({ ...acc, [param.name]: param.default }),
@@ -94,16 +92,6 @@ export default function SetupPresetAlert({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, form.values]);
-
-  const assignContracts = async () => {
-    const contracts = await fetchContracts(orgId);
-
-    setContracts(contracts);
-  };
-
-  useEffect(() => {
-    assignContracts();
-  }, []);
 
   const onChangeContract = (contractName: string) => {
     const contract = contracts.find(
