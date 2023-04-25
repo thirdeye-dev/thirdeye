@@ -32,4 +32,4 @@ jobs:
         HOST: ${{ secrets.SERVER_SSH_HOST }}
         CODE_PATH: ${{ secrets.CODE_PATH }}
       run: |
-        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "cd ${CODE_PATH}/docker && ./cicd.sh"
+        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "chmod +x ${CODE_PATH}/docker/cicd.sh && ${CODE_PATH}/docker/cicd.sh"
