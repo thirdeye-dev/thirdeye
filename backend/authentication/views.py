@@ -1,5 +1,6 @@
-import logging
 import os
+import logging
+import requests
 
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
@@ -110,8 +111,10 @@ def github_login(request):
     if settings.DEMO_INSTANCE:
         REPLACEMENT_URL = settings.FRONTEND_URL + "/api"
 
+    current_domain = request.get_host()
+
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
-        "0.0.0.0:8000", REPLACEMENT_URL
+        current_domain, REPLACEMENT_URL
     )
 
     if settings.DEMO_INSTANCE:
