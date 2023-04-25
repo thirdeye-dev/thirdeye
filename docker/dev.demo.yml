@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+   backend:
+    container_name: backend_demo_app_third_eye
+    expose:
+      - "8000"
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    entrypoint: docker/entrypoint/entrypoint.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/app
+    env_file:
+      - ./.env
+    environment:
+      - DEMO_INSTANCE=true

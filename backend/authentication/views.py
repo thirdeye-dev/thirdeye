@@ -105,9 +105,18 @@ class MeAPIView(generics.RetrieveAPIView):
 
 
 def github_login(request):
+    REPLACEMENT_URL = "http://localhost:3000/api"
+
+    if settings.DEMO_INSTANCE:
+        REPLACEMENT_URL = settings.FRONTEND_URL + "/api"
+
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
-        "0.0.0.0:8000", "localhost:3000/api"
+        "0.0.0.0:8000", REPLACEMENT_URL
     )
+
+    if settings.DEMO_INSTANCE:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)
     except AttributeError as error:
@@ -124,9 +133,10 @@ class GithubLoginCallbackView(APIView):
         except (
             OAuthError,
             OAuth2Error,
-        ):
+        ) as e:
+            logger.error("OAuth authentication error: %s", e)
             # Not giving out the actual error as we risk exposing the client secret
-            raise AuthenticationFailed("OAuth authentication error.")
+            raise AuthenticationFailed("OAuth authentication error.",)
 
         resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
