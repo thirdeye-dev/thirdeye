@@ -151,6 +151,7 @@ DEMO_INSTANCE = True if os.environ.get("DEMO_INSTANCE") == "true" else False
 
 DEMO_ALLOWED_EMAILS = [
     "wolfwithahat@protonmail.com",
+    "smahkam57@gmail.com"
 ]
 
 PROTOTYPE_DOMAIN = "thirdeye-prototype.vercel.app"
