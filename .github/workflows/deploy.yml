@@ -34,9 +34,4 @@ jobs:
         ACTOR: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST}
-        "docker login -u ${ACTOR} -p ${TOKEN} ghcr.io && 
-        cd /home/deployuser/thirdeye/docker &&
-        docker pull ghcr.io/thirdeye-dev/thirdeye:latest && 
-        docker-compose down && 
-        docker-compose -f /home/deployuser/thirdeye/docker/demo.yml up -d"
+        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "docker login -u ${ACTOR} -p ${TOKEN} ghcr.io && cd /home/deployuser/thirdeye/docker && docker pull ghcr.io/thirdeye-dev/thirdeye:latest && docker-compose -f /home/deployuser/thirdeye/docker/demo.yml down && docker-compose -f /home/deployuser/thirdeye/docker/demo.yml up -d"
