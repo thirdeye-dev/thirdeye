@@ -6,11 +6,9 @@ services:
     expose:
       - "8000"
     image: ghcr.io/thirdeye-dev/thirdeye:latest
-    entrypoint: docker/entrypoint/entrypoint.sh
+    entrypoint: /app/backend/entrypoint.sh
     ports:
       - "8000:8000"
-    volumes:
-      - ../db.sqlite:/app/backend/db.sqlite
     env_file:
       - ./.env
     environment:
