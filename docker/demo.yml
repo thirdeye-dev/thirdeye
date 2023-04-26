@@ -5,7 +5,7 @@ services:
     container_name: backend_demo_app_third_eye
     expose:
       - "8000"
-    image: third-eye-backend:latest
+    image: ghcr.io/thirdeye-dev/thirdeye:latest
     entrypoint: docker/entrypoint/entrypoint.sh
     ports:
       - "8000:8000"
