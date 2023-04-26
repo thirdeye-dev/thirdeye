@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const removeImports = require("next-remove-imports")();
+
 const backendUrl = process.env.BACKEND_URL || "http://0.0.0.0:8000/";
 
 const nextConfig = {
@@ -31,4 +33,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = removeImports(nextConfig);
