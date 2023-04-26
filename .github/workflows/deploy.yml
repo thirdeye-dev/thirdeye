@@ -39,4 +39,4 @@ jobs:
         cd /home/deployuser/thirdeye/docker &&
         docker pull ghcr.io/thirdeye-dev/thirdeye:latest && 
         docker-compose down && 
-        docker-compose -f ${CODE_PATH}/docker/demo.yml up -d"
+        docker-compose -f /home/deployuser/thirdeye/docker/demo.yml up -d"
