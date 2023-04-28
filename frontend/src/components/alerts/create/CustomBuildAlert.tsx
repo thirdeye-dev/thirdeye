@@ -12,8 +12,8 @@ import { useEffect } from "react";
 const PLACEHOLDER_ALERT = `blockchain_alerts:
 - alert_type: every_transaction # alert_type can be: every_transaction & cron
   alerts:
-    my_alert: # alert name can be arbitrary
-      condition: txn_gasPrice >= 100000 and txn_from != '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B' # condition (boolean) runs like python, but is not
+    AlertName: # alert name can be arbitrary
+      condition: 'txn_gasPrice >= 100000' # condition (boolean) runs like python, but is not
       notifications: # options are: send_webhook, send_email, send_sms
       - send_webhook
       webhook_url: https://example.com/webhook # only if send_webhook is added above`;
