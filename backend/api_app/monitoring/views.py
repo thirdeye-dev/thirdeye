@@ -265,9 +265,13 @@ class AlertCreateAPIView(CreateAPIView):
 
 class NotificationListViewSet(ListAPIView):
     serializer_class = NotificationAPISerializer
-    permission_classes = [SmartContractNotificationAndAlertsPermissions]
+    permission_classes = [IsMember]
 
     def get_queryset(self):
-        queryset = self.serializer_class.Meta.model.objects.all() #insecure! fix!
+        queryset = self.serializer_class.Meta.model.objects.filter(
+            alert__smart_contract__owner_organization=self.request.data.get(
+                "owner_organization"
+            )
+        )
         return queryset
 
