@@ -17,4 +17,3 @@ services:
       - ./.env
     environment:
       - DEMO_INSTANCE=true
-  

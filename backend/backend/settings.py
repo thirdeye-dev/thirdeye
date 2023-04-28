@@ -149,11 +149,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "backend.wsgi.application"
 DEMO_INSTANCE = True if os.environ.get("DEMO_INSTANCE") == "true" else False
 
-DEMO_ALLOWED_EMAILS = [
-    "wolfwithahat@protonmail.com",
+DEMO_ALLOWED_LOGINS = [
+    "0x0elliot",
+    "syedahkam",
+    "kapersky1337",
 ]
 
-PROTOTYPE_URL = "https://thirdeye-prototype.vercel.app/"
+PROTOTYPE_DOMAIN = "thirdeye-prototype.vercel.app"
+
+PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
 
 FRONTEND_URL = (
     PROTOTYPE_URL

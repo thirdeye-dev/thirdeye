@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+   backend:
+    container_name: backend_demo_app_third_eye
+    expose:
+      - "8000"
+    image: ghcr.io/thirdeye-dev/thirdeye:latest
+    entrypoint: /app/backend/entrypoint.sh
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    environment:
+      - DEMO_INSTANCE=true
+  

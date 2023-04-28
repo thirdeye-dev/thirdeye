@@ -105,9 +105,23 @@ class MeAPIView(generics.RetrieveAPIView):
 
 
 def github_login(request):
+    # for development
+    REPLACEMENT_DOMAIN = "localhost:3000"
+
+    if settings.DEMO_INSTANCE:
+        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+
+    REPLACEMENT_DOMAIN += "/api"
+
+    current_domain = request.get_host()
+
     redirect_uri = request.build_absolute_uri(reverse("oauth_github_callback")).replace(
-        "0.0.0.0:8000", "localhost:3000/api"
+        current_domain, REPLACEMENT_DOMAIN
     )
+
+    if settings.DEMO_INSTANCE:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)
     except AttributeError as error:
@@ -124,9 +138,12 @@ class GithubLoginCallbackView(APIView):
         except (
             OAuthError,
             OAuth2Error,
-        ):
+        ) as e:
+            logger.error("OAuth authentication error: %s", e)
             # Not giving out the actual error as we risk exposing the client secret
-            raise AuthenticationFailed("OAuth authentication error.")
+            raise AuthenticationFailed(
+                "OAuth authentication error.",
+            )
 
         resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
@@ -149,8 +166,9 @@ class GithubLoginCallbackView(APIView):
 
         if settings.DEMO_INSTANCE:
             # In demo instance, we only allow a certain set of emails to login
-            allowed_emails = settings.DEMO_ALLOWED_EMAILS
-            if not (user_email not in allowed_emails):
+            login = profile.get("login", "").lower()
+            allowed_logins = settings.DEMO_ALLOWED_LOGINS
+            if not (login in allowed_logins):
                 raise AuthenticationFailed(
                     "You are not allowed to login to this demo instance."
                 )
@@ -182,9 +200,7 @@ class GithubLoginCallbackView(APIView):
         access_token = tokens.get("access")
         refresh_token = tokens.get("refresh")
 
-        # Uncomment this for local testing
         return redirect(
             f"{settings.FRONTEND_URL}auth/social?access"
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
-        # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))

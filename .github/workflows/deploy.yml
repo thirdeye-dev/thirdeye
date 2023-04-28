@@ -30,6 +30,13 @@ jobs:
         PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         DEPLOY_USER: ${{ secrets.SERVER_SSH_USER }}
         HOST: ${{ secrets.SERVER_SSH_HOST }}
-        CODE_PATH: ${{ secrets.CODE_PATH }}
+        CODE_PATH: ${{ vars.CODE_PATH }}
+        ACTOR: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "cd ${CODE_PATH}/docker && docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io && docker pull ghcr.io/thirdeye-dev/thirdeye:latest && docker-compose down && docker-compose -f docker-compose.demo.yml up -d"
+        ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${HOST} "\
+            docker login -u ${ACTOR} -p ${TOKEN} ghcr.io && \
+            cd /home/deployuser/thirdeye/docker && \
+            docker pull ghcr.io/thirdeye-dev/thirdeye:latest && \
+            docker-compose -f /home/deployuser/thirdeye/docker/demo.yml down && \
+            docker-compose -f /home/deployuser/thirdeye/docker/demo.yml up -d"
