@@ -1,4 +1,3 @@
-import pytz
 import logging
 from datetime import datetime, timedelta
 
@@ -14,7 +13,6 @@ from api_app.monitoring.models import Alerts, Notification
 from api_app.smartcontract.models import SmartContract
 from authentication.organizations.models import Organization
 from authentication.organizations.permissions import IsMember
-from api_app.core.serializer import PreWrittenAlertsSerializer
 
 from .models import Alerts
 from .permissions import (
@@ -275,4 +273,3 @@ class NotificationListViewSet(ListAPIView):
             )
         )
         return queryset
-

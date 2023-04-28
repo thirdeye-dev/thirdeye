@@ -9,7 +9,6 @@ from .views import (
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
     set_pre_written_alerts,
-    OverviewDataAPIView
 )
 
 urlpatterns = [
