@@ -256,6 +256,18 @@ paths:
                 items:
                   $ref: '#/components/schemas/AlertsAPI'
           description: ''
+  /monitoring/overview-data:
+    get:
+      operationId: monitoring_overview_data_retrieve
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /monitoring/pre-written-alerts:
     get:
       operationId: monitoring_pre_written_alerts_retrieve
