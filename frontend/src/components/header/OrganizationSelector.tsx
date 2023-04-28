@@ -1,20 +1,12 @@
-import {
-  ActionIcon,
-  Divider,
-  Group,
-  Header,
-  Select,
-  useMantineColorScheme,
-} from "@mantine/core";
-import Logo from "./Logo";
-import { FiMoon, FiSun } from "react-icons/fi";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { fetchOrganizations } from "@/services/organizations";
-import Organization from "@/models/organization";
+import { useRouter } from "next/router";
 
-function OrganizationSelector() {
+import { Select } from "@mantine/core";
+
+import Organization from "@/models/organization";
+import { fetchOrganizations } from "@/services/organizations";
+
+export default function OrganizationSelector() {
   const router = useRouter();
 
   const currentOrgId = router.query.orgId;
@@ -61,42 +53,5 @@ function OrganizationSelector() {
       // @ts-ignore
       onSelect={(e) => onOrganizationChange(e.target.value)}
     />
-  );
-}
-
-export default function HeaderComponent() {
-  const router = useRouter();
-
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
-  const shouldShowOrganizationSelector =
-    router.pathname.includes("/org") ?? false;
-
-  return (
-    <Header height={"5rem"} fixed>
-      <Group
-        position="apart"
-        sx={(theme) => ({
-          height: "100%",
-          width: "100%",
-          padding: theme.spacing.md,
-        })}
-      >
-        <Group>
-          <Link href="/">
-            <Logo />
-          </Link>
-
-          <Divider orientation="vertical" />
-          {shouldShowOrganizationSelector && <OrganizationSelector />}
-        </Group>
-
-        <Group>
-          <ActionIcon onClick={() => toggleColorScheme()}>
-            {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-          </ActionIcon>
-        </Group>
-      </Group>
-    </Header>
   );
 }

@@ -6,3 +6,16 @@ export const toSentenceCase = (str: string) => {
 
   return capitalizedWords.join(" ");
 };
+
+export const getColorByTag = (tag: string) => {
+  switch (tag) {
+    case "success":
+      return "green";
+    case "warn":
+      return "yellow";
+    case "error":
+      return "red";
+    default:
+      return "gray";
+  }
+};

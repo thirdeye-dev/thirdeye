@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { Stack } from "@mantine/core";
 
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 
 const inter = Inter({
   variable: "--font-inter",
