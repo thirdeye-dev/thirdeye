@@ -5,10 +5,10 @@ from .views import (
     AlertRetrieveAPIView,
     NotificationListViewSet,
     OrganizationAlertListViewSet,
+    OverviewDataAPIView,
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
     set_pre_written_alerts,
-    OverviewDataAPIView
 )
 
 urlpatterns = [
