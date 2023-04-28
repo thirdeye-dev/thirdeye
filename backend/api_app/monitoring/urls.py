@@ -8,6 +8,7 @@ from .views import (
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
     set_pre_written_alerts,
+    OverviewDataAPIView
 )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path(
         "set-pre-written-alerts", set_pre_written_alerts, name="set_pre_written_alerts"
     ),
+    path("overview-data", OverviewDataAPIView, name="overview-data"),
 ]
