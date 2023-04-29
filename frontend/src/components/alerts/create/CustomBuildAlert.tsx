@@ -55,6 +55,7 @@ export default function CustomBuildAlert({
           }}
           value={PLACEHOLDER_ALERT}
           onChange={onChange}
+          // @ts-ignore
           extensions={[loadLanguage("yaml"), EditorView.lineWrapping]}
         />
       </Paper>
