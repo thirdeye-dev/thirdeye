@@ -29,7 +29,7 @@ export default function ContractCard({
   const organizationId = router.query.orgId as string;
 
   const onClickAddAlert = () => {
-    router.push(`/org/${organizationId}/contracts/${contract.id}#add-alert`);
+    router.push(`/org/${organizationId}/alerts/create`);
   };
   const onClickManage = () => {
     router.push(`/org/${organizationId}/contracts/${contract.id}`);
@@ -85,7 +85,7 @@ export default function ContractCard({
               size="sm"
               onClick={onClickAddAlert}
             >
-              Add Alert
+              Create Alert
             </Button>
             <Button
               variant="light"
