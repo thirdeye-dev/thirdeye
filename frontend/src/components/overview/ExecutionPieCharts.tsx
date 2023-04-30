@@ -10,13 +10,13 @@ import {
 
 export default function ExecutionPieCharts() {
   const alertTriggers = [
-    { name: "Contract 1", value: 1350 },
-    { name: "Contract 2", value: 1140 },
+    { name: "Alpha", value: 1350 },
+    { name: "Beta", value: 1140 },
   ];
 
   const onChainTriggers = [
-    { name: "Contract 1", value: 224 },
-    { name: "Contract 2", value: 892 },
+    { name: "Alpha", value: 224 },
+    { name: "Beta", value: 892 },
   ];
 
   const colors = ["#FF9830", "#B877D9", "#73BF69", "#5794F2"];

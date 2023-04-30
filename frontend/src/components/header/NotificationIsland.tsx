@@ -25,7 +25,7 @@ dayjs.extend(relativeTime);
 export function NotificationIsland() {
   const [notifications, setNotifications] = useState<Array<Record<any, any>>>([
     {
-      contract_name: "My Contract",
+      contract_name: "Alpha",
       contract_id: 1,
       alert_name: "Gas Threshold Exceed",
       type: "gas_threshold_reached",
@@ -35,7 +35,7 @@ export function NotificationIsland() {
       executed_at: dayjs(),
     },
     {
-      contract_name: "My Contract",
+      contract_name: "Beta",
       contract_id: 1,
       alert_name: "Change in balance",
       type: "owner_balance_changed",
@@ -45,7 +45,7 @@ export function NotificationIsland() {
       executed_at: dayjs().subtract(1, "hour"),
     },
     {
-      contract_name: "My Contract",
+      contract_name: "Beta",
       contract_id: 1,
       alert_name: "Too many Failed Transactions",
       type: "too_many_failed_transactions",

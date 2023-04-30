@@ -16,5 +16,29 @@
                 "type": "str"
             }
         }
+    },
+    "ORACLE_MISMATCH": {
+        "name": "ORACLE_MISMATCH",
+        "description": "Longtail asset prices have been maliciously pumped, there is an oracle mismatch happening.",
+        "alert_yaml": "GAS_PRICE_THRESHOLD.yaml",
+        "params": {
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str"
+            }
+        }
+    },
+    "TOO_MANY_FAILED_TXS": {
+        "name": "TOO_MANY_FAILED_TXS",
+        "description": "Too many failed transactions in the last 24 hours",
+        "alert_yaml": "GAS_PRICE_THRESHOLD.yaml",
+        "params": {
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str"
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ import {
 
 const data = [
   {
-    name: "Contract 1",
+    name: "Alpha",
     color: "#8884d8",
     entries: [
       { day: "monday", executions: 30 },
@@ -24,7 +24,7 @@ const data = [
     ],
   },
   {
-    name: "Contract 2",
+    name: "Beta",
     color: "#82ca9d",
     entries: [
       { day: "monday", executions: 20 },

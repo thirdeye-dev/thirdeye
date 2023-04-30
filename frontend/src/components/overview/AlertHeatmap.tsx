@@ -44,7 +44,7 @@ export default function AlertHeatmap() {
   const chartCfg = {
     autoFit: true,
     start: "2022-01",
-    end: "2023-01",
+    end: "2022-12",
     data,
     height: 180,
     size: 10,
