@@ -42,35 +42,28 @@ def OverviewDataAPIView(request):
 
     owner_organization = Organization.objects.filter(id=owner_organization_id).first()
 
-    timemode = request.query_params.get("timemode")
-    if timemode is None:
-        timemode = "weekly"  # options: weekly & yearly
+    time_mode = request.query_params.get("time_mode")
+    if time_mode is None:
+        time_mode = "weekly"  # options: weekly & yearly
 
     # Get the current date and time
     now = datetime.now()
 
-    # Calculate the start date based on the timemode
-    if timemode == "weekly":
+    # Calculate the start date based on the time_mode
+    if time_mode == "weekly":
         start_date = now - timedelta(days=now.weekday())  # since monday
     else:
         start_date = datetime(now.year, 1, 1)  # Yearly
-
-    # if timemode == "weekly":
-    # fetch all notifications for the organization since the beginning of the week.
-    # else, fetch all notifications for the organization since the beginning of
-    # the year to now.
 
     notifications = Notification.objects.filter(
         alert__smart_contract__owner_organization=owner_organization,
         created_at__gte=start_date,
     )
 
-    # get all the smart contracts in the organization
     smart_contracts = SmartContract.objects.filter(
         owner_organization=owner_organization
     )
 
-    # for each smart contract, compile the data for the frontend.
     smart_contracts_data = []
     for smart_contract in smart_contracts:
         smart_contract_data = {
@@ -79,36 +72,13 @@ def OverviewDataAPIView(request):
             "entries": [],
         }
 
-        # fetch all notifications for the smart contract
-        # according to the timemode
-
         smart_contract_notifications = notifications.filter(
             alert__smart_contract=smart_contract, created_at__gte=start_date
         )
 
-        # now, to generate the data for the frontend, we need to group t
-        # he notifications by day of the week or by day of the year.
-        # for each day, we need to count the number of notifications.
-        # we can do this by creating a dictionary with the day as the key
-        # and the number of notifications as the value. then, we can convert
-        # this dictionary into a list of objects with the day and
-        # the number of notifications. finally, we can add this list of objects
-        #  to the smart_contract_data object.
-
-        # create a dictionary with the day as the key and the number
-        #  of notifications as the value. for example,
-        # {"monday": 10, "tuesday": 20, "wednesday": 30} this dictionary will be
-        #  used to generate the list of objects with
-        # the day and the number of notifications.
-
         day_to_number_of_notifications = {}
 
-        # for each notification, get the day of the week or the day of the year.
-        # if the day is not in the dictionary, add it with the value 1.
-        # if the day is in the dictionary, increment the value by 1.
-
         for notification in smart_contract_notifications:
-            # get date in UTC format
             date = notification.created_at.astimezone(pytz.utc)
             day = notification.created_at.strftime("%A")
 
@@ -119,15 +89,11 @@ def OverviewDataAPIView(request):
 
         smart_contracts_data.append(smart_contract_data)
 
-    # convert the dictionary into a list of objects with
-    # the day and the number of notifications. for example,
-    # [{day: "monday", executions: 10}, {day: "tuesday", executions: 20},
-    # {day: "wednesday", executions: 30}]
     for smart_contract_data in smart_contracts_data:
         for day, number_of_notifications in day_to_number_of_notifications.items():
             smart_contract_data["entries"].append(
                 {
-                    "day" if timemode == "weekly" else "date": date,
+                    "day" if time_mode == "weekly" else "date": date,
                     "executions": number_of_notifications,
                 }
             )
