@@ -268,7 +268,7 @@ class NotificationListViewSet(ListAPIView):
 
     def get_queryset(self):
         queryset = self.serializer_class.Meta.model.objects.filter(
-            alert__smart_contract__owner_organization=self.request.data.get(
+            alert__smart_contract__owner_organization=self.request.query_params.get(
                 "owner_organization"
             )
         )
