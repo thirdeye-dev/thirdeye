@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 from api_app.monitoring import tasks
 from api_app.monitoring.models import MonitoringTasks, Notification
+from api_app.monitoring.serializers import NotificationAPISerializer
 from api_app.smartcontract.models import SmartContract
 
 logger = get_task_logger(__name__)
@@ -40,11 +41,22 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Notification)
 def notification_post_save(sender, instance, created, **kwargs):
     if created:
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
         # task = tasks.send_webhook.delay(instance.id)
         # use async_to_sync to make it work
         task = tasks.send_webhook.apply_async(args=[instance.id])
         instance.task_id = task.id
         instance.save()
+
+        notification = NotificationAPISerializer(instance).data
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(  # shift this to a celery task
+            str(instance.alert.smart_contract.owner_organization.id),
+            {"type": "send_notification", "notification": notification},
+        )
 
 
 @task_failure.connect(sender=tasks.monitor_contract, weak=False)

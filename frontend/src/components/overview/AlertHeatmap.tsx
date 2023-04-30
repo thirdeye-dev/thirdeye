@@ -37,7 +37,7 @@ export default function AlertHeatmap() {
   const data = [
     ...Array.from({ length: 365 }).map((_, i) => ({
       date: dayjs("2022-01-01").add(i, "day").format("YYYY-MM-DD"),
-      executions: Math.floor(Math.random() * 30) / 20,
+      executions: Math.floor(Math.random() * 10),
     })),
   ];
 
@@ -51,20 +51,21 @@ export default function AlertHeatmap() {
     dateField: "date",
     valueField: "executions",
     condition: (val: number) => {
+      // Get heatmap color based on value (number of executions) from github (expect 0-30)
+      const colors = ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"];
+
       if (val === 0) {
-        return "#F2F3F5";
-      }
-
-      if (val > 0 && val <= 1) {
-        return "#BAE7FF";
-      }
-
-      if (val > 1 && val <= 10) {
-        return "#1890FF";
-      }
-
-      if (val > 10) {
-        return "#0050B3";
+        return colors[0];
+      } else if (val > 0 && val <= 5) {
+        return colors[1];
+      } else if (val > 5 && val <= 10) {
+        return colors[2];
+      } else if (val > 10 && val <= 15) {
+        return colors[3];
+      } else if (val > 15 && val <= 20) {
+        return colors[4];
+      } else {
+        return colors[4];
       }
     },
   };
