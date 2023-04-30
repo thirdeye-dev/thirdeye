@@ -41,8 +41,8 @@ def monitoring_task_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Notification)
 def notification_post_save(sender, instance, created, **kwargs):
     if created:
-        from channels.layers import get_channel_layer
         from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
 
         # task = tasks.send_webhook.delay(instance.id)
         # use async_to_sync to make it work
@@ -53,12 +53,9 @@ def notification_post_save(sender, instance, created, **kwargs):
         notification = NotificationAPISerializer(instance).data
 
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)( # shift this to a celery task
+        async_to_sync(channel_layer.group_send)(  # shift this to a celery task
             str(instance.alert.smart_contract.owner_organization.id),
-            {
-                'type': 'send_notification',
-                'notification': notification
-            }
+            {"type": "send_notification", "notification": notification},
         )
 
 

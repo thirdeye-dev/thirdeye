@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
-import django
 from datetime import timedelta
 from pathlib import Path
 
@@ -150,8 +149,6 @@ TEMPLATES = [
 ]
 
 
-
-
 WSGI_APPLICATION = "backend.wsgi.application"
 ASGI_APPLICATION = "backend.asgi.application"
 
@@ -252,10 +249,10 @@ REDIS_DB = 0
 REDIS_HOST = os.environ.get("REDIS_PORT_6379_TCP_ADDR", "redis")
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(REDIS_HOST, REDIS_PORT)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
         # 'ROUTING': 'api_app.monitoring.routing.application',
     },
@@ -316,4 +313,3 @@ SPECTACULAR_SETTINGS = {
 
 
 # django.setup()
-
