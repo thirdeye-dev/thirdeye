@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+import django
 from datetime import timedelta
 from pathlib import Path
 
@@ -79,6 +80,8 @@ INSTALLED_APPS = [
     "api_app.core",
     "api_app.monitoring",
     "api_app.smartcontract",
+    "channels",
+    "channels_redis",
 ]
 
 APPEND_SLASH = False
@@ -146,7 +149,12 @@ TEMPLATES = [
     },
 ]
 
+
+
+
 WSGI_APPLICATION = "backend.wsgi.application"
+ASGI_APPLICATION = "backend.asgi.application"
+
 DEMO_INSTANCE = True if os.environ.get("DEMO_INSTANCE") == "true" else False
 
 DEMO_ALLOWED_LOGINS = [
@@ -239,7 +247,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_PORT = 6379
 REDIS_DB = 0
+
+# look into the env stuff later. might be useless.
 REDIS_HOST = os.environ.get("REDIS_PORT_6379_TCP_ADDR", "redis")
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(REDIS_HOST, REDIS_PORT)],
+        },
+        # 'ROUTING': 'api_app.monitoring.routing.application',
+    },
+}
 
 RABBIT_HOSTNAME = os.environ.get("RABBIT_PORT_5672_TCP", "rabbit")
 
@@ -290,3 +310,10 @@ SPECTACULAR_SETTINGS = {
         {"url": "http://localhost:3000/", "description": "Localhost API base URL"},
     ],
 }
+
+# os.environ['DJANGO_SETTINGS_MODULE'] =  "backend.settings"
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+
+
+# django.setup()
+

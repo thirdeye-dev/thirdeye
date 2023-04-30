@@ -1,3 +1,5 @@
+channels
+channels-redis
 django==3.2.18
 gunicorn==20.1.*
 djangorestframework-simplejwt

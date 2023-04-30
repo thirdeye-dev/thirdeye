@@ -38,7 +38,7 @@ services:
       dockerfile: docker/Dockerfile
     container_name: celery_thirdeye
     volumes:
-      - "../:/app"
+      - ../:/app
     networks:
       default:
       internal:
@@ -54,7 +54,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     volumes:
-      - "../:/app"
+      - ../:/app
     networks:
       default:
       internal:

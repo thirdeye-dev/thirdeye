@@ -11,6 +11,8 @@ from .views import (
     set_pre_written_alerts,
 )
 
+from .routing import websocket_urlpatterns
+
 urlpatterns = [
     path("contract/<int:pk>/alerts", SmartContractAlertListViewSet.as_view()),
     path("organization/alerts", OrganizationAlertListViewSet.as_view()),
