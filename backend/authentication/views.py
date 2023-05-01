@@ -164,14 +164,14 @@ class GithubLoginCallbackView(APIView):
         if not user_email and emails:
             user_email = emails[0].get("email")
 
-        if settings.DEMO_INSTANCE:
-            # In demo instance, we only allow a certain set of emails to login
-            login = profile.get("login", "").lower()
-            allowed_logins = settings.DEMO_ALLOWED_LOGINS
-            if not (login in allowed_logins):
-                raise AuthenticationFailed(
-                    "You are not allowed to login to this demo instance."
-                )
+        # if settings.DEMO_INSTANCE:
+        #     # In demo instance, we only allow a certain set of emails to login
+        #     login = profile.get("login", "").lower()
+        #     allowed_logins = settings.DEMO_ALLOWED_LOGINS
+        #     if not (login in allowed_logins):
+        #         raise AuthenticationFailed(
+        #             "You are not allowed to login to this demo instance."
+        #         )
 
         try:
             user = User.objects.get(email=user_email)

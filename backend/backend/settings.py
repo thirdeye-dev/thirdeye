@@ -160,7 +160,7 @@ DEMO_ALLOWED_LOGINS = [
     "kapersky1337",
 ]
 
-PROTOTYPE_DOMAIN = "thirdeye-prototype.vercel.app"
+PROTOTYPE_DOMAIN = "thirdeyelabs.xyz"
 
 PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
 
