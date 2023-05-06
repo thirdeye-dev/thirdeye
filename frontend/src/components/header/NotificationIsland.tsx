@@ -81,7 +81,7 @@ export function NotificationIsland() {
       withBorder
       radius="lg"
       h="100%"
-      w="40%"
+      w="42%"
       shadow="lg"
       sx={(theme) => ({
         backgroundColor:
@@ -97,7 +97,7 @@ export function NotificationIsland() {
           </Text>
         </Flex>
       ) : (
-        <HoverCard width="39%" position="bottom-start" radius="lg" offset={20}>
+        <HoverCard width="41%" position="bottom-start" radius="lg" offset={20}>
           <HoverCard.Target>
             <Flex
               direction="row"
