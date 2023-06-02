@@ -9,7 +9,11 @@ blockchain_alerts:
           - send_email
           - send_sms
           - send_webhook
-
+        automation:
+          command: "command" # call command in the smart contract
+          arguments:
+            - a: "1" # python like expression
+            - b: "2" # python like expression
 
 # Another type
 blockchain_alerts:
