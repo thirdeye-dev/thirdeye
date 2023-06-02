@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from api_app.smartcontract.permissions import CanAccessSmartContract
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import SmartContract
-from .serializers import SmartContractSerializer
+from .serializers import SmartContractSerializer, ABISerializer
 
 
-# add permissions later
 class SmartContractViewSet(viewsets.ModelViewSet):
     serializer_class = SmartContractSerializer
 
@@ -47,3 +47,18 @@ class SmartContractViewSet(viewsets.ModelViewSet):
             {"error": "User is not a member of the organization"},
             status=Status.HTTP_400_BAD_REQUEST,
         )
+
+
+@api_view(["POST"])
+@permission_classes([CanAccessSmartContract])
+def add_abi(request):
+    smart_contract_id = request.data.get("smart_contract")
+    smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
+
+    abi = request.data.get("abi")
+    serializer = ABISerializer(data=abi)
+    serializer.is_valid(raise_exception=True)
+    smart_contract.abi = serializer.data
+
+    smart_contract.save()
+    return Response({"message": "abi added successfully"}, status=Status.HTTP_200_OK)

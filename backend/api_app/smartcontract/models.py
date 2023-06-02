@@ -27,6 +27,9 @@ class SmartContract(BaseMixin):
         max_length=100, choices=Network.choices, default=Network.MAINNET
     )
 
+    # supposed to be a json field
+    abi = models.TextField(null=True, default=None)
+
     active = models.BooleanField(default=True)
 
     # support for organisational scoping coming soon

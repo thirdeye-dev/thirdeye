@@ -6,14 +6,43 @@ from authentication.organizations.models import Organization
 
 from .models import SmartContract
 
+class InputSerializer(serializers.Serializer):
+    internalType = serializers.CharField()
+    name = serializers.CharField()
+    type = serializers.CharField()
 
-def smart_contract_validator(value):
-    pattern = re.compile(r"^0x[a-fA-F0-9]{40}$")
-    if not pattern.match(value):
-        raise serializers.ValidationError("Invalid smart contract address")
+class OutputSerializer(serializers.Serializer):
+    internalType = serializers.CharField()
+    name = serializers.CharField()
+    type = serializers.CharField()
 
+class MethodSerializer(serializers.Serializer):
+    inputs = InputSerializer(many=True)
+    name = serializers.CharField()
+    outputs = OutputSerializer(many=True)
+    stateMutability = serializers.CharField()
+    type = serializers.CharField()
+
+class ABIObjectSerializer(serializers.Serializer):
+    compiler = serializers.DictField()
+    language = serializers.CharField()
+    output = serializers.DictField(child=MethodSerializer())
+    devdoc = serializers.DictField()
+    userdoc = serializers.DictField()
+
+class ABISerializer(serializers.Serializer):
+    version = serializers.IntegerField()
+    abi = serializers.ListField(child=ABIObjectSerializer())
+    settings = serializers.DictField()
+    sources = serializers.DictField()
 
 class SmartContractSerializer(serializers.ModelSerializer):
+    def smart_contract_validator(value):
+        pattern = re.compile(r"^0x[a-fA-F0-9]{40}$")
+        if not pattern.match(value):
+            raise serializers.ValidationError("Invalid smart contract address")
+
+    abi = ABISerializer(required=False)
     address = serializers.CharField(validators=[smart_contract_validator])
     chain = serializers.CharField(required=True)
     network = serializers.CharField(required=True)
@@ -27,7 +56,7 @@ class SmartContractSerializer(serializers.ModelSerializer):
     class Meta:
         model = SmartContract
         fields = "__all__"
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "abi")
 
     def validate(self, data):
         if data["chain"] == "ETH":
