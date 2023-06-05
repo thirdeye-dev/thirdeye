@@ -48,11 +48,21 @@ class SmartContractViewSet(viewsets.ModelViewSet):
             status=Status.HTTP_400_BAD_REQUEST,
         )
 
+# the assumption here is that CanAccessSmartContractWithoutAction
+# takes care of verifying that smart_contract exists in request body.
+@api_view(["DELETE"])
+@permission_classes([CanAccessSmartContractWithoutAction])
+def delete_abi(request):
+    smart_contract_id = request.data.get("smart_contract")
+    smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
+
+    smart_contract.abi = None
+    smart_contract.save()
+    return Response({"message": "abi deleted successfully"}, status=Status.HTTP_200_OK)
+
 @api_view(["GET"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def get_abi(request):
-    # the assumption here is that CanAccessSmartContractWithoutAction
-    # takes care of verifying that smart_contract exists in request body.
     smart_contract_id = request.data.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
@@ -62,8 +72,6 @@ def get_abi(request):
 @api_view(["POST"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def add_abi(request):
-    # the assumption here is that CanAccessSmartContractWithoutAction
-    # takes care of verifying that smart_contract exists in request body.
     smart_contract_id = request.data.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
