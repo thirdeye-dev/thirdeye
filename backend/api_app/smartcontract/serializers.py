@@ -6,20 +6,22 @@ from authentication.organizations.models import Organization
 
 from .models import SmartContract
 
-from rest_framework import serializers
 
 class CompilerSerializer(serializers.Serializer):
     version = serializers.CharField()
+
 
 class InputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField()
     type = serializers.CharField()
 
+
 class OutputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField(allow_blank=True)
     type = serializers.CharField()
+
 
 class FunctionSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
@@ -28,27 +30,33 @@ class FunctionSerializer(serializers.Serializer):
     stateMutability = serializers.CharField()
     type = serializers.CharField()
 
+
 class DevdocSerializer(serializers.Serializer):
     kind = serializers.CharField()
     methods = serializers.DictField()
     version = serializers.IntegerField()
+
 
 class UserdocSerializer(serializers.Serializer):
     kind = serializers.CharField()
     methods = serializers.DictField()
     version = serializers.IntegerField()
 
+
 class OutputSerializer(serializers.Serializer):
     abi = FunctionSerializer(many=True)
     devdoc = DevdocSerializer()
     userdoc = UserdocSerializer()
 
+
 class MetadataSerializer(serializers.Serializer):
     bytecodeHash = serializers.CharField()
+
 
 class OptimizerSerializer(serializers.Serializer):
     enabled = serializers.BooleanField()
     runs = serializers.IntegerField()
+
 
 class SettingsSerializer(serializers.Serializer):
     compilationTarget = serializers.DictField()
@@ -58,9 +66,11 @@ class SettingsSerializer(serializers.Serializer):
     optimizer = OptimizerSerializer()
     remappings = serializers.ListField()
 
+
 class SourceSerializer(serializers.Serializer):
     keccak256 = serializers.CharField()
     urls = serializers.ListField(child=serializers.CharField())
+
 
 class ABIJSONSerializer(serializers.Serializer):
     compiler = CompilerSerializer()
