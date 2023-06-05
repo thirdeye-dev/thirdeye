@@ -6,6 +6,11 @@ from authentication.organizations.models import Organization
 
 from .models import SmartContract
 
+from rest_framework import serializers
+
+class CompilerSerializer(serializers.Serializer):
+    version = serializers.CharField()
+
 class InputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField()
@@ -13,28 +18,58 @@ class InputSerializer(serializers.Serializer):
 
 class OutputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
-    name = serializers.CharField()
+    name = serializers.CharField(allow_blank=True)
     type = serializers.CharField()
 
-class MethodSerializer(serializers.Serializer):
+class FunctionSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
     name = serializers.CharField()
     outputs = OutputSerializer(many=True)
     stateMutability = serializers.CharField()
     type = serializers.CharField()
 
-class ABIObjectSerializer(serializers.Serializer):
-    compiler = serializers.DictField()
-    language = serializers.CharField()
-    output = serializers.DictField(child=MethodSerializer())
-    devdoc = serializers.DictField()
-    userdoc = serializers.DictField()
-
-class ABISerializer(serializers.Serializer):
+class DevdocSerializer(serializers.Serializer):
+    kind = serializers.CharField()
+    methods = serializers.DictField()
     version = serializers.IntegerField()
-    abi = serializers.ListField(child=ABIObjectSerializer())
-    settings = serializers.DictField()
-    sources = serializers.DictField()
+
+class UserdocSerializer(serializers.Serializer):
+    kind = serializers.CharField()
+    methods = serializers.DictField()
+    version = serializers.IntegerField()
+
+class OutputSerializer(serializers.Serializer):
+    abi = FunctionSerializer(many=True)
+    devdoc = DevdocSerializer()
+    userdoc = UserdocSerializer()
+
+class MetadataSerializer(serializers.Serializer):
+    bytecodeHash = serializers.CharField()
+
+class OptimizerSerializer(serializers.Serializer):
+    enabled = serializers.BooleanField()
+    runs = serializers.IntegerField()
+
+class SettingsSerializer(serializers.Serializer):
+    compilationTarget = serializers.DictField()
+    evmVersion = serializers.CharField()
+    libraries = serializers.DictField()
+    metadata = MetadataSerializer()
+    optimizer = OptimizerSerializer()
+    remappings = serializers.ListField()
+
+class SourceSerializer(serializers.Serializer):
+    keccak256 = serializers.CharField()
+    urls = serializers.ListField(child=serializers.CharField())
+
+class ABIJSONSerializer(serializers.Serializer):
+    compiler = CompilerSerializer()
+    language = serializers.CharField()
+    output = OutputSerializer()
+    settings = SettingsSerializer()
+    sources = serializers.DictField(child=SourceSerializer())
+    version = serializers.IntegerField()
+
 
 class SmartContractSerializer(serializers.ModelSerializer):
     def smart_contract_validator(value):
@@ -42,7 +77,6 @@ class SmartContractSerializer(serializers.ModelSerializer):
         if not pattern.match(value):
             raise serializers.ValidationError("Invalid smart contract address")
 
-    abi = ABISerializer(required=False)
     address = serializers.CharField(validators=[smart_contract_validator])
     chain = serializers.CharField(required=True)
     network = serializers.CharField(required=True)
@@ -55,8 +89,8 @@ class SmartContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SmartContract
-        fields = "__all__"
-        read_only_fields = ("id", "abi")
+        fields = ("id", "address", "chain", "network", "owner_organization")
+        read_only_fields = ("id",)
 
     def validate(self, data):
         if data["chain"] == "ETH":
