@@ -28,7 +28,7 @@ class SmartContract(BaseMixin):
     )
 
     # supposed to be a json field
-    abi = models.TextField(null=True, default=None)
+    abi = models.JSONField(null=True, default=None)
 
     active = models.BooleanField(default=True)
 
