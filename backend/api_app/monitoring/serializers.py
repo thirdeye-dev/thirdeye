@@ -5,7 +5,7 @@ import yaml
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
 
-from api_app.monitoring.exceptions import ConditionResultError
+from api_app.monitoring.exceptions import ConditionResultError, ABINotFoundError, ContractFunctionError
 from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ class Transaction:
         self.gas = transaction_data.get("gas")
         self.gasPrice = transaction_data.get("gasPrice")
         self.input = transaction_data.get("input")
+        self.output = transaction_data.get("output")
         self.v = transaction_data.get("v")
         self.r = transaction_data.get("r")
         self.s = transaction_data.get("s")
@@ -49,6 +50,7 @@ class Transaction:
             "r": self.r,
             "s": self.s,
             "timestamp": self.timestamp,
+            "output": self.output,
         }
 
     def compile_to_dict(self):
@@ -156,6 +158,36 @@ class BlockchainAlertRunner:
                 else:
                     # condition not met
                     pass
+
+    def trigger_automations(self, automations):
+        abi = self.Alert.smart_contract.abi
+
+        if abi is None:
+            raise ABINotFoundError("ABI not found for smart contract.")
+
+        for automation_name, automation in automations:
+            function_to_call = automation.get("function")
+            if function_to_call is None:
+                # ideally, shouldn't get here.
+                raise ContractFunctionError("No function set in automation.")
+            
+            function = self.Alert.smart_contract.get_function_by_name(function_to_call)
+            if function is None:
+                raise ContractFunctionError("Function not found in ABI.")
+            
+            function_inputs_from_abi = automation.get("inputs")
+            function_input_arguments = automation.get("arguments")
+            if function_inputs_from_abi is None:
+                raise ContractFunctionError("No inputs found in ABI.")
+            
+            if function_input_arguments is None:
+                raise ContractFunctionError("No arguments found in automation.")
+            
+            if len(function_inputs_from_abi) != len(function_input_arguments):
+                raise ContractFunctionError("Number of inputs and arguments don't match.")
+            
+            # call function with arguments
+
 
     def check_alert_condition(self, alert) -> bool:
         variables = self.transaction.compile_to_dict_with_prefix()

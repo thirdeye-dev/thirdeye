@@ -76,7 +76,7 @@ def add_abi(request):
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
     abi = request.data.get("abi")
-    serializer = ABIJSONSerializer(data=abi)
+    serializer = ABIJSONSerializer(data=abi, many=True)
     serializer.is_valid(raise_exception=True)
     smart_contract.abi = serializer.data
 

@@ -105,8 +105,12 @@ def monitor_contract(self, monitoring_task_id):
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    # fix the chain. it should be number.
-    network_id = int(chain) if chain.isdigit() else 1
+    network_id = settings.ETH_NETWORK_IDS.get(network)
+    if not network_id:
+        error_msg = f"Network {network} not supported"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
     w3 = Web3(Web3.WebsocketProvider(rpc_url))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
@@ -148,6 +152,34 @@ def monitor_contract(self, monitoring_task_id):
         transaction_data["nonce"] = int(transaction_data["nonce"], 16)
 
         return transaction_data
+    
+    def trace_transaction(transaction_hash):
+        request_data = {
+            "id": 2,
+            "jsonrpc": "2.0",
+            "method": "trace_transaction",
+            "params": [transaction_hash],
+        }
+        ws.send(json.dumps(request_data))
+        response = json.loads(ws.recv())
+        response["transaction_hash"] = transaction_hash
+
+        data = response["result"]
+
+        input_ = data["input"]
+        output = data.get("result").get("output")
+
+        abi = monitoring_task.SmartContract.abi
+        contract = w3.eth.contract(address=contract_address, abi=abi)
+
+        # decode the input
+        decoded_input = contract.decode_function_input(input_)
+
+        # decode the output
+        decoded_output = contract.decode_function_result(decoded_input["name"], output)
+
+        return decoded_input, decoded_output
+
 
     while True:
         try:
@@ -165,6 +197,11 @@ def monitor_contract(self, monitoring_task_id):
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts
+
+                decoded_input, decoded_output = trace_transaction(transaction_hash)
+                transaction["input"] = decoded_input
+                transaction["output"] = decoded_output
+
                 alerts = Alerts.objects.filter(
                     smart_contract=monitoring_task.SmartContract
                 )

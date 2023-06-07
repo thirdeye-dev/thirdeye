@@ -33,9 +33,15 @@ INFURA_HTTP_ENDPOINT = f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}"
 CHAINS_AND_NETWORKS = {
     "eth": {
         "mainnet": f"wss://mainnet.infura.io/ws/v3/{INFURA_PROJECT_ID}",
-        "goerli": f"wss://goerli.infura.io/w3/v3/{INFURA_PROJECT_ID}",
-        "sepolia": f"wss://sepolia.infura.io/w3/v3/{INFURA_PROJECT_ID}",
+        "goerli": f"wss://goerli.infura.io/ws/v3/{INFURA_PROJECT_ID}",
+        "sepolia": f"wss://sepolia.infura.io/ws/v3/{INFURA_PROJECT_ID}",
     }
+}
+
+ETH_NETWORK_IDS = {
+    "mainnet": 1,
+    "goerli": 5,
+    "sepolia": 1337,
 }
 
 # Oauth definitions
