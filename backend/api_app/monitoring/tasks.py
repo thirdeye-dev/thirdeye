@@ -119,6 +119,11 @@ def monitor_contract(self, monitoring_task_id):
 
     ws = websocket.create_connection(rpc_url)
 
+    requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", 
+                data=json.dumps({"message": "Monitoring task started",
+                                 "contract_address": contract_address,
+                                 "rpc_url": rpc_url,}))
+
     # Subscribe to new transactions for a specific smart contract
     # look into the eth_subscribe method
     subscribe_data = {
@@ -157,12 +162,20 @@ def monitor_contract(self, monitoring_task_id):
         request_data = {
             "id": 2,
             "jsonrpc": "2.0",
-            "method": "trace_transaction",
+            "method": "debug_traceTransaction", # probably disable by provider
             "params": [transaction_hash],
         }
         ws.send(json.dumps(request_data))
         response = json.loads(ws.recv())
-        response["transaction_hash"] = transaction_hash
+
+        requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", 
+                    json={
+                        "type": "trace_transaction",
+                        "response": response,
+                    }
+                )
+        
+        return "", ""
 
         data = response["result"]
 
@@ -186,6 +199,10 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
+            # requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", json={
+            #     "response": response,
+            #     "rpc_url": rpc_url,
+            # })
             if "result" in response and response.get("id") == 1:
                 subscription_id = response["result"]
             elif (
@@ -197,7 +214,6 @@ def monitor_contract(self, monitoring_task_id):
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts
-
                 decoded_input, decoded_output = trace_transaction(transaction_hash)
                 transaction["input"] = decoded_input
                 transaction["output"] = decoded_output
@@ -207,9 +223,6 @@ def monitor_contract(self, monitoring_task_id):
                 )
 
                 for alert in alerts:
-                    # TODO: I want to check later in the YAML
-                    # if the alert is checked every_transaction
-                    # or every x amount of time.
                     alert_runner = BlockchainAlertRunner(alert, transaction)
                     alert_runner.run()
 
@@ -225,9 +238,12 @@ def monitor_contract(self, monitoring_task_id):
                 "timestamp": datetime.now().timestamp(),
                 "error": str(e),
                 "transaction": transaction_hash,
+                "response": response,
+                "message": message,
+                "rpc_url": rpc_url,
             }
 
             # this exception is an edge case that i need to handle
-            requests.post("https://eot0jnzvvvbvr8j.m.pipedream.net/", data=data)
+            requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", data=data)
 
     ws.close()
