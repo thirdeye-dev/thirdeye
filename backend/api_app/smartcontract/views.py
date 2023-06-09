@@ -1,14 +1,18 @@
 from rest_framework import status as Status
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from api_app.smartcontract.permissions import CanAccessSmartContract
+from api_app.smartcontract.permissions import (
+    CanAccessSmartContract,
+    CanAccessSmartContractWithoutAction,
+)
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
 from rest_framework.decorators import api_view, permission_classes
 
 from .models import SmartContract
-from .serializers import SmartContractSerializer, ABISerializer
+from .serializers import ABIJSONSerializer, SmartContractSerializer
 
 
 class SmartContractViewSet(viewsets.ModelViewSet):
@@ -49,14 +53,37 @@ class SmartContractViewSet(viewsets.ModelViewSet):
         )
 
 
+# the assumption here is that CanAccessSmartContractWithoutAction
+# takes care of verifying that smart_contract exists in request body.
+@api_view(["DELETE"])
+@permission_classes([CanAccessSmartContractWithoutAction])
+def delete_abi(request):
+    smart_contract_id = request.data.get("smart_contract")
+    smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
+
+    smart_contract.abi = None
+    smart_contract.save()
+    return Response({"message": "abi deleted successfully"}, status=Status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([CanAccessSmartContractWithoutAction])
+def get_abi(request):
+    smart_contract_id = request.data.get("smart_contract")
+    smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
+
+    abi = smart_contract.abi
+    return Response(abi, status=Status.HTTP_200_OK)
+
+
 @api_view(["POST"])
-@permission_classes([CanAccessSmartContract])
+@permission_classes([CanAccessSmartContractWithoutAction])
 def add_abi(request):
     smart_contract_id = request.data.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
     abi = request.data.get("abi")
-    serializer = ABISerializer(data=abi)
+    serializer = ABIJSONSerializer(data=abi, many=True)
     serializer.is_valid(raise_exception=True)
     smart_contract.abi = serializer.data
 

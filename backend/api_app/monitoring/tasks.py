@@ -92,7 +92,6 @@ def monitor_contract(self, monitoring_task_id):
         error_msg = f"Monitoring task with id {monitoring_task_id} not found"
         logger.error(error_msg)
 
-        # silently, exit task.
         return
 
     contract_address = monitoring_task.SmartContract.address
@@ -105,8 +104,12 @@ def monitor_contract(self, monitoring_task_id):
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    # fix the chain. it should be number.
-    network_id = int(chain) if chain.isdigit() else 1
+    network_id = settings.ETH_NETWORK_IDS.get(network)
+    if not network_id:
+        error_msg = f"Network {network} not supported"
+        logger.error(error_msg)
+        raise Exception(error_msg)
+
     w3 = Web3(Web3.WebsocketProvider(rpc_url))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
@@ -115,13 +118,14 @@ def monitor_contract(self, monitoring_task_id):
 
     ws = websocket.create_connection(rpc_url)
 
-    # Subscribe to new transactions for a specific smart contract
-    # look into the eth_subscribe method
     subscribe_data = {
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
-        "params": ["logs", {"address": contract_address, "fromBlock": "latest"}],
+        "params": [
+            "alchemy_pendingTransactions",
+            {"address": contract_address, "fromBlock": "latest"},
+        ],
     }
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
@@ -149,11 +153,55 @@ def monitor_contract(self, monitoring_task_id):
 
         return transaction_data
 
+    def decode_input(transaction_data):
+        abi = monitoring_task.SmartContract.abi
+        if not abi:
+            error_msg = f"ABI not found for contract {contract_address}"
+            logger.log(error_msg)
+            return transaction_data.get("input")
+        contract = w3.eth.contract(address=contract_address, abi=abi)
+
+        # decode the input
+        fn_name, decoded_input = contract.decode_function_input(
+            transaction_data["input"]
+        )
+        fn_name = fn_name.fn_name
+
+        return fn_name, decoded_input
+
+    def trace_transaction(transaction_hash):
+        request_data = {
+            "id": 2,
+            "jsonrpc": "2.0",
+            "method": "debug_traceTransaction",  # probably disable by provider
+            "params": [transaction_hash],
+        }
+        ws.send(json.dumps(request_data))
+        response = json.loads(ws.recv())
+
+        data = response["result"]
+
+        input_ = data["input"]
+        output = data.get("result").get("output")
+
+        abi = monitoring_task.SmartContract.abi
+        str_abi = json.dumps(abi)
+        contract = w3.eth.contract(address=contract_address, abi=str_abi)
+
+        # decode the input
+        decoded_input = contract.decode_function_input(input_)
+
+        # decode the output
+        decoded_output = contract.decode_function_result(decoded_input["name"], output)
+
+        return decoded_input, decoded_output
+
     while True:
         try:
             # collect data
             message = ws.recv()
             response = json.loads(message)
+
             if "result" in response and response.get("id") == 1:
                 subscription_id = response["result"]
             elif (
@@ -161,18 +209,21 @@ def monitor_contract(self, monitoring_task_id):
                 and "params" in response
                 and response["params"]["subscription"] == subscription_id
             ):
-                transaction_hash = response["params"]["result"]["transactionHash"]
+                transaction_hash = response["params"]["result"]["hash"]
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts
+                # decoded_input, decoded_output = trace_transaction(transaction_hash)
+                fn_name, decoded_input = decode_input(transaction)
+                transaction["input"] = decoded_input
+                transaction["output"] = ""
+                transaction["fn_name"] = fn_name
+
                 alerts = Alerts.objects.filter(
                     smart_contract=monitoring_task.SmartContract
                 )
 
                 for alert in alerts:
-                    # TODO: I want to check later in the YAML
-                    # if the alert is checked every_transaction
-                    # or every x amount of time.
                     alert_runner = BlockchainAlertRunner(alert, transaction)
                     alert_runner.run()
 
@@ -187,10 +238,12 @@ def monitor_contract(self, monitoring_task_id):
             data = {
                 "timestamp": datetime.now().timestamp(),
                 "error": str(e),
-                "transaction": transaction_hash,
+                "response": response,
+                "message": message,
+                "rpc_url": rpc_url,
             }
 
             # this exception is an edge case that i need to handle
-            requests.post("https://eot0jnzvvvbvr8j.m.pipedream.net/", data=data)
+            logger.error(data)
 
     ws.close()

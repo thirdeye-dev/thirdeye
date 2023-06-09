@@ -11,9 +11,27 @@ class InputSerializer(serializers.Serializer):
     name = serializers.CharField()
     type = serializers.CharField()
 
-class OutputSerializer(serializers.Serializer):
+class CompilerSerializer(serializers.Serializer):
+    version = serializers.CharField()
+
+
+class InputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField()
+    type = serializers.CharField()
+
+
+class OutputSerializer(serializers.Serializer):
+    internalType = serializers.CharField()
+    name = serializers.CharField(allow_blank=True)
+    type = serializers.CharField()
+
+
+class ABIJSONSerializer(serializers.Serializer):
+    inputs = InputSerializer(many=True)
+    name = serializers.CharField()
+    outputs = OutputSerializer(many=True)
+    stateMutability = serializers.CharField()
     type = serializers.CharField()
 
 class MethodSerializer(serializers.Serializer):
@@ -42,7 +60,6 @@ class SmartContractSerializer(serializers.ModelSerializer):
         if not pattern.match(value):
             raise serializers.ValidationError("Invalid smart contract address")
 
-    abi = ABISerializer(required=False)
     address = serializers.CharField(validators=[smart_contract_validator])
     chain = serializers.CharField(required=True)
     network = serializers.CharField(required=True)
@@ -55,8 +72,8 @@ class SmartContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SmartContract
-        fields = "__all__"
-        read_only_fields = ("id", "abi")
+        fields = ("id", "address", "chain", "network", "owner_organization")
+        read_only_fields = ("id",)
 
     def validate(self, data):
         if data["chain"] == "ETH":
