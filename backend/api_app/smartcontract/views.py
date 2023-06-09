@@ -3,24 +3,18 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-<<<<<<< HEAD
-from api_app.smartcontract.permissions import CanAccessSmartContractWithoutAction, CanAccessSmartContract
-=======
 from api_app.smartcontract.permissions import (
     CanAccessSmartContract,
     CanAccessSmartContractWithoutAction,
 )
->>>>>>> b80fd4fe7b7b218c2593720b0aa72b2c32b25bf2
+
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
 from rest_framework.decorators import api_view, permission_classes
 
 from .models import SmartContract
-<<<<<<< HEAD
-from .serializers import SmartContractSerializer, ABIJSONSerializer
-=======
+
 from .serializers import ABIJSONSerializer, SmartContractSerializer
->>>>>>> b80fd4fe7b7b218c2593720b0aa72b2c32b25bf2
 
 
 class SmartContractViewSet(viewsets.ModelViewSet):
