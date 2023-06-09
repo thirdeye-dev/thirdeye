@@ -92,7 +92,6 @@ def monitor_contract(self, monitoring_task_id):
         error_msg = f"Monitoring task with id {monitoring_task_id} not found"
         logger.error(error_msg)
 
-        # silently, exit task.
         return
 
     contract_address = monitoring_task.SmartContract.address
@@ -119,13 +118,6 @@ def monitor_contract(self, monitoring_task_id):
 
     ws = websocket.create_connection(rpc_url)
 
-    requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", 
-                data=json.dumps({"message": "Monitoring task started",
-                                 "contract_address": contract_address,
-                                 "rpc_url": rpc_url,}))
-
-    # Subscribe to new transactions for a specific smart contract
-    # look into the eth_subscribe method
     subscribe_data = {
         "id": 1,
         "jsonrpc": "2.0",
@@ -182,13 +174,6 @@ def monitor_contract(self, monitoring_task_id):
         ws.send(json.dumps(request_data))
         response = json.loads(ws.recv())
 
-        requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", 
-                    json={
-                        "type": "trace_transaction",
-                        "response": response,
-                    }
-                )
-
         data = response["result"]
 
         input_ = data["input"]
@@ -212,10 +197,7 @@ def monitor_contract(self, monitoring_task_id):
             # collect data
             message = ws.recv()
             response = json.loads(message)
-            # requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", json={
-            #     "response": response,
-            #     "rpc_url": rpc_url,
-            # })
+
             if "result" in response and response.get("id") == 1:
                 subscription_id = response["result"]
             elif (
@@ -258,6 +240,6 @@ def monitor_contract(self, monitoring_task_id):
             }
 
             # this exception is an edge case that i need to handle
-            requests.post("https://eowbtlmdzcequyi.m.pipedream.net", data=data)
+            logger.error(data)
 
     ws.close()
