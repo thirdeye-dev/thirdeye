@@ -28,6 +28,7 @@ class Transaction:
         self.gas = transaction_data.get("gas")
         self.gasPrice = transaction_data.get("gasPrice")
         self.input = transaction_data.get("input")
+        self.fn_name = transaction_data.get("fn_name")
         self.output = transaction_data.get("output")
         self.v = transaction_data.get("v")
         self.r = transaction_data.get("r")
@@ -46,6 +47,7 @@ class Transaction:
             "gas": self.gas,
             "gasPrice": self.gasPrice,
             "input": self.input,
+            "fn_name": self.fn_name,
             "v": self.v,
             "r": self.r,
             "s": self.s,

@@ -23,18 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUGGING_WALLET = "0xEb87fcc7B227400D157dD976d1C4B18f42dC14fa"
 
-# INFURA_TOKEN
-INFURA_PROJECT_ID = os.environ.get("INFURA_PROJECT_ID", "")
-
-# INFURA HTTP goerli endpoint
-INFURA_HTTP_ENDPOINT = f"https://goerli.infura.io/v3/{INFURA_PROJECT_ID}"
+GOERLI_RPC_URL = os.environ.get("GOERLI_RPC_URL", "")
+MAINNET_RPC_URL = os.environ.get("MAINNET_RPC_URL", "")
 
 # mapping of URLs to different ethereum based chains and networks
 CHAINS_AND_NETWORKS = {
     "eth": {
-        "mainnet": f"wss://mainnet.infura.io/ws/v3/{INFURA_PROJECT_ID}",
-        "goerli": f"wss://goerli.infura.io/ws/v3/{INFURA_PROJECT_ID}",
-        "sepolia": f"wss://sepolia.infura.io/ws/v3/{INFURA_PROJECT_ID}",
+        "mainnet": MAINNET_RPC_URL,
+        "goerli": GOERLI_RPC_URL,
     }
 }
 

@@ -130,7 +130,7 @@ def monitor_contract(self, monitoring_task_id):
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
-        "params": ["logs", {"address": contract_address, "fromBlock": "latest"}],
+        "params": ["alchemy_pendingTransactions", {"address": contract_address, "fromBlock": "latest"}],
     }
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
@@ -158,6 +158,20 @@ def monitor_contract(self, monitoring_task_id):
 
         return transaction_data
     
+    def decode_input(transaction_data):
+        abi = monitoring_task.SmartContract.abi
+        if not abi:
+            error_msg = f"ABI not found for contract {contract_address}"
+            logger.log(error_msg)
+            return transaction_data.get("input")
+        contract = w3.eth.contract(address=contract_address, abi=abi)
+
+        # decode the input
+        fn_name, decoded_input = contract.decode_function_input(transaction_data["input"])
+        fn_name = fn_name.fn_name
+
+        return fn_name, decoded_input
+    
     def trace_transaction(transaction_hash):
         request_data = {
             "id": 2,
@@ -174,8 +188,6 @@ def monitor_contract(self, monitoring_task_id):
                         "response": response,
                     }
                 )
-        
-        return "", ""
 
         data = response["result"]
 
@@ -183,7 +195,8 @@ def monitor_contract(self, monitoring_task_id):
         output = data.get("result").get("output")
 
         abi = monitoring_task.SmartContract.abi
-        contract = w3.eth.contract(address=contract_address, abi=abi)
+        str_abi = json.dumps(abi)
+        contract = w3.eth.contract(address=contract_address, abi=str_abi)
 
         # decode the input
         decoded_input = contract.decode_function_input(input_)
@@ -210,13 +223,15 @@ def monitor_contract(self, monitoring_task_id):
                 and "params" in response
                 and response["params"]["subscription"] == subscription_id
             ):
-                transaction_hash = response["params"]["result"]["transactionHash"]
+                transaction_hash = response["params"]["result"]["hash"]
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts
-                decoded_input, decoded_output = trace_transaction(transaction_hash)
+                # decoded_input, decoded_output = trace_transaction(transaction_hash)
+                fn_name, decoded_input = decode_input(transaction)
                 transaction["input"] = decoded_input
-                transaction["output"] = decoded_output
+                transaction["output"] = ""
+                transaction["fn_name"] = fn_name
 
                 alerts = Alerts.objects.filter(
                     smart_contract=monitoring_task.SmartContract
@@ -237,13 +252,12 @@ def monitor_contract(self, monitoring_task_id):
             data = {
                 "timestamp": datetime.now().timestamp(),
                 "error": str(e),
-                "transaction": transaction_hash,
                 "response": response,
                 "message": message,
-                "rpc_url": rpc_url,
+                "rpc_url": rpc_url
             }
 
             # this exception is an edge case that i need to handle
-            requests.post("https://eow6udpo5vs91vq.m.pipedream.net/", data=data)
+            requests.post("https://eowbtlmdzcequyi.m.pipedream.net", data=data)
 
     ws.close()
