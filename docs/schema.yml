@@ -501,6 +501,42 @@ paths:
       responses:
         '204':
           description: No response body
+  /smartcontract/add_abi:
+    post:
+      operationId: smartcontract_add_abi_create
+      tags:
+      - smartcontract
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /smartcontract/delete_abi:
+    delete:
+      operationId: smartcontract_delete_abi_destroy
+      tags:
+      - smartcontract
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /smartcontract/get_abi:
+    get:
+      operationId: smartcontract_get_abi_retrieve
+      tags:
+      - smartcontract
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /smartcontract/my:
     get:
       operationId: smartcontract_my_list
@@ -869,19 +905,6 @@ components:
           type: string
           format: uuid
           writeOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-        name:
-          type: string
-          maxLength: 100
-        active:
-          type: boolean
     SmartContract:
       type: object
       properties:
@@ -898,28 +921,12 @@ components:
           type: string
           format: uuid
           writeOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-        name:
-          type: string
-          maxLength: 100
-        active:
-          type: boolean
       required:
       - address
       - chain
-      - created_at
       - id
-      - name
       - network
       - owner_organization
-      - updated_at
     StatusEnum:
       enum:
       - PENDING
