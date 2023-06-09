@@ -5,7 +5,11 @@ import yaml
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
 
-from api_app.monitoring.exceptions import ConditionResultError, ABINotFoundError, ContractFunctionError
+from api_app.monitoring.exceptions import (
+    ABINotFoundError,
+    ConditionResultError,
+    ContractFunctionError,
+)
 from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
@@ -172,24 +176,25 @@ class BlockchainAlertRunner:
             if function_to_call is None:
                 # ideally, shouldn't get here.
                 raise ContractFunctionError("No function set in automation.")
-            
+
             function = self.Alert.smart_contract.get_function_by_name(function_to_call)
             if function is None:
                 raise ContractFunctionError("Function not found in ABI.")
-            
+
             function_inputs_from_abi = automation.get("inputs")
             function_input_arguments = automation.get("arguments")
             if function_inputs_from_abi is None:
                 raise ContractFunctionError("No inputs found in ABI.")
-            
+
             if function_input_arguments is None:
                 raise ContractFunctionError("No arguments found in automation.")
-            
-            if len(function_inputs_from_abi) != len(function_input_arguments):
-                raise ContractFunctionError("Number of inputs and arguments don't match.")
-            
-            # call function with arguments
 
+            if len(function_inputs_from_abi) != len(function_input_arguments):
+                raise ContractFunctionError(
+                    "Number of inputs and arguments don't match."
+                )
+
+            # call function with arguments
 
     def check_alert_condition(self, alert) -> bool:
         variables = self.transaction.compile_to_dict_with_prefix()

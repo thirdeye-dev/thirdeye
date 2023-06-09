@@ -122,7 +122,10 @@ def monitor_contract(self, monitoring_task_id):
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_subscribe",
-        "params": ["alchemy_pendingTransactions", {"address": contract_address, "fromBlock": "latest"}],
+        "params": [
+            "alchemy_pendingTransactions",
+            {"address": contract_address, "fromBlock": "latest"},
+        ],
     }
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
@@ -149,7 +152,7 @@ def monitor_contract(self, monitoring_task_id):
         transaction_data["nonce"] = int(transaction_data["nonce"], 16)
 
         return transaction_data
-    
+
     def decode_input(transaction_data):
         abi = monitoring_task.SmartContract.abi
         if not abi:
@@ -159,16 +162,18 @@ def monitor_contract(self, monitoring_task_id):
         contract = w3.eth.contract(address=contract_address, abi=abi)
 
         # decode the input
-        fn_name, decoded_input = contract.decode_function_input(transaction_data["input"])
+        fn_name, decoded_input = contract.decode_function_input(
+            transaction_data["input"]
+        )
         fn_name = fn_name.fn_name
 
         return fn_name, decoded_input
-    
+
     def trace_transaction(transaction_hash):
         request_data = {
             "id": 2,
             "jsonrpc": "2.0",
-            "method": "debug_traceTransaction", # probably disable by provider
+            "method": "debug_traceTransaction",  # probably disable by provider
             "params": [transaction_hash],
         }
         ws.send(json.dumps(request_data))
@@ -190,7 +195,6 @@ def monitor_contract(self, monitoring_task_id):
         decoded_output = contract.decode_function_result(decoded_input["name"], output)
 
         return decoded_input, decoded_output
-
 
     while True:
         try:
@@ -236,7 +240,7 @@ def monitor_contract(self, monitoring_task_id):
                 "error": str(e),
                 "response": response,
                 "message": message,
-                "rpc_url": rpc_url
+                "rpc_url": rpc_url,
             }
 
             # this exception is an edge case that i need to handle
