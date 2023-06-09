@@ -38,7 +38,6 @@ class CanAccessSmartContract(permissions.BasePermission):
 
         return Membership.is_member(user=request.user, organization=organization)
 
-
 class CanAccessSmartContractWithoutAction(permissions.BasePermission):
     """
     Custom permission to check by smart contract id
@@ -68,3 +67,5 @@ class CanAccessSmartContractWithoutAction(permissions.BasePermission):
         organization = smart_contract.owner_organization
 
         return Membership.is_member(user=request.user, organization=organization)
+
+

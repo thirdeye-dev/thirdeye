@@ -37,3 +37,18 @@ class SmartContract(BaseMixin):
 
     def __str__(self):
         return self.name
+    
+    def get_function_names(self) -> list:
+        return [f["name"] for f in self.abi if f["type"] == "function"]
+    
+    def get_event_names(self) -> list:
+        return [f["name"] for f in self.abi if f["type"] == "event"]
+    
+    def get_function_by_name(self, name):
+        filtered = [
+            f for f in self.abi if f["type"] == "function" and f["name"] == name
+        ]
+        if len(filtered) == 0:
+            return None
+        
+        return filtered[0]

@@ -6,80 +6,27 @@ from authentication.organizations.models import Organization
 
 from .models import SmartContract
 
+from rest_framework import serializers
 
 class CompilerSerializer(serializers.Serializer):
     version = serializers.CharField()
-
 
 class InputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField()
     type = serializers.CharField()
 
-
 class OutputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField(allow_blank=True)
     type = serializers.CharField()
 
-
-class FunctionSerializer(serializers.Serializer):
+class ABIJSONSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
     name = serializers.CharField()
     outputs = OutputSerializer(many=True)
     stateMutability = serializers.CharField()
     type = serializers.CharField()
-
-
-class DevdocSerializer(serializers.Serializer):
-    kind = serializers.CharField()
-    methods = serializers.DictField()
-    version = serializers.IntegerField()
-
-
-class UserdocSerializer(serializers.Serializer):
-    kind = serializers.CharField()
-    methods = serializers.DictField()
-    version = serializers.IntegerField()
-
-
-class OutputSerializer(serializers.Serializer):
-    abi = FunctionSerializer(many=True)
-    devdoc = DevdocSerializer()
-    userdoc = UserdocSerializer()
-
-
-class MetadataSerializer(serializers.Serializer):
-    bytecodeHash = serializers.CharField()
-
-
-class OptimizerSerializer(serializers.Serializer):
-    enabled = serializers.BooleanField()
-    runs = serializers.IntegerField()
-
-
-class SettingsSerializer(serializers.Serializer):
-    compilationTarget = serializers.DictField()
-    evmVersion = serializers.CharField()
-    libraries = serializers.DictField()
-    metadata = MetadataSerializer()
-    optimizer = OptimizerSerializer()
-    remappings = serializers.ListField()
-
-
-class SourceSerializer(serializers.Serializer):
-    keccak256 = serializers.CharField()
-    urls = serializers.ListField(child=serializers.CharField())
-
-
-class ABIJSONSerializer(serializers.Serializer):
-    compiler = CompilerSerializer()
-    language = serializers.CharField()
-    output = OutputSerializer()
-    settings = SettingsSerializer()
-    sources = serializers.DictField(child=SourceSerializer())
-    version = serializers.IntegerField()
-
 
 class SmartContractSerializer(serializers.ModelSerializer):
     def smart_contract_validator(value):

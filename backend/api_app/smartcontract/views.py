@@ -7,10 +7,13 @@ from api_app.smartcontract.permissions import (
     CanAccessSmartContract,
     CanAccessSmartContractWithoutAction,
 )
+
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import SmartContract
+
 from .serializers import ABIJSONSerializer, SmartContractSerializer
 
 
@@ -51,7 +54,6 @@ class SmartContractViewSet(viewsets.ModelViewSet):
             status=Status.HTTP_400_BAD_REQUEST,
         )
 
-
 # the assumption here is that CanAccessSmartContractWithoutAction
 # takes care of verifying that smart_contract exists in request body.
 @api_view(["DELETE"])
@@ -64,7 +66,6 @@ def delete_abi(request):
     smart_contract.save()
     return Response({"message": "abi deleted successfully"}, status=Status.HTTP_200_OK)
 
-
 @api_view(["GET"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def get_abi(request):
@@ -74,7 +75,6 @@ def get_abi(request):
     abi = smart_contract.abi
     return Response(abi, status=Status.HTTP_200_OK)
 
-
 @api_view(["POST"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def add_abi(request):
@@ -82,7 +82,7 @@ def add_abi(request):
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
     abi = request.data.get("abi")
-    serializer = ABIJSONSerializer(data=abi)
+    serializer = ABIJSONSerializer(data=abi, many=True)
     serializer.is_valid(raise_exception=True)
     smart_contract.abi = serializer.data
 
