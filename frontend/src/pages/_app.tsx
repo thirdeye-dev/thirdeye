@@ -1,18 +1,23 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
+import { NextPage } from "next";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
+
 import {
   ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
   MantineThemeOverride,
 } from "@mantine/core";
-import "../styles/globals.css";
-import { NextPage } from "next";
-import { ReactElement, ReactNode, useEffect, useState } from "react";
-import RootLayout from "@/layouts/RootLayout";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
+import { SWRConfig } from "swr";
+
+import RootLayout from "@/layouts/RootLayout";
 import { RouterTransition } from "@/components/RouterTransition";
+import axiosInstance from "@/axios";
+
+import "@/styles/globals.css";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -77,7 +82,15 @@ export default function App(props: AppPropsWithLayout) {
           <Notifications />
 
           <ModalsProvider>
-            <RootLayout>{getLayout(<Component {...pageProps} />)}</RootLayout>
+            <RootLayout>
+              <SWRConfig
+                value={{
+                  fetcher: axiosInstance.get,
+                }}
+              >
+                {getLayout(<Component {...pageProps} />)}
+              </SWRConfig>
+            </RootLayout>
           </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
