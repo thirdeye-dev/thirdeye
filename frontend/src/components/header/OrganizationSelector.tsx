@@ -9,7 +9,7 @@ function SelectItem({ label, ...others }: SelectItemProps) {
   return (
     <div {...others}>
       <Group noWrap>
-        <Avatar variant="filled" color="green" alt={label?.toString()}>
+        <Avatar variant="outline" color="green" alt={label?.toString()}>
           {label?.toString().at(0)}
         </Avatar>
 
