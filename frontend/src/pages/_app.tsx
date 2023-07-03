@@ -85,7 +85,8 @@ export default function App(props: AppPropsWithLayout) {
             <RootLayout>
               <SWRConfig
                 value={{
-                  fetcher: axiosInstance.get,
+                  fetcher: (url) =>
+                    axiosInstance.get(url).then((res) => res.data), // default fetcher
                 }}
               >
                 {getLayout(<Component {...pageProps} />)}

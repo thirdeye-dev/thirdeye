@@ -1,19 +1,12 @@
 import User from "@/models/user";
 import { fetchCurrentUser } from "@/services/user";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 export default function useCurrentUser() {
-  const [user, setUser] = useState<User | null>(null);
+  const { data, ...swr } = useSWR<User>("/authentication/me", fetchCurrentUser);
 
-  const fetchUser = async () => {
-    const user = await fetchCurrentUser();
-
-    setUser(user);
+  return {
+    user: data,
+    ...swr,
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  return user;
 }

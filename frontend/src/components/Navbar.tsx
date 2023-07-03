@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Center,
   createStyles,
   Navbar,
@@ -15,7 +14,6 @@ import { FaFileContract } from "react-icons/fa";
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 
-import useCurrentUser from "@/hooks/use-current-user";
 import UserAvatar from "./UserAvatar";
 
 const useStyles = createStyles((theme) => ({
@@ -109,8 +107,6 @@ export default function NavbarMinimal({
   const router = useRouter();
   const organizationId = router.query.orgId as string;
 
-  const user = useCurrentUser();
-
   const onClickLink = (link: NavLink) => {
     router.push(`/org/${organizationId}/${link.href}`);
   };
@@ -135,7 +131,7 @@ export default function NavbarMinimal({
   return (
     <Navbar height={"92vh"} width={{ base: 80 }} p="md">
       <Center>
-        <UserAvatar src={user?.avatar} />
+        <UserAvatar />
       </Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={0}>
