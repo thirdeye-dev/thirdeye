@@ -25,8 +25,8 @@ instance.interceptors.response.use(
   (error) => {
     const response: AxiosResponse = error.response;
 
-    // If we get a 401 or 403, redirect to the login page.
-    if (response.status === 401 || response.status === 403) {
+    // If we get a 401, redirect to the login page.
+    if (response.status === 401) {
       removeUserCookie();
       Router.push("/login");
     }
