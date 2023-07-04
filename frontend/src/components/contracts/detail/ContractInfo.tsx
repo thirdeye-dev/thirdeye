@@ -2,11 +2,17 @@ import CopyToClipboard from "@/components/CopyToClipboard";
 import Contract from "@/models/contract";
 import { Text, Box, Flex, Stack, Divider } from "@mantine/core";
 
-function Features({ contract }: { contract: Contract }) {
+function Features({
+  contract,
+  numAlerts,
+}: {
+  contract: Contract;
+  numAlerts: number;
+}) {
   const features = [
     {
       name: "Total Alerts",
-      value: 128,
+      value: numAlerts,
     },
     {
       name: "Chain",
@@ -55,8 +61,10 @@ function Features({ contract }: { contract: Contract }) {
 
 export default function ContractInfo({
   contract,
+  numAlerts,
 }: {
   contract: Contract | undefined;
+  numAlerts: number;
 }) {
   if (!contract) return null;
 
@@ -78,7 +86,7 @@ export default function ContractInfo({
         </Text>
 
         <CopyToClipboard textToCopy={contract.address} />
-        <Features contract={contract} />
+        <Features contract={contract} numAlerts={numAlerts} />
       </Stack>
     </Box>
   );

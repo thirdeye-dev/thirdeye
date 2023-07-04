@@ -54,7 +54,7 @@ export default function ContractDetailed() {
       <Flex w="100%" h="82vh" justify="space-between" gap="md">
         <Stack w="60%" h="100%">
           <Paper w="100%" h="40%">
-            <ContractInfo contract={contract} />
+            <ContractInfo contract={contract} numAlerts={alerts?.length ?? 0} />
           </Paper>
 
           <Paper withBorder w="100%" h="60%">
