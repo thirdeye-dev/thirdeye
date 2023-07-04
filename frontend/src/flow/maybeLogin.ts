@@ -1,10 +1,9 @@
-import { fetchCurrentUser } from "@/services/user";
-import { Router } from "next/router";
+import { NextRouter } from "next/router";
 
-export default async function maybeLogin(router: Router) {
-  const user = await fetchCurrentUser();
+export default async function maybeLogin(error: any, router: NextRouter) {
+  console.log(error);
 
-  if (user === null) {
+  if (error) {
     return router.push("/login");
   }
 
