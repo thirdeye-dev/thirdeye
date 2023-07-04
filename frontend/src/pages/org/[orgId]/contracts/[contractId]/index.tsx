@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -8,8 +8,7 @@ import ContractAlertTable from "@/components/contracts/detail/ContractAlertTable
 import ContractInfo from "@/components/contracts/detail/ContractInfo";
 import useContract from "@/hooks/use-contract";
 import AppShellLayout from "@/layouts/AppShellLayout";
-import Alert from "@/models/alert";
-import { fetchAlertsByContract } from "@/services/alerts";
+import useAlerts from "@/hooks/use-alerts";
 
 export default function ContractDetailed() {
   const router = useRouter();
@@ -18,6 +17,7 @@ export default function ContractDetailed() {
   const contractId = router.query.contractId as string;
 
   const { contract } = useContract(contractId, organizationId);
+  const { alerts } = useAlerts(contractId);
 
   const breadcrumbItems = [
     { title: "contracts", href: `/org/${organizationId}/contracts` },
@@ -30,23 +30,6 @@ export default function ContractDetailed() {
       {item.title}
     </Link>
   ));
-
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-
-  const assignAlerts = async () => {
-    if (!contractId) return;
-
-    const alerts = await fetchAlertsByContract(parseInt(contractId));
-    console.log("alerts", alerts);
-
-    setAlerts(alerts);
-  };
-
-  useEffect(() => {
-    assignAlerts();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [organizationId, contractId]);
 
   const addNewAlert = () => {
     router.push(`/org/${organizationId}/alerts/create`);
@@ -78,8 +61,8 @@ export default function ContractDetailed() {
             <ContractAlertTable
               alerts={alerts}
               addNewAlert={addNewAlert}
-              editAlert={() => {}}
-              deleteAlert={() => {}}
+              editAlert={() => {}} // TODO
+              deleteAlert={() => {}} // TODO
             />
           </Paper>
         </Stack>
