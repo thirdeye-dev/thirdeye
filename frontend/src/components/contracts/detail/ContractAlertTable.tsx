@@ -25,7 +25,7 @@ export default function ContractAlertTable({
   editAlert,
   deleteAlert,
 }: {
-  alerts: Alert[];
+  alerts: Alert[] | undefined;
   addNewAlert: () => void;
   editAlert: (alert: Alert) => void;
   deleteAlert: (alert: Alert) => void;
@@ -57,40 +57,43 @@ export default function ContractAlertTable({
         </thead>
 
         <tbody>
-          {alerts.map((alert) => (
-            <tr key={alert.id}>
-              <td>{alert.id}</td>
-              <td>{alert.name}</td>
-              <td>{alert.created_at}</td>
-              <td>{alert.updated_at}</td>
+          {alerts?.map(
+            (alert) =>
+              (
+                <tr key={alert.id}>
+                  <td>{alert.id}</td>
+                  <td>{alert.name}</td>
+                  <td>{alert.created_at}</td>
+                  <td>{alert.updated_at}</td>
 
-              <td>
-                <Flex gap="4px" justify="flex-end">
-                  <Tooltip label="Edit">
-                    <Button
-                      color="blue"
-                      variant="subtle"
-                      p="xs"
-                      onClick={() => {}}
-                    >
-                      <AiOutlineEdit size="1.2rem" />
-                    </Button>
-                  </Tooltip>
+                  <td>
+                    <Flex gap="4px" justify="flex-end">
+                      <Tooltip label="Edit">
+                        <Button
+                          color="blue"
+                          variant="subtle"
+                          p="xs"
+                          onClick={() => {}}
+                        >
+                          <AiOutlineEdit size="1.2rem" />
+                        </Button>
+                      </Tooltip>
 
-                  <Tooltip label="Delete">
-                    <Button
-                      color="red"
-                      variant="subtle"
-                      p="xs"
-                      onClick={() => {}}
-                    >
-                      <AiOutlineDelete size="1.2rem" />
-                    </Button>
-                  </Tooltip>
-                </Flex>
-              </td>
-            </tr>
-          ))}
+                      <Tooltip label="Delete">
+                        <Button
+                          color="red"
+                          variant="subtle"
+                          p="xs"
+                          onClick={() => {}}
+                        >
+                          <AiOutlineDelete size="1.2rem" />
+                        </Button>
+                      </Tooltip>
+                    </Flex>
+                  </td>
+                </tr>
+              ) ?? []
+          )}
         </tbody>
       </Table>
     </ScrollArea>

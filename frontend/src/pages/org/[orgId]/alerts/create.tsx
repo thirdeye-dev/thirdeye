@@ -1,5 +1,5 @@
 import { Button, Container, Flex, Stack, Stepper } from "@mantine/core";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 
 import AppShellLayout from "@/layouts/AppShellLayout";
 import ChoosePresetAlert from "@/components/alerts/create/ChoosePresetAlert";
@@ -13,39 +13,16 @@ import Contract from "@/models/contract";
 import { createPresetAlert } from "@/services/presetAlerts";
 import { notifications } from "@mantine/notifications";
 import CustomDetails from "@/components/alerts/create/CustomDetails";
-import { fetchContracts } from "@/services/contracts";
 import CustomBuildAlert from "@/components/alerts/create/CustomBuildAlert";
 import { createAlert } from "@/services/alerts";
+import useContracts from "@/hooks/use-contracts";
 
 export default function CreateAlert() {
   const router = useRouter();
+
   const orgId = router.query.orgId as string;
 
-  const [activeStep, setActiveStep] = useState(0);
-
-  const incStep = () =>
-    setActiveStep((current) =>
-      current < getPossibleStepsLength() ? current + 1 : current
-    );
-
-  const decStep = () =>
-    setActiveStep((current) => (current > 0 ? current - 1 : current));
-
-  const [contracts, setContracts] = useState<Contract[]>([]);
-
-  const assignContracts = async () => {
-    if (!orgId) return;
-
-    const contracts = await fetchContracts(orgId);
-
-    setContracts(contracts);
-  };
-
-  useEffect(() => {
-    assignContracts();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orgId]);
+  const { contracts } = useContracts(orgId);
 
   const [alertType, setAlertType] = useState<AlertType | null>(null);
   const [selectedContract, setSelectedContract] = useState<Contract | null>(
@@ -60,6 +37,16 @@ export default function CreateAlert() {
   const [customName, setCustomName] = useState<string>("");
   const [customDescription, setCustomDescription] = useState<string>("");
   const [customYaml, setCustomYaml] = useState<string>("");
+
+  const [activeStep, setActiveStep] = useState(0);
+
+  const incStep = () =>
+    setActiveStep((current) =>
+      current < getPossibleStepsLength() ? current + 1 : current
+    );
+
+  const decStep = () =>
+    setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const steps = [
     {
@@ -87,7 +74,7 @@ export default function CreateAlert() {
         <SetupPresetAlert
           presetAlert={presetAlert!}
           setParams={setPresetParams}
-          contracts={contracts}
+          contracts={contracts!}
           setContract={setSelectedContract}
         />
       ),
@@ -100,7 +87,7 @@ export default function CreateAlert() {
         <CustomDetails
           setName={setCustomName}
           setDescription={setCustomDescription}
-          contracts={contracts}
+          contracts={contracts!}
           setContract={setSelectedContract}
         />
       ),

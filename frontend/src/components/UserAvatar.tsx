@@ -1,12 +1,13 @@
+import useCurrentUser from "@/hooks/use-current-user";
 import { Avatar } from "@mantine/core";
 
 export default function UserAvatar({
-  src,
   radius = 36,
   ...props
 }: {
-  src?: string;
   radius?: number;
 }) {
-  return <Avatar src={src} radius={radius} {...props} />;
+  const { user } = useCurrentUser();
+
+  return <Avatar src={user?.avatar} radius={radius} {...props} />;
 }

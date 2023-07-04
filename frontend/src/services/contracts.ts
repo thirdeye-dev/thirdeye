@@ -1,14 +1,14 @@
 import axios from "@/axios";
 import Contract from "@/models/contract";
 
-export async function fetchContracts(orgId: string) {
-  const response = await axios.get<Contract[]>("/smartcontract/my", {
+export async function fetchContracts(orgId: string): Promise<Contract[]> {
+  const resp = await axios.get<Contract[]>("/smartcontract/my", {
     params: {
       owner_organization: orgId,
     },
   });
 
-  return response.data;
+  return resp.data;
 }
 
 export async function createContract(
@@ -27,17 +27,17 @@ export async function createContract(
   return response.data;
 }
 
-export async function fetchContract(contractId: string, orgId: string) {
-  const response = await axios.get<Contract>(
-    `/smartcontract/my/${contractId}`,
-    {
-      params: {
-        owner_organization: orgId,
-      },
-    }
-  );
+export async function fetchContract(
+  contractId: string,
+  orgId: string
+): Promise<Contract> {
+  const resp = await axios.get<Contract>(`/smartcontract/my/${contractId}`, {
+    params: {
+      owner_organization: orgId,
+    },
+  });
 
-  return response.data;
+  return resp.data;
 }
 
 export async function deleteContract(contractId: number, orgId: string) {
