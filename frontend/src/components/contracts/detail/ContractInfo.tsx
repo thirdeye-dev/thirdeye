@@ -56,7 +56,7 @@ function Features({ contract }: { contract: Contract }) {
 export default function ContractInfo({
   contract,
 }: {
-  contract: Contract | null;
+  contract: Contract | undefined;
 }) {
   if (!contract) return null;
 

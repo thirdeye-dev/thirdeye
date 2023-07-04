@@ -1,20 +1,23 @@
-import ContractAlertTable from "@/components/contracts/detail/ContractAlertTable";
-import ContractInfo from "@/components/contracts/detail/ContractInfo";
-import AppShellLayout from "@/layouts/AppShellLayout";
-import Alert from "@/models/alert";
-import Contract from "@/models/contract";
-import { fetchAlertsByContract } from "@/services/alerts";
-import { fetchContract } from "@/services/contracts";
-import { Box, Breadcrumbs, Flex, Modal, Paper, Stack } from "@mantine/core";
+import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
+
+import { Box, Breadcrumbs, Flex, Paper, Stack } from "@mantine/core";
+
+import ContractAlertTable from "@/components/contracts/detail/ContractAlertTable";
+import ContractInfo from "@/components/contracts/detail/ContractInfo";
+import useContract from "@/hooks/use-contract";
+import AppShellLayout from "@/layouts/AppShellLayout";
+import Alert from "@/models/alert";
+import { fetchAlertsByContract } from "@/services/alerts";
 
 export default function ContractDetailed() {
   const router = useRouter();
 
   const organizationId = router.query.orgId as string;
   const contractId = router.query.contractId as string;
+
+  const { contract } = useContract(contractId, organizationId);
 
   const breadcrumbItems = [
     { title: "contracts", href: `/org/${organizationId}/contracts` },
@@ -28,16 +31,7 @@ export default function ContractDetailed() {
     </Link>
   ));
 
-  const [contract, setContract] = useState<Contract | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
-
-  const assignContract = async () => {
-    if (!organizationId || !contractId) return;
-
-    const contract = await fetchContract(contractId, organizationId);
-
-    setContract(contract);
-  };
 
   const assignAlerts = async () => {
     if (!contractId) return;
@@ -49,7 +43,6 @@ export default function ContractDetailed() {
   };
 
   useEffect(() => {
-    assignContract();
     assignAlerts();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
