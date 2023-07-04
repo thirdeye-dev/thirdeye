@@ -895,6 +895,9 @@ components:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+          maxLength: 100
         address:
           type: string
         chain:
@@ -911,6 +914,9 @@ components:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+          maxLength: 100
         address:
           type: string
         chain:
@@ -925,6 +931,7 @@ components:
       - address
       - chain
       - id
+      - name
       - network
       - owner_organization
     StatusEnum:
