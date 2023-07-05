@@ -9,6 +9,7 @@ from api_app.smartcontract.permissions import (
 )
 from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import SmartContract
 from .serializers import ABIJSONSerializer, SmartContractSerializer
