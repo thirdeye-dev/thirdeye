@@ -10,8 +10,8 @@ export async function createOrganization(organization: { name: string }) {
   return response.data;
 }
 
-export async function fetchOrganizations() {
-  const response = await axios.get<Organization[]>("/organizations/my");
+export async function fetchOrganizations(): Promise<Organization[]> {
+  const resp = await axios.get<Organization[]>("/organizations/my");
 
-  return response.data;
+  return resp.data;
 }

@@ -1,57 +1,58 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { Select } from "@mantine/core";
+import { Avatar, Group, Select, SelectItemProps, Text } from "@mantine/core";
 
-import Organization from "@/models/organization";
-import { fetchOrganizations } from "@/services/organizations";
+import useOrgs from "@/hooks/use-orgs";
+
+function SelectItem({ label, ...others }: SelectItemProps) {
+  return (
+    <div {...others}>
+      <Group noWrap>
+        <Avatar variant="outline" color="green" alt={label?.toString()}>
+          {label?.toString().at(0)}
+        </Avatar>
+
+        <Text size="sm">{label}</Text>
+      </Group>
+    </div>
+  );
+}
 
 export default function OrganizationSelector() {
   const router = useRouter();
 
-  const currentOrgId = router.query.orgId;
-  const selectRef = useRef<HTMLInputElement>(null);
+  const currentOrgId = router.query.orgId as string;
+  const { orgs } = useOrgs();
 
-  const orgs = useRef<Array<Organization>>([]);
-  const [orgEntries, setOrgEntries] = useState<Array<string>>([]);
-
-  const assignOrgs = async () => {
-    orgs.current = await fetchOrganizations();
-
-    const orgNames = orgs.current.map((org) => org.name);
-
-    setOrgEntries(orgNames);
-  };
-
-  useEffect(() => {
-    assignOrgs();
-  }, []);
+  const [selectValue, setSelectValue] = useState<string | null>(null);
 
   useEffect(() => {
     if (!currentOrgId) return;
 
-    const currentOrgName = orgs.current.find((org) => org.id === currentOrgId);
-
-    selectRef.current!.value = currentOrgName?.name ?? "";
+    setSelectValue(currentOrgId); // whenever the orgId changes in the URL, we want to update the selectValue
   }, [currentOrgId]);
 
-  const onOrganizationChange = (orgName: string) => {
-    if (!orgName) return;
+  const onOrganizationChange = (orgId: string) => {
+    if (!orgId) return;
 
-    const org = orgs.current.find((org) => org.name === orgName);
-    if (!org || org.id === currentOrgId) return; // don't do anything if the org is the same or doesn't exist
+    if (orgId === selectValue) return; // don't do anything if the org is the same
 
-    router.push(`/org/${org?.id}`);
+    setSelectValue(orgId);
+    router.push(`/org/${selectValue}`); // update the URL to match the selected org
   };
+
+  const data = orgs?.map((org) => ({ value: org.id, label: org.name })) ?? [];
 
   return (
     <Select
-      ref={selectRef}
+      w="50%"
       placeholder="Organization"
-      data={orgEntries}
-      w="40%"
-      // @ts-ignore
-      onSelect={(e) => onOrganizationChange(e.target.value)}
+      nothingFound="No organizations"
+      itemComponent={SelectItem}
+      value={selectValue}
+      data={data}
+      onChange={(orgId) => onOrganizationChange(orgId!)}
     />
   );
 }

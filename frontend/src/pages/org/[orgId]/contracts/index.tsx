@@ -1,5 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
-import AppShellLayout from "@/layouts/AppShellLayout";
+import { ReactNode } from "react";
+import { useRouter } from "next/router";
+
 import {
   Button,
   Container,
@@ -14,40 +15,25 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
+import AppShellLayout from "@/layouts/AppShellLayout";
 import Contract from "@/models/contract";
-import { deleteContract, fetchContracts } from "@/services/contracts";
+import { deleteContract } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
 import ContractCard from "@/components/contracts/ContractCard";
-import { useRouter } from "next/router";
+import useContracts from "@/hooks/use-contracts";
 
 export default function Contracts() {
   const router = useRouter();
 
-  const [contracts, setContracts] = useState<Array<Contract>>([]);
+  const organizationId = router.query.orgId as string;
+  const { contracts, isLoading, mutate } = useContracts(organizationId); // FIXME: sometimes organizationId is undefined, causing a failed request
+
   const [isAddModalOpened, { open: openAddModal, close: closeAddModal }] =
     useDisclosure(false);
 
-  const organizationId = router.query.orgId as string;
-
-  const assignContracts = async (organizationId: string) => {
-    const contracts = await fetchContracts(organizationId);
-    console.log(contracts, "contracts");
-
-    setContracts(contracts);
-  };
-
-  useEffect(() => {
-    if (!organizationId) return;
-
-    assignContracts(organizationId);
-  }, [organizationId]);
-
-  const onClickAdd = () => {
-    openAddModal();
-  };
-
   const handleContractDelete = async (contract: Contract) => {
     await deleteContract(contract.id, organizationId);
+    mutate();
 
     notifications.show({
       title: "Success",
@@ -55,11 +41,11 @@ export default function Contracts() {
       color: "green",
       icon: <AiFillCheckCircle />,
     });
-    assignContracts(organizationId);
   };
 
-  const afterFormSuccess = () => {
+  const afterAddContract = () => {
     closeAddModal();
+    mutate();
 
     notifications.show({
       title: "Success",
@@ -67,7 +53,6 @@ export default function Contracts() {
       color: "green",
       icon: <AiFillCheckCircle />,
     });
-    assignContracts(organizationId);
   };
 
   return (
@@ -80,7 +65,7 @@ export default function Contracts() {
       >
         <AddContractForm
           organizationId={organizationId}
-          afterSuccess={afterFormSuccess}
+          afterSuccess={afterAddContract}
         />
       </Modal>
 
@@ -95,7 +80,7 @@ export default function Contracts() {
               color="orange.4"
               variant="light"
               p={"xs"}
-              onClick={onClickAdd}
+              onClick={() => openAddModal()}
             >
               <AiOutlinePlus size="1.3rem" />
             </Button>
@@ -103,7 +88,15 @@ export default function Contracts() {
         </Flex>
 
         <Paper radius="md" p="xl" mih="80vh" withBorder>
-          {contracts.length === 0 ? (
+          {isLoading && (
+            <Flex direction="column" justify="center" align="center" h="70vh">
+              <Text color="gray.7" size="2.5em" weight="bold" align="center">
+                Loading...
+              </Text>
+            </Flex>
+          )}
+
+          {contracts?.length === 0 ? (
             // FIXME: improve the feedback
             <Flex direction="column" justify="center" align="center" h="70vh">
               <Text color="gray.7" size="2.5em" weight="bold" align="center">
@@ -115,7 +108,7 @@ export default function Contracts() {
             </Flex>
           ) : (
             <SimpleGrid cols={2}>
-              {contracts.map((contract, idx) => (
+              {contracts?.map((contract, idx) => (
                 <ContractCard
                   key={idx}
                   contract={contract}

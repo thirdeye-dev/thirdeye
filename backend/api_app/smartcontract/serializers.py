@@ -72,7 +72,7 @@ class SmartContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SmartContract
-        fields = ("id", "address", "chain", "network", "owner_organization")
+        fields = ("id", "name", "address", "chain", "network", "owner_organization")
         read_only_fields = ("id",)
 
     def validate(self, data):

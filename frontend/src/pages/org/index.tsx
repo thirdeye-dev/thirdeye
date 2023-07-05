@@ -1,23 +1,19 @@
 import chooseDefaultOrganization from "@/flow/chooseDefaultOrganization";
-import { fetchOrganizations } from "@/services/organizations";
+import useOrgs from "@/hooks/use-orgs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function OrganizationIndex() {
   const router = useRouter();
-
-  const chooseAndRedirect = async () => {
-    const orgs = await fetchOrganizations();
-
-    const chosen = chooseDefaultOrganization(orgs);
-    router.push(`/org/${chosen.id}`);
-  };
+  const { orgs } = useOrgs();
 
   useEffect(() => {
-    chooseAndRedirect();
+    if (!orgs) return;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const defaultOrg = chooseDefaultOrganization(orgs);
+
+    router.push(`/org/${defaultOrg.id}`);
+  }, [orgs, router]);
 
   return null;
 }
