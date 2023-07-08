@@ -157,8 +157,8 @@ def monitor_contract(self, monitoring_task_id):
         abi = monitoring_task.SmartContract.abi
         if not abi:
             error_msg = f"ABI not found for contract {contract_address}"
-            logger.log(error_msg)
-            return transaction_data.get("input")
+            logger.error(error_msg)
+            return "", transaction_data.get("input")
         contract = w3.eth.contract(address=contract_address, abi=abi)
 
         # decode the input

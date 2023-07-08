@@ -20,7 +20,7 @@ class Network(models.TextChoices):
 
 
 class SmartContract(BaseMixin):
-    address = models.CharField(max_length=42, unique=True)
+    address = models.CharField(max_length=42)
     name = models.CharField(max_length=100)
     chain = models.CharField(max_length=16, choices=Chain.choices)
     network = models.CharField(
