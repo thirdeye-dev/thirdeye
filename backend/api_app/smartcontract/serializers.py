@@ -6,10 +6,12 @@ from authentication.organizations.models import Organization
 
 from .models import SmartContract
 
+
 class InputSerializer(serializers.Serializer):
     internalType = serializers.CharField()
     name = serializers.CharField()
     type = serializers.CharField()
+
 
 class CompilerSerializer(serializers.Serializer):
     version = serializers.CharField()
@@ -34,12 +36,14 @@ class ABIJSONSerializer(serializers.Serializer):
     stateMutability = serializers.CharField()
     type = serializers.CharField()
 
+
 class MethodSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
     name = serializers.CharField()
     outputs = OutputSerializer(many=True)
     stateMutability = serializers.CharField()
     type = serializers.CharField()
+
 
 class ABIObjectSerializer(serializers.Serializer):
     compiler = serializers.DictField()
@@ -48,11 +52,13 @@ class ABIObjectSerializer(serializers.Serializer):
     devdoc = serializers.DictField()
     userdoc = serializers.DictField()
 
+
 class ABISerializer(serializers.Serializer):
     version = serializers.IntegerField()
     abi = serializers.ListField(child=ABIObjectSerializer())
     settings = serializers.DictField()
     sources = serializers.DictField()
+
 
 class SmartContractSerializer(serializers.ModelSerializer):
     def smart_contract_validator(value):
