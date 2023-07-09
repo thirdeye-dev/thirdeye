@@ -9,36 +9,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    name: "Alpha",
-    color: "#8884d8",
-    entries: [
-      { day: "monday", executions: 30 },
-      { day: "tuesday", executions: 200 },
-      { day: "wednesday", executions: 100 },
-      { day: "thursday", executions: 400 },
-      { day: "friday", executions: 150 },
-      { day: "saturday", executions: 250 },
-      { day: "sunday", executions: 220 },
-    ],
-  },
-  {
-    name: "Beta",
-    color: "#82ca9d",
-    entries: [
-      { day: "monday", executions: 20 },
-      { day: "tuesday", executions: 100 },
-      { day: "wednesday", executions: 200 },
-      { day: "thursday", executions: 300 },
-      { day: "friday", executions: 250 },
-      { day: "saturday", executions: 150 },
-      { day: "sunday", executions: 120 },
-    ],
-  },
-];
+import { OverviewContract, OverviewData } from "@/models/overviewData";
+import useOverviewData from "@/hooks/use-overview-data";
 
-export default function AlertGraph() {
+export default function AlertGraph({ orgId }: { orgId: string | undefined }) {
+  let { data, isLoading } = useOverviewData(orgId, "weekly");
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (data?.every(e => e.entries.length === 0)) {
+    return <div>No entries found for contracts</div>
+  }
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ScatterChart
@@ -68,12 +52,12 @@ export default function AlertGraph() {
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
         <Legend />
 
-        {data.map((contract) => (
+        {data?.map((contract: OverviewContract) => (
           <Scatter
-            key={contract.name}
+            key={contract.id}
             name={contract.name}
             data={contract.entries}
-            fill={contract.color}
+            fill={'#' + Math.floor(Math.random() * 16777215).toString(16)} // FIXME: Ideally, the color should come from backend. 
             line
           />
         ))}

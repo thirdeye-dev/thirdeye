@@ -6,14 +6,19 @@ import AlertGraph from "@/components/overview/AlertGraph";
 import AlertHeatmap from "@/components/overview/AlertHeatmap";
 import ExecutionPieCharts from "@/components/overview/ExecutionPieCharts";
 import AverageStats from "@/components/overview/AverageStats";
+import { useRouter } from "next/router";
 
 export default function Overview() {
+  const router = useRouter();
+
+  const organizationId = router.query.orgId as string | undefined;
+
   return (
     <Flex direction="row" gap="md" h="88vh">
       <Box w="70%" h="100%">
         <Stack h="100%">
           <Paper withBorder w="100%" h="70%" p="md">
-            <AlertGraph />
+            <AlertGraph orgId={organizationId} />
           </Paper>
 
           <Paper withBorder w="100%" h="30%" p="md">
