@@ -1,8 +1,6 @@
-from collections.abc import Iterable
 import logging
 from datetime import datetime, timedelta
 
-import pytz
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
@@ -30,10 +28,13 @@ logger = logging.getLogger(__name__)
     that runs every day at 00:00 UTC for every organization.
 """
 
+
 @api_view(["GET"])
 @permission_classes([IsMember])
 def OverviewStatsAPIView(request):
-    if (owner_organization_id := request.query_params.get("owner_organization")) is None:
+    if (
+        owner_organization_id := request.query_params.get("owner_organization")
+    ) is None:
         return Response(
             {"error": "owner_organization is a required query parameter"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -52,22 +53,22 @@ def OverviewStatsAPIView(request):
     stats = {
         "notifications": None,
     }
-   
+
     # Get Today's date
     now = datetime.now().date()
 
     if time_mode == "today":
         stats["notifications"] = Notification.objects.filter(
             alert__smart_contract__owner_organization=owner_organization,
-            created_at__gte=datetime.utcnow().date()
-        ).count()       
+            created_at__gte=datetime.utcnow().date(),
+        ).count()
 
     if time_mode == "weekly":
         start_date = now - timedelta(days=now.weekday())
 
         stats["notifications"] = Notification.objects.filter(
             alert__smart_contract__owner_organization=owner_organization,
-            created_at__gte=start_date # all notifs from last weekday till now
+            created_at__gte=start_date,  # all notifs from last weekday till now
         ).count()
 
     if time_mode == "monthly":
@@ -75,7 +76,7 @@ def OverviewStatsAPIView(request):
 
         stats["notifications"] = Notification.objects.filter(
             alert__smart_contract__owner_organization=owner_organization,
-            created_at__gte=start_date # all notifs from first day of month till now
+            created_at__gte=start_date,  # all notifs from first day of month till now
         ).count()
 
     if time_mode == "yearly":
@@ -83,7 +84,7 @@ def OverviewStatsAPIView(request):
 
         stats["notifications"] = Notification.objects.filter(
             alert__smart_contract__owner_organization=owner_organization,
-            created_at__gte=start_date # all notifs from first day of year till now
+            created_at__gte=start_date,  # all notifs from first day of year till now
         ).count()
 
     return Response(stats, status=status.HTTP_200_OK)
@@ -143,10 +144,14 @@ def OverviewDataAPIView(request):
                 date_to_number_of_notifications[date] = 0
             else:
                 date_to_number_of_notifications[date] += 1
-        
+
         for days_after_initial in range(0, 7 if time_mode == "weekly" else 365):
             # Calculate specific datetime after initial
-            date = start_date if days_after_initial == 0 else start_date + timedelta(days=days_after_initial)
+            date = (
+                start_date
+                if days_after_initial == 0
+                else start_date + timedelta(days=days_after_initial)
+            )
 
             # Convert datetime to date instance
             date = date.date()
@@ -154,11 +159,9 @@ def OverviewDataAPIView(request):
             # Fetch executions, if not found, return 0
             executions = date_to_number_of_notifications.get(date, 0)
 
-            smart_contract_data["entries"].append({
-                "day": date.strftime("%A"),
-                "date": date,
-                "executions": executions
-            })
+            smart_contract_data["entries"].append(
+                {"day": date.strftime("%A"), "date": date, "executions": executions}
+            )
 
         smart_contracts_data.append(smart_contract_data)
 
