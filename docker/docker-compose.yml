@@ -32,6 +32,21 @@ services:
     env_file:
       - ./.env
 
+  # flow_support:
+  #   container_name: flowsupport_app_thirdeye
+  #   networks:
+  #     default:
+  #     internal:
+  #   expose:
+  #     - "8001"
+  #   build:
+  #     context: ..
+  #     dockerfile: flowSupport/Dockerfile
+  #   volumes:
+  #     - ../flowSupport/:/app
+  #   env_file:
+  #     - ./.env
+
   celery:
     build:
       context: ..
