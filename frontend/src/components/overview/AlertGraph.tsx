@@ -19,10 +19,6 @@ export default function AlertGraph({ orgId }: { orgId: string | undefined }) {
     return <div>Loading...</div>;
   }
 
-  if (data?.every(e => e.entries.length === 0)) {
-    return <div>No entries found for contracts</div>
-  }
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ScatterChart

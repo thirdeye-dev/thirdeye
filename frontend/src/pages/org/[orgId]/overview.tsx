@@ -22,7 +22,7 @@ export default function Overview() {
           </Paper>
 
           <Paper withBorder w="100%" h="30%" p="md">
-            <AlertHeatmap />
+            <AlertHeatmap orgId={organizationId} />
           </Paper>
         </Stack>
       </Box>

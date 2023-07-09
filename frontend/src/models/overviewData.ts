@@ -4,6 +4,7 @@ export interface OverviewContract {
   color: string;
   entries: {
     day: string;
+    date: string;
     executions: number;
   }[];
 }
