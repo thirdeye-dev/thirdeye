@@ -53,7 +53,7 @@ export default function AlertGraph({ orgId }: { orgId: string | undefined }) {
             key={contract.id}
             name={contract.name}
             data={contract.entries}
-            fill={'#' + Math.floor(Math.random() * 16777215).toString(16)} // FIXME: Ideally, the color should come from backend. 
+            fill={"#" + Math.floor(Math.random() * 16777215).toString(16)} // FIXME: Ideally, the color should come from backend.
             line
           />
         ))}

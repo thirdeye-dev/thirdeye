@@ -1,3 +1,3 @@
 export default interface OverviewStats {
-  notifications: number
+  notifications: number;
 }

@@ -9,18 +9,27 @@ import {
   Tooltip,
 } from "recharts";
 
-export default function ExecutionPieCharts({ orgId }: { orgId: string | undefined }) {
+export default function ExecutionPieCharts({
+  orgId,
+}: {
+  orgId: string | undefined;
+}) {
   const { data } = useOverviewData(orgId, "weekly");
 
-  const contractNames = data?.flatMap(contract => contract.name) ?? [];
+  const contractNames = data?.flatMap((contract) => contract.name) ?? [];
 
-  const alertTriggers = data?.flatMap(contract => ({
+  const alertTriggers = data?.flatMap((contract) => ({
     name: contract.name,
-    value: contract.entries.flatMap(entry => entry.executions).reduce((p, v) => p + v)
-  }))
+    value: contract.entries
+      .flatMap((entry) => entry.executions)
+      .reduce((p, v) => p + v),
+  }));
 
   // TODO: plug in on chain triggers
-  const onChainTriggers = contractNames.map(name => ({ name: name, value: 0 }));
+  const onChainTriggers = contractNames.map((name) => ({
+    name: name,
+    value: 0,
+  }));
 
   const colors = ["#FF9830", "#B877D9", "#73BF69", "#5794F2"];
   const RADIAN = Math.PI / 180;

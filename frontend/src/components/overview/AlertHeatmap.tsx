@@ -50,9 +50,11 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
     }
 
     return result;
-  }
-  
-  const dataMerged: {date: string, executions: number}[] = mergeEntries(data ?? []);
+  };
+
+  const dataMerged: { date: string; executions: number }[] = mergeEntries(
+    data ?? []
+  );
 
   const chartCfg = {
     autoFit: true,
@@ -82,7 +84,7 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
   };
 
   if (isLoading) {
-    return <div>Loading..</div>
+    return <div>Loading..</div>;
   }
 
   return (

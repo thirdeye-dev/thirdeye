@@ -1,10 +1,15 @@
 import { Flex, Group, Text, ThemeIcon } from "@mantine/core";
 
-export default function StatsCard({ title, value, icon, color }: {
-  title: string,
-  value: number | string,
-  icon: any,
-  color: string
+export default function StatsCard({
+  title,
+  value,
+  icon,
+  color,
+}: {
+  title: string;
+  value: number | string;
+  icon: any;
+  color: string;
 }) {
   return (
     <Flex

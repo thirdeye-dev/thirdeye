@@ -7,7 +7,7 @@ import { TimeMode } from "@/models/common";
 import StatsCard from "@/components/overview/StatsCard";
 
 export default function AverageStats({ orgId }: { orgId: string | undefined }) {
-  const genStats = (notifsCount: number) => ([
+  const genStats = (notifsCount: number) => [
     {
       title: "Notifications",
       icon: <MdNotificationsActive />,
@@ -18,31 +18,31 @@ export default function AverageStats({ orgId }: { orgId: string | undefined }) {
       title: "On-Chain Triggers",
       icon: <TbBrandTorchain />,
       color: "blue",
-      value: "Coming Soon!"
+      value: "Coming Soon!",
     },
-  ])
-  
+  ];
+
   const StatPanel = ({ timeMode }: { timeMode: TimeMode }) => {
     const { data, isLoading } = useOverviewStats(orgId, timeMode);
 
-    const stats = genStats(data?.notifications ?? 0)
+    const stats = genStats(data?.notifications ?? 0);
 
     return (
       <Tabs.Panel value={timeMode} pt="xs">
-          <Stack>
-            {stats.map((stat, idx) => (
-              <StatsCard
-                key={idx}
-                title={isLoading ? "Loading.." : stat.title}
-                value={stat.value}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </Stack>
+        <Stack>
+          {stats.map((stat, idx) => (
+            <StatsCard
+              key={idx}
+              title={isLoading ? "Loading.." : stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+            />
+          ))}
+        </Stack>
       </Tabs.Panel>
-    )
-  }
+    );
+  };
 
   return (
     <Stack>
