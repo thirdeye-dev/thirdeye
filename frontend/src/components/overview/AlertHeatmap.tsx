@@ -56,8 +56,6 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
 
   const chartCfg = {
     autoFit: true,
-    start: "2023-01-01",
-    end: "2023-12-31",
     data: dataMerged,
     height: 180,
     size: 10,

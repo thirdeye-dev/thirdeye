@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import logging
 from datetime import datetime, timedelta
 
@@ -28,6 +29,64 @@ logger = logging.getLogger(__name__)
     Ideally, a lot of what happens in this file should be moved to a cronjob
     that runs every day at 00:00 UTC for every organization.
 """
+
+@api_view(["GET"])
+@permission_classes([IsMember])
+def OverviewStatsAPIView(request):
+    if (owner_organization_id := request.query_params.get("owner_organization")) is None:
+        return Response(
+            {"error": "owner_organization is a required query parameter"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # options: today, weekly, monthly & yearly
+    if (time_mode := request.query_params.get("time_mode")) is None:
+        return Response(
+            {"error": "time_mode is a required query parameter"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    owner_organization = Organization.objects.filter(id=owner_organization_id).first()
+
+    # NOTE: not averaging the executions right now
+    stats = {
+        "notifications": None,
+    }
+   
+    # Get Today's date
+    now = datetime.now().date()
+
+    if time_mode == "today":
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=datetime.utcnow().date()
+        ).count()       
+
+    if time_mode == "weekly":
+        start_date = now - timedelta(days=now.weekday())
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date # all notifs from last weekday till now
+        ).count()
+
+    if time_mode == "monthly":
+        start_date = now.replace(day=1)
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date # all notifs from first day of month till now
+        ).count()
+
+    if time_mode == "yearly":
+        start_date = now.replace(month=1, day=1)
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date # all notifs from first day of year till now
+        ).count()
+
+    return Response(stats, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])

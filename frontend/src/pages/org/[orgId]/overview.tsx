@@ -30,7 +30,7 @@ export default function Overview() {
       <Box w="30%" h="100%">
         <Stack h="100%">
           <Paper withBorder w="100%" h="65%" p="md">
-            <AverageStats />
+            <AverageStats orgId={organizationId} />
           </Paper>
           <Paper withBorder w="100%" h="35%" p="md">
             <ExecutionPieCharts />
