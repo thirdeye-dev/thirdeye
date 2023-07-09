@@ -6,6 +6,7 @@ from .views import (
     NotificationListViewSet,
     OrganizationAlertListViewSet,
     OverviewDataAPIView,
+    OverviewStatsAPIView,
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
     set_pre_written_alerts,
@@ -22,4 +23,5 @@ urlpatterns = [
         "set-pre-written-alerts", set_pre_written_alerts, name="set_pre_written_alerts"
     ),
     path("overview-data", OverviewDataAPIView, name="overview-data"),
+    path("overview-stats", OverviewStatsAPIView, name="overview-stats"),
 ]

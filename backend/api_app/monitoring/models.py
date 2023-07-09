@@ -69,4 +69,4 @@ class Notification(BaseMixin):
     )
 
     def __str__(self):
-        return f"{self.alert.smart_contract.address} - {self.sent_to}"
+        return f"{self.alert.smart_contract.address} - {self.notification_target}"

@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 import { Button, Flex, Stack, Text, Tooltip } from "@mantine/core";
 
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import useOverviewData from "@/hooks/use-overview-data";
+import { OverviewData } from "@/models/overviewData";
 
 function HeatmapControls() {
   return (
@@ -29,23 +31,34 @@ function HeatmapControls() {
 }
 
 // TODO: Find a better heatmap library, temporary solution right now
-export default function AlertHeatmap() {
+export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
   const CalendarHeatmap = dynamic(() => import("@antv/calendar-heatmap"), {
     ssr: false,
   });
 
-  const data = [
-    ...Array.from({ length: 365 }).map((_, i) => ({
-      date: dayjs("2022-01-01").add(i, "day").format("YYYY-MM-DD"),
-      executions: Math.floor(Math.random() * 10),
-    })),
-  ];
+  const { data, isLoading } = useOverviewData(orgId, "yearly");
+
+  const mergeEntries = (data: OverviewData) => {
+    let result = [];
+
+    // FIXME: this could get buggy when dates would conflict between multiple contracts
+    // the graphing library may or may not handle that
+    for (const contract of data) {
+      for (const entry of contract.entries) {
+        result.push(entry);
+      }
+    }
+
+    return result;
+  };
+
+  const dataMerged: { date: string; executions: number }[] = mergeEntries(
+    data ?? []
+  );
 
   const chartCfg = {
     autoFit: true,
-    start: "2022-01",
-    end: "2022-12",
-    data,
+    data: dataMerged,
     height: 180,
     size: 10,
     dateField: "date",
@@ -69,6 +82,10 @@ export default function AlertHeatmap() {
       }
     },
   };
+
+  if (isLoading) {
+    return <div>Loading..</div>;
+  }
 
   return (
     <Stack justify="center" h="100%" p="md">

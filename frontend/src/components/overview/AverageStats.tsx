@@ -1,89 +1,48 @@
-import { Flex, Group, Stack, Tabs, Text, ThemeIcon } from "@mantine/core";
+import { Stack, Tabs, Text } from "@mantine/core";
 import { MdAttachMoney, MdNotificationsActive } from "react-icons/md";
 import { TbBrandTorchain } from "react-icons/tb";
 
-interface AverageStat {
-  title: string;
-  value_today: number;
-  value_weekly: number;
-  value_monthly: number;
-  value_annually: number;
-  icon: any;
-  color: string;
-}
+import useOverviewStats from "@/hooks/use-overview-stats";
+import { TimeMode } from "@/models/common";
+import StatsCard from "@/components/overview/StatsCard";
 
-// Maybe a hack? Fix later
-type SingleValueAverageStat = Omit<
-  AverageStat,
-  "value_today" | "value_weekly" | "value_monthly" | "value_annually"
-> & { value: number };
-
-function StatsCard({ title, value, icon, color }: SingleValueAverageStat) {
-  return (
-    <Flex
-      p="xl"
-      align="center"
-      justify="space-between"
-      sx={(theme) => ({
-        borderBottom: `0.5px solid ${
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[4]
-            : theme.colors.gray[2]
-        }`,
-        "&:hover": {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
-        },
-      })}
-    >
-      <Group>
-        <ThemeIcon size="xl" color={color} variant="outline">
-          {icon}
-        </ThemeIcon>
-        <Text size="lg" weight="bold">
-          {title}
-        </Text>
-      </Group>
-
-      <Text size="1.8em" weight="bold">
-        {value}
-      </Text>
-    </Flex>
-  );
-}
-
-export default function AverageStats() {
-  const stats: AverageStat[] = [
+export default function AverageStats({ orgId }: { orgId: string | undefined }) {
+  const genStats = (notifsCount: number) => [
     {
       title: "Notifications",
-      value_today: 15,
-      value_weekly: 100,
-      value_monthly: 500,
-      value_annually: 1000,
       icon: <MdNotificationsActive />,
       color: "yellow",
+      value: notifsCount,
     },
     {
       title: "On-Chain Triggers",
-      value_today: 3,
-      value_weekly: 20,
-      value_monthly: 100,
-      value_annually: 200,
       icon: <TbBrandTorchain />,
       color: "blue",
-    },
-    {
-      title: "Transactions",
-      value_today: 5,
-      value_weekly: 30,
-      value_monthly: 150,
-      value_annually: 300,
-      icon: <MdAttachMoney />,
-      color: "red",
+      value: "Coming Soon!",
     },
   ];
+
+  const StatPanel = ({ timeMode }: { timeMode: TimeMode }) => {
+    const { data, isLoading } = useOverviewStats(orgId, timeMode);
+
+    const stats = genStats(data?.notifications ?? 0);
+
+    return (
+      <Tabs.Panel value={timeMode} pt="xs">
+        <Stack>
+          {stats.map((stat, idx) => (
+            <StatsCard
+              key={idx}
+              title={isLoading ? "Loading.." : stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+            />
+          ))}
+        </Stack>
+      </Tabs.Panel>
+    );
+  };
 
   return (
     <Stack>
@@ -95,64 +54,13 @@ export default function AverageStats() {
           <Tabs.Tab value="today">Today</Tabs.Tab>
           <Tabs.Tab value="weekly">Weekly</Tabs.Tab>
           <Tabs.Tab value="monthly">Monthly</Tabs.Tab>
-          <Tabs.Tab value="annually">Annually</Tabs.Tab>
+          <Tabs.Tab value="yearly">Annually</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="today" pt="xs">
-          <Stack>
-            {stats.map((stat) => (
-              <StatsCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value_today}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </Stack>
-        </Tabs.Panel>
-
-        <Tabs.Panel value="weekly" pt="xs">
-          <Stack>
-            {stats.map((stat) => (
-              <StatsCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value_weekly}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </Stack>
-        </Tabs.Panel>
-
-        <Tabs.Panel value="monthly" pt="xs">
-          <Stack>
-            {stats.map((stat) => (
-              <StatsCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value_monthly}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </Stack>
-        </Tabs.Panel>
-
-        <Tabs.Panel value="annually" pt="xs">
-          <Stack>
-            {stats.map((stat) => (
-              <StatsCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value_annually}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </Stack>
-        </Tabs.Panel>
+        <StatPanel timeMode="today" />
+        <StatPanel timeMode="weekly" />
+        <StatPanel timeMode="monthly" />
+        <StatPanel timeMode="yearly" />
       </Tabs>
     </Stack>
   );
