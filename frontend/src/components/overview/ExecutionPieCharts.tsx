@@ -74,7 +74,7 @@ export default function ExecutionPieCharts({
             label={renderCustomizedLabel}
             fill="#8884d8"
           >
-            {alertTriggers.map((entry, index) => (
+            {alertTriggers?.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={colors[index % colors.length]}
