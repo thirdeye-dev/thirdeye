@@ -76,27 +76,32 @@ def OverviewDataAPIView(request):
             alert__smart_contract=smart_contract, created_at__gte=start_date
         )
 
-        day_to_number_of_notifications = {}
-
+        date_to_number_of_notifications = {}
         for notification in smart_contract_notifications:
-            date = notification.created_at.astimezone(pytz.utc)
-            day = notification.created_at.strftime("%A")
+            date = notification.created_at.date()
 
-            if day not in day_to_number_of_notifications:
-                day_to_number_of_notifications[day] = 1
+            if date not in date_to_number_of_notifications:
+                date_to_number_of_notifications[date] = 0
             else:
-                day_to_number_of_notifications[day] += 1
+                date_to_number_of_notifications[date] += 1
+        
+        for days_after_initial in range(0, 7 if time_mode == "weekly" else 365):
+            # Calculate specific datetime after initial
+            date = start_date if days_after_initial == 0 else start_date + timedelta(days=days_after_initial)
+
+            # Convert datetime to date instance
+            date = date.date()
+
+            # Fetch executions, if not found, return 0
+            executions = date_to_number_of_notifications.get(date, 0)
+
+            smart_contract_data["entries"].append({
+                "day": date.strftime("%A"),
+                "date": date,
+                "executions": executions
+            })
 
         smart_contracts_data.append(smart_contract_data)
-
-    for smart_contract_data in smart_contracts_data:
-        for day, number_of_notifications in day_to_number_of_notifications.items():
-            smart_contract_data["entries"].append(
-                {
-                    "day" if time_mode == "weekly" else "date": date,
-                    "executions": number_of_notifications,
-                }
-            )
 
     return Response(smart_contracts_data, status=status.HTTP_200_OK)
 
