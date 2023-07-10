@@ -1,3 +1,4 @@
+import json
 from rest_framework import status as Status
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -57,7 +58,7 @@ class SmartContractViewSet(viewsets.ModelViewSet):
 @api_view(["DELETE"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def delete_abi(request):
-    smart_contract_id = request.data.get("smart_contract")
+    smart_contract_id = request.query_params.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
     smart_contract.abi = None
@@ -68,20 +69,33 @@ def delete_abi(request):
 @api_view(["GET"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def get_abi(request):
-    smart_contract_id = request.data.get("smart_contract")
+    smart_contract_id = request.query_params.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
-    abi = smart_contract.abi
+    if (abi := smart_contract.abi) is None:
+        return Response({"error": "ABI not set for the contract"}, status=Status.HTTP_204_NO_CONTENT)
+
     return Response(abi, status=Status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 @permission_classes([CanAccessSmartContractWithoutAction])
 def add_abi(request):
-    smart_contract_id = request.data.get("smart_contract")
+    smart_contract_id = request.query_params.get("smart_contract")
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
+    if request.data is None and type(request.data) != dict:
+        return Response(
+            {"error": "request data is required"},
+            status=Status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Get abi as text
     abi = request.data.get("abi")
+    
+    # Parse abi as json
+    abi = json.loads(abi)
+
     serializer = ABIJSONSerializer(data=abi, many=True)
     serializer.is_valid(raise_exception=True)
     smart_contract.abi = serializer.data
