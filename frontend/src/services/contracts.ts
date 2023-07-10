@@ -49,3 +49,41 @@ export async function deleteContract(contractId: number, orgId: string) {
 
   return response.data;
 }
+
+// TODO: the response should be typed to an ABI interface
+export async function fetchContractABI(contractId: number) {
+  const resp = await axios.get(`/smartcontract/get_abi`, {
+    params: {
+      smart_contract: contractId,
+    },
+  });
+
+  return resp.data;
+}
+
+// TODO: the ABI input should be typed
+export async function addContractABI(contractId: number, abi: string) {
+  const resp = await axios.post(
+    `/smartcontract/add_abi`,
+    JSON.stringify({
+      abi: abi,
+    }),
+    {
+      params: {
+        smart_contract: contractId,
+      },
+    }
+  );
+
+  return resp.data;
+}
+
+export async function deleteContractABI(contractId: number) {
+  const resp = await axios.delete(`/smartcontract/delete_abi`, {
+    params: {
+      smart_contract: contractId,
+    },
+  });
+
+  return resp.data;
+}
