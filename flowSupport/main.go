@@ -96,6 +96,7 @@ func connectToRedis() (*redis.Client, error) {
 		DB:       redisDbInt,                // Replace with your Redis database number
 	})
 
+	fmt.Println("[INFO] Trying to ping Redis on:", host + ":" + port)
 	// Ping the Redis server to check if the connection is successful
 	pong, err := client.Ping(context.Background()).Result()
 	if err != nil {
@@ -111,10 +112,16 @@ func setTestValues(rdb *redis.Client) {
 	fmt.Println("[INFO] Setting test values")
 	// array of smart contract ids
 	var smartContracts = [...]string{"A.0b2a3299cc857e29.TopShot"}
-
-	err := rdb.Set(ctx, "smart_contracts:flow", smartContracts, 0).Err()
+	
+	marshaledSmartContracts, err := json.Marshal(smartContracts)
 	if err != nil {
-		fmt.Println("[ERROR] Failed to set test smart contracts:", err)
+		fmt.Println("[ERROR] Failed to marshal test contracts:", err)
+		return
+	}
+
+	err = rdb.RPush(ctx, "smart_contracts:flow", marshaledSmartContracts, 0).Err()
+	if err != nil {
+		fmt.Println("[ERROR] Failed to set test contracts:", err)
 	} else {
 		fmt.Println("[INFO] Successfully set test smart contracts")
 	}
@@ -160,17 +167,30 @@ func main() {
 			fmt.Println("Error decoding JSON: ", err)
 		}
 		
+		fmt.Println("[INFO] Checking for matches in redis values")
 		// check all the values in redis for key "smart_contracts:flow"
-		values, err := rdb.Get(ctx, "smart_contracts:flow").Result()
-		// Print the values
-		for _, value := range values {
-			valueString := string(value)
-			fmt.Printf("%s ", valueString)
+		values, err := rdb.LRange(ctx, "smart_contracts:flow", 0, -1).Result()
 
-			if strings.Contains(dataString, valueString) {
-				fmt.Println("[INFO] Found a match: ", valueString)
+		var fetchedSmartContracts []string
+		err = json.Unmarshal([]byte(values[0]), &fetchedSmartContracts)
+
+		if err != nil {
+			fmt.Println("[Error] Error getting values from redis: ", err)
+		}
+
+		if values == nil {
+			fmt.Println("[INFO] No values found in redis")
+		} else {
+			fmt.Println("[INFO] Values found in redis")
+			// Print the values
+			for _,  smartContract := range fetchedSmartContracts {
+				smartContractID := string(smartContract)
+				if strings.Contains(dataString, smartContractID) {
+					fmt.Println("[INFO] Found a match: ", smartContractID)
+				} else {
+					fmt.Println("[INFO] No match found for this value")
+				}
 			}
 		}
-		
 	})
 }
