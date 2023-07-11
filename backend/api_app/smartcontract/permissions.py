@@ -50,9 +50,7 @@ class CanAccessSmartContractWithoutAction(permissions.BasePermission):
     message = "You are not a member of the organization that owns this smart contract."
 
     def has_permission(self, request, view):
-        smart_contract_id = request.data.get("smart_contract")
-        if request.method == "GET":
-            smart_contract_id = request.query_params.get("smart_contract")
+        smart_contract_id = request.query_params.get("smart_contract")
 
         if smart_contract_id is None:
             self.message = "smart contract id is required"

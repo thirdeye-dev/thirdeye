@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  flow_support:
+    container_name: flowsupport_app_thirdeye
+    networks:
+      default:
+      internal:
+    build:
+      context: ../
+      dockerfile: flowSupport/Dockerfile
+    volumes:
+      - ../flowSupport/:/app
+    env_file:
+      - ./.env
+    restart: always

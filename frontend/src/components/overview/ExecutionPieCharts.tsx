@@ -1,3 +1,4 @@
+import useOverviewData from "@/hooks/use-overview-data";
 import { Stack, Text } from "@mantine/core";
 import {
   Cell,
@@ -8,16 +9,27 @@ import {
   Tooltip,
 } from "recharts";
 
-export default function ExecutionPieCharts() {
-  const alertTriggers = [
-    { name: "Alpha", value: 1350 },
-    { name: "Beta", value: 1140 },
-  ];
+export default function ExecutionPieCharts({
+  orgId,
+}: {
+  orgId: string | undefined;
+}) {
+  const { data } = useOverviewData(orgId, "weekly");
 
-  const onChainTriggers = [
-    { name: "Alpha", value: 224 },
-    { name: "Beta", value: 892 },
-  ];
+  const contractNames = data?.flatMap((contract) => contract.name) ?? [];
+
+  const alertTriggers = data?.flatMap((contract) => ({
+    name: contract.name,
+    value: contract.entries
+      .flatMap((entry) => entry.executions)
+      .reduce((p, v) => p + v),
+  }));
+
+  // TODO: plug in on chain triggers
+  const onChainTriggers = contractNames.map((name) => ({
+    name: name,
+    value: 0,
+  }));
 
   const colors = ["#FF9830", "#B877D9", "#73BF69", "#5794F2"];
   const RADIAN = Math.PI / 180;
@@ -62,7 +74,7 @@ export default function ExecutionPieCharts() {
             label={renderCustomizedLabel}
             fill="#8884d8"
           >
-            {alertTriggers.map((entry, index) => (
+            {alertTriggers?.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={colors[index % colors.length]}

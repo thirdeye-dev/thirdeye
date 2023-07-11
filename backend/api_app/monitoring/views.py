@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime, timedelta
 
-import pytz
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
@@ -28,6 +27,67 @@ logger = logging.getLogger(__name__)
     Ideally, a lot of what happens in this file should be moved to a cronjob
     that runs every day at 00:00 UTC for every organization.
 """
+
+
+@api_view(["GET"])
+@permission_classes([IsMember])
+def OverviewStatsAPIView(request):
+    if (
+        owner_organization_id := request.query_params.get("owner_organization")
+    ) is None:
+        return Response(
+            {"error": "owner_organization is a required query parameter"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # options: today, weekly, monthly & yearly
+    if (time_mode := request.query_params.get("time_mode")) is None:
+        return Response(
+            {"error": "time_mode is a required query parameter"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    owner_organization = Organization.objects.filter(id=owner_organization_id).first()
+
+    # NOTE: not averaging the executions right now
+    stats = {
+        "notifications": None,
+    }
+
+    # Get Today's date
+    now = datetime.now().date()
+
+    if time_mode == "today":
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=datetime.utcnow().date(),
+        ).count()
+
+    if time_mode == "weekly":
+        start_date = now - timedelta(days=now.weekday())
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date,  # all notifs from last weekday till now
+        ).count()
+
+    if time_mode == "monthly":
+        start_date = now.replace(day=1)
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date,  # all notifs from first day of month till now
+        ).count()
+
+    if time_mode == "yearly":
+        start_date = now.replace(month=1, day=1)
+
+        stats["notifications"] = Notification.objects.filter(
+            alert__smart_contract__owner_organization=owner_organization,
+            created_at__gte=start_date,  # all notifs from first day of year till now
+        ).count()
+
+    return Response(stats, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -76,27 +136,34 @@ def OverviewDataAPIView(request):
             alert__smart_contract=smart_contract, created_at__gte=start_date
         )
 
-        day_to_number_of_notifications = {}
-
+        date_to_number_of_notifications = {}
         for notification in smart_contract_notifications:
-            date = notification.created_at.astimezone(pytz.utc)
-            day = notification.created_at.strftime("%A")
+            date = notification.created_at.date()
 
-            if day not in day_to_number_of_notifications:
-                day_to_number_of_notifications[day] = 1
+            if date not in date_to_number_of_notifications:
+                date_to_number_of_notifications[date] = 0
             else:
-                day_to_number_of_notifications[day] += 1
+                date_to_number_of_notifications[date] += 1
+
+        for days_after_initial in range(0, 7 if time_mode == "weekly" else 365):
+            # Calculate specific datetime after initial
+            date = (
+                start_date
+                if days_after_initial == 0
+                else start_date + timedelta(days=days_after_initial)
+            )
+
+            # Convert datetime to date instance
+            date = date.date()
+
+            # Fetch executions, if not found, return 0
+            executions = date_to_number_of_notifications.get(date, 0)
+
+            smart_contract_data["entries"].append(
+                {"day": date.strftime("%A"), "date": date, "executions": executions}
+            )
 
         smart_contracts_data.append(smart_contract_data)
-
-    for smart_contract_data in smart_contracts_data:
-        for day, number_of_notifications in day_to_number_of_notifications.items():
-            smart_contract_data["entries"].append(
-                {
-                    "day" if time_mode == "weekly" else "date": date,
-                    "executions": number_of_notifications,
-                }
-            )
 
     return Response(smart_contracts_data, status=status.HTTP_200_OK)
 
