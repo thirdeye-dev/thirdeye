@@ -62,9 +62,11 @@ class ABISerializer(serializers.Serializer):
 
 class SmartContractSerializer(serializers.ModelSerializer):
     def smart_contract_validator(value):
-        pattern = re.compile(r"^0x[a-fA-F0-9]{40}$")
-        if not pattern.match(value):
-            raise serializers.ValidationError("Invalid smart contract address")
+        # TODO: commenting out for now
+        # pattern = re.compile(r"^0x[a-fA-F0-9]{40}$")
+        # if not pattern.match(value):
+        #     raise serializers.ValidationError("Invalid smart contract address")
+        pass
 
     address = serializers.CharField(validators=[smart_contract_validator])
     chain = serializers.CharField(required=True)
@@ -78,7 +80,7 @@ class SmartContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SmartContract
-        fields = ("id", "name", "address", "chain", "network", "owner_organization")
+        fields = ("id", "object_type", "name", "address", "chain", "network", "owner_organization")
         read_only_fields = ("id",)
 
     def validate(self, data):
