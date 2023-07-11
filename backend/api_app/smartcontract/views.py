@@ -1,4 +1,5 @@
 import json
+
 from rest_framework import status as Status
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -73,7 +74,9 @@ def get_abi(request):
     smart_contract = SmartContract.objects.filter(id=smart_contract_id).first()
 
     if (abi := smart_contract.abi) is None:
-        return Response({"error": "ABI not set for the contract"}, status=Status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"error": "ABI not set for the contract"}, status=Status.HTTP_204_NO_CONTENT
+        )
 
     return Response(abi, status=Status.HTTP_200_OK)
 
@@ -92,7 +95,7 @@ def add_abi(request):
 
     # Get abi as text
     abi = request.data.get("abi")
-    
+
     # Parse abi as json
     abi = json.loads(abi)
 
