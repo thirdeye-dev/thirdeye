@@ -19,6 +19,10 @@ export async function createContract(
   // @ts-ignore
   contract.owner_organization = orgId;
 
+  // FIXME: hack to make backend accept object_type
+  // @ts-ignore
+  contract.object_type = contract.object_type.toUpperCase();
+
   const response = await axios.post<Contract>(
     "/smartcontract/my",
     JSON.stringify(contract)
