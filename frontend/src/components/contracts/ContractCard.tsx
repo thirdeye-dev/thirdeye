@@ -56,10 +56,16 @@ export default function ContractCard({
           <Group spacing={"0.2rem"}>
             <Tooltip label={contract.chain.toUpperCase()} color="gray">
               <Avatar
-                color={contract.chain.toLowerCase() === Chain.ETH ? "blue" : "violet"}
+                color={
+                  contract.chain.toLowerCase() === Chain.ETH ? "blue" : "violet"
+                }
                 size="sm"
               >
-                {contract.chain.toLowerCase() === Chain.ETH ? <FaEthereum /> : <TbPolygon />}
+                {contract.chain.toLowerCase() === Chain.ETH ? (
+                  <FaEthereum />
+                ) : (
+                  <TbPolygon />
+                )}
               </Avatar>
             </Tooltip>
 

@@ -1,6 +1,12 @@
 import { Chain, Network, ObjectType } from "@/models/contract";
 import { createContract } from "@/services/contracts";
-import { Button, SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  SegmentedControl,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 const flowAccountAddressRegex = new RegExp(/^0x{0,1}[0-9a-fA-F]{16}/);
@@ -25,12 +31,15 @@ export default function AddContractForm({
     },
     validate: (vals) => {
       const validateObjectType = () => {
-        if (vals.chain === Chain.ETH && vals.object_type === ObjectType.ACCOUNT) {
-          return "account type not supported on chain eth"
+        if (
+          vals.chain === Chain.ETH &&
+          vals.object_type === ObjectType.ACCOUNT
+        ) {
+          return "account type not supported on chain eth";
         }
 
         return null;
-      }
+      };
 
       const validateEthAddress = () => {
         if (vals.address.length === 0) return "address is required";
@@ -40,7 +49,7 @@ export default function AddContractForm({
         }
 
         return null;
-      }
+      };
 
       const validateFlowAddress = () => {
         if (vals.address.length === 0) return "address is required";
@@ -59,23 +68,30 @@ export default function AddContractForm({
         }
 
         return null;
-      }
+      };
 
       const validateNetwork = () => {
-        if (vals.chain === Chain.FLOW && vals.network !== Network.MAINNET && vals.network !== Network.TESTNET) {
+        if (
+          vals.chain === Chain.FLOW &&
+          vals.network !== Network.MAINNET &&
+          vals.network !== Network.TESTNET
+        ) {
           return "unsupported network for chain flow";
         }
 
         return null;
-      }
+      };
 
       return {
         object_type: validateObjectType(),
         name: vals.name.length > 0 ? null : "name can't be empty",
-        address: vals.chain === Chain.FLOW ? validateFlowAddress() : validateEthAddress(),
-        network: validateNetwork()
-      }
-    }
+        address:
+          vals.chain === Chain.FLOW
+            ? validateFlowAddress()
+            : validateEthAddress(),
+        network: validateNetwork(),
+      };
+    },
   });
 
   const handleOnSubmit = async (values: Record<string, unknown>) => {
@@ -97,7 +113,7 @@ export default function AddContractForm({
           }}
           data={Object.entries(Chain).map(([k, v]) => ({
             label: k,
-            value: v
+            value: v,
           }))}
           {...form.getInputProps("chain")}
         />
@@ -107,7 +123,7 @@ export default function AddContractForm({
           name="object_type"
           data={Object.entries(ObjectType).map(([k, v]) => ({
             label: k,
-            value: v
+            value: v,
           }))}
           {...form.getInputProps("object_type")}
         />
@@ -124,13 +140,13 @@ export default function AddContractForm({
           type="text"
           {...form.getInputProps("address")}
         />
-        
+
         <Select
           placeholder="Select a network"
           name="network"
           data={Object.entries(Network).map(([k, v]) => ({
             label: k,
-            value: v
+            value: v,
           }))}
           {...form.getInputProps("network")}
         />
