@@ -7,6 +7,7 @@ import (
 	"strconv"
     "context"
 	"os"
+	"time"
 	"log"
 
 	"github.com/r3labs/sse/v2"
@@ -128,6 +129,8 @@ func setTestValues(rdb *redis.Client) {
 }
 
 func main() {
+	fmt.Println("[INFO] Starting Flow Support Service at: ", time.Now().Format(time.RFC3339))
+
 	rdb, err := connectToRedis()
 	setTestValues(rdb)
 
@@ -154,7 +157,9 @@ func main() {
 
 	client := sse.NewClient(url)
 
-	client.SubscribeRaw(func(msg *sse.Event) {
+	err = client.SubscribeRaw(func(msg *sse.Event) {
+		fmt.Println("[INFO] Received message from SSE client at ", time.Now().Format(time.RFC3339))
+
 		// Got some data!
 		dataString := string(msg.Data)
 
@@ -193,4 +198,6 @@ func main() {
 			}
 		}
 	})
+	fmt.Printf("[INFO] Error in SSE client connection: %s\n", err)
+	fmt.Printf("[INFO] Service terminated at %s\n", time.Now().Format(time.RFC3339))
 }
