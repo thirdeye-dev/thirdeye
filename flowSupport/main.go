@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"encoding/json"
 	"strings"
+	"strconv"
+    "context"
 	"os"
+	"log"
 
 	"github.com/r3labs/sse/v2"
-	"github.com/lib/pq"
-	"database/sql"
+	"github.com/redis/go-redis/v9"
 )
+
+var ctx = context.Background()
 
 type LatestTransaction struct {
 	Hash          string     `json:"hash"`
@@ -62,44 +66,67 @@ type Root struct {
 }
 
 
-func connectToDatabase() (*sql.DB, error) {
-	dbName := os.Getenv("POSTGRES_DB")
-	if dbName == "" {
-		dbName = "main"
+func connectToRedis() (*redis.Client, error) {
+	port := os.Getenv("REDIS_PORT")
+	if port == "" {
+		port = "6379"
 	}
 
-	dbUser := os.Getenv("POSTGRES_USER")
-	if dbUser == "" {
-		dbUser = "admin"
+	host := os.Getenv("REDIS_HOST")
+	if host == "" {
+		host = "redis"
 	}
 
-	dbPassword := os.Getenv("POSTGRES_PASSWORD")
-	if dbPassword == "" {
-		dbPassword = "admin"
+	redisDb := os.Getenv("REDIS_DB")
+	if redisDb == "" {
+		redisDb = "0"
 	}
 
-	dbHost := os.Getenv("POSTGRES_HOST")	
-	if dbHost == "" {
-		dbHost = "postgres"
-	}
-
-	pgConn := fmt.Sprintf("postgres://%s:%s@%s/%s", dbUser, dbPassword, dbHost, dbName)
-	conn, err := pq.NewConnector(pgConn)
+	// convert redisDb to int
+	redisDbInt, err := strconv.Atoi(redisDb)
 	if err != nil {
-		panic(err)
+		redisDbInt = 0
+		fmt.Println("[ERROR] Failed to convert REDIS_DB to int, defaulting to 0")
 	}
 
-	db := sql.OpenDB(conn)
-	fmt.Println("[INFO] Connected to database")
-	return db, err
+	// Create a new Redis client
+	client := redis.NewClient(&redis.Options{
+		Addr: host + ":" + port,
+		Password: "",               // Replace with your Redis server password
+		DB:       redisDbInt,                // Replace with your Redis database number
+	})
+
+	// Ping the Redis server to check if the connection is successful
+	pong, err := client.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatal("[ERROR] Failed to ping the database:", err)
+		return nil, err
+	}
+
+	fmt.Println("[INFO] Connected to Redis:", pong)
+	return client, nil
+}
+
+func setTestValues(rdb *redis.Client) {
+	fmt.Println("[INFO] Setting test values")
+	// array of smart contract ids
+	var smartContracts = [...]string{"A.0b2a3299cc857e29.TopShot"}
+
+	err := rdb.Set(ctx, "smart_contracts:flow", smartContracts, 0).Err()
+	if err != nil {
+		fmt.Println("[ERROR] Failed to set test smart contracts:", err)
+	} else {
+		fmt.Println("[INFO] Successfully set test smart contracts")
+	}
 }
 
 func main() {
-	db, err := connectToDatabase()
+	rdb, err := connectToRedis()
+	setTestValues(rdb)
+
 	if err != nil {
 		panic(err)
 	}
-
 
 	fmt.Println("[INFO] Starting SSE client")
     url := "https://query.flowgraph.co/?query=subscription%20TransactionStreamSubscription%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20latestTransaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20...TransactionStreamItemFragment%20%20%20%20%7D%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fragment%20TransactionStreamItemFragment%20on%20Transaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hash%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20height%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20index%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20status%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20keyIndex%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sequenceNumber%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20gasLimit%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20script%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20arguments%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hasError%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20error%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20eventCount%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20time%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20payer%20%7B%20address%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20proposer%20%7B%20%20%20%20%20%20address%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20authorizers%20%7B%20address%20%7D%20%20events%20%7B%20%20%20%20%20%20edges%20%7B%20%20%20%20%20%20%20%20node%20%7B%20%20%20%20%20%20%20%20%20%20type%20%7B%20%20%20%20%20%20%20%20%20%20%20%20id%20%20%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20fields%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%7D%20%20%20%20%7D%20%20%20%20%20%7D&token=5a477c43abe4ded25f1e8cc778a34911134e0590"
@@ -123,7 +150,6 @@ func main() {
 	client.SubscribeRaw(func(msg *sse.Event) {
 		// Got some data!
 		dataString := string(msg.Data)
-		fmt.Println("[DEBUG] Data: ", dataString)
 
 		decoder := json.NewDecoder(strings.NewReader(dataString))
 		var root Root
@@ -133,6 +159,18 @@ func main() {
 		if err != nil {
 			fmt.Println("Error decoding JSON: ", err)
 		}
+		
+		// check all the values in redis for key "smart_contracts:flow"
+		values, err := rdb.Get(ctx, "smart_contracts:flow").Result()
+		// Print the values
+		for _, value := range values {
+			valueString := string(value)
+			fmt.Printf("%s ", valueString)
 
+			if strings.Contains(dataString, valueString) {
+				fmt.Println("[INFO] Found a match: ", valueString)
+			}
+		}
+		
 	})
 }
