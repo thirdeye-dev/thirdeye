@@ -21,9 +21,5 @@ RUN go clean -modcache
 # Build the Go binary
 RUN go build -o main .
 
-COPY flowSupport/entrypoint.sh /app/entrypoint.sh
-
-RUN chmod +x /app/entrypoint.sh
-
 # Set the entrypoint command to run the Go binary
 ENTRYPOINT  ["go", "run", "main.go"]
