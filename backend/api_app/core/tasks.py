@@ -2,7 +2,7 @@ from celery import signals
 from celery.utils.log import get_task_logger
 
 from api_app.monitoring.models import MonitoringTasks
-from api_app.smartcontract.models import SmartContract
+from api_app.smartcontract.models import Chain, SmartContract
 from backend.celery import app
 
 logger = get_task_logger(__name__)
@@ -23,7 +23,7 @@ def entrypoint(self):
     tasks_to_delete = MonitoringTasks.objects.all()
     tasks_to_delete.delete()
 
-    smart_contracts = SmartContract.objects.filter(active=True)
+    smart_contracts = SmartContract.objects.filter(active=True, chain=Chain.ETH) # only ethereum chain is supported here
     for contract in smart_contracts:
         monitoring_task = MonitoringTasks.objects.create(
             SmartContract=contract,

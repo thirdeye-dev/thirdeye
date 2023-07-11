@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from api_app.monitoring import tasks
 from api_app.monitoring.models import MonitoringTasks, Notification
 from api_app.monitoring.serializers import NotificationAPISerializer
-from api_app.smartcontract.models import SmartContract
+from api_app.smartcontract.models import Chain, SmartContract
 
 logger = get_task_logger(__name__)
 
@@ -16,7 +16,7 @@ demo_instance = settings.DEMO_INSTANCE
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
-    if created and not demo_instance:
+    if created and not demo_instance and instance.chain == Chain.ETH: # monitoring task only supported for eth
         # do on create
         monitoring_task = MonitoringTasks.objects.create(
             SmartContract=instance,
