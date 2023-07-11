@@ -6,10 +6,14 @@ from authentication.organizations.models import Organization
 
 User = get_user_model()
 
+class ObjectType(models.TextChoices):
+    CONTRACT = "CONTRACT", "contract"
+    ACCOUNT = "ACCOUNT", "account"
 
 # chain choices enum: "ETH", "BSC", "POLYGON"
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
+    FLOW = "FLOW", "flow"
 
 
 class Network(models.TextChoices):
@@ -20,6 +24,9 @@ class Network(models.TextChoices):
 
 
 class SmartContract(BaseMixin):
+    object_type = models.CharField(
+        max_length=8, choices=ObjectType.choices, default=ObjectType.CONTRACT,
+    )
     address = models.CharField(max_length=42)
     name = models.CharField(max_length=100)
     chain = models.CharField(max_length=16, choices=Chain.choices)
