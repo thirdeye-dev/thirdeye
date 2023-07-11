@@ -10,6 +10,7 @@ export enum Chain {
 
 export enum Network {
   MAINNET = "mainnet",
+  TESTNET = "testnet",
   SEPOLIA = "sepolia",
   GOERLI = "goerli"
 }

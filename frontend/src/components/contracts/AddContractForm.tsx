@@ -62,7 +62,7 @@ export default function AddContractForm({
       }
 
       const validateNetwork = () => {
-        if (vals.chain === Chain.FLOW && vals.network !== Network.MAINNET) {
+        if (vals.chain === Chain.FLOW && vals.network !== Network.MAINNET && vals.network !== Network.TESTNET) {
           return "unsupported network for chain flow";
         }
 

@@ -17,8 +17,12 @@ class Chain(models.TextChoices):
 
 
 class Network(models.TextChoices):
-    # eth network choices
     MAINNET = "MAINNET", "mainnet"
+
+    # flow specifc choices
+    TESTNET = "TESTNET", "testnet"
+
+    # eth specific choices
     SEPOLIA = "SEPOLIA", "sepolia"
     GOERLI = "GOERLI", "goerli"
 
