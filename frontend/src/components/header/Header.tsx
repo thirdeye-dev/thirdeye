@@ -13,16 +13,14 @@ import { useRouter } from "next/router";
 
 import Logo from "../Logo";
 import OrganizationSelector from "./OrganizationSelector";
-import { NotificationIsland } from "./NotificationIsland";
+import NotificationIsland from "./NotificationIsland";
 
 export default function HeaderComponent() {
   const router = useRouter();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  const shouldShowOrganizationSelector =
-    router.pathname.includes("/org") ?? false;
-
+  const shouldShowOrganizationSelector = router.pathname.includes("/org");
   const shouldShowNotificationsIsland = router.pathname.includes("/org");
 
   return (
@@ -30,6 +28,7 @@ export default function HeaderComponent() {
       <Flex
         direction="row"
         justify="space-between"
+        align="center"
         sx={(theme) => ({
           height: "100%",
           width: "100%",
