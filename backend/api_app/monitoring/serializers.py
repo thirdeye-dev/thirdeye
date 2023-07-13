@@ -15,6 +15,7 @@ from api_app.monitoring.models import Alerts, Notification
 logger = logging.getLogger(__name__)
 
 
+# this is for ETH
 # new code. This is the new serializer.
 # Transaction class to map transaction attributes
 class Transaction:
@@ -70,6 +71,49 @@ class Transaction:
 
         dict_with_str = {str(prefix + x): y for x, y in dict_normal.items()}
         return dict_with_str
+
+
+class FlowTransaction(Transaction):
+    def __init__(self, data):
+        self.hash = data.get("hash")
+        self.height = data.get("height")
+        self.index = data.get("index")
+        self.status = data.get("status")
+        self.keyIndex = data.get("keyIndex")
+        self.sequenceNumber = data.get("sequenceNumber")
+        self.gasLimit = data.get("gasLimit")
+        self.script = data.get("script")
+        self.arguments = data.get("arguments")
+        self.hasError = data.get("hasError")
+        self.error = data.get("error")
+        self.eventCount = data.get("eventCount")
+        self.time = data.get("time")
+        self.payer = data.get("payer")
+        self.proposer = data.get("proposer")
+        self.authorizers = data.get("authorizers")
+        self.events = data.get("events")
+        self.triggered_by = data.get("triggered_by")
+
+        self.to_dict = {
+            "hash": self.hash,
+            "height": self.height,
+            "index": self.index,
+            "status": self.status,
+            "keyIndex": self.keyIndex,
+            "sequenceNumber": self.sequenceNumber,
+            "gasLimit": self.gasLimit,
+            "script": self.script,
+            "arguments": self.arguments,
+            "hasError": self.hasError,
+            "error": self.error,
+            "eventCount": self.eventCount,
+            "time": self.time,
+            "payer": self.payer,
+            "proposer": self.proposer,
+            "authorizers": self.authorizers,
+            "events": self.events,
+            "triggered_by": self.triggered_by,
+        }
 
 
 class NotificationType(rfs.ChoiceField):
@@ -154,7 +198,12 @@ class BlockchainAlertRunner:
     def __init__(self, Alert: Alerts, transaction_data: dict):
         self.Alert = Alert
         self.validated_data = validate_configuration(Alert.alert_yaml)
-        self.transaction = Transaction(transaction_data)
+
+        if Alert.smart_contract.chain == "flow":
+            self.transaction = FlowTransaction(transaction_data)
+
+        else:
+            self.transaction = Transaction(transaction_data)
 
     def run(self):
         for contract_address in self.validated_data["blockchain_alerts"]:

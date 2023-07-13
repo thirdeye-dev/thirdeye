@@ -247,6 +247,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REDIS_PORT = 6379
 REDIS_DB = 0
 
+INTERNAL_API_KEY = os.environ.get("INTERNAL_API_KEY", "69495764f93b0d37f365690d897192b1bd0bf8af116e8822b8b09c5ab6c997ce")
+
 # look into the env stuff later. might be useless.
 REDIS_HOST = os.environ.get("REDIS_PORT_6379_TCP_ADDR", "redis")
 

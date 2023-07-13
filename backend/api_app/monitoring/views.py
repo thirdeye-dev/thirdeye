@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime, timedelta
 
+from django.conf import settings
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
@@ -9,7 +11,7 @@ from rest_framework.response import Response
 
 from api_app.core.serializer import PreWrittenAlertsSerializer
 from api_app.monitoring.models import Alerts, Notification
-from api_app.smartcontract.models import SmartContract
+from api_app.smartcontract.models import SmartContract, Chain, ObjectType
 from authentication.organizations.models import Organization
 from authentication.organizations.permissions import IsMember
 
@@ -19,15 +21,81 @@ from .permissions import (
     SmartContractAlertPermissions,
     SmartContractNotificationAndAlertsPermissions,
 )
+from .tasks import monitoring_flow
 from .serializers import AlertsAPISerializer, NotificationAPISerializer
 
 logger = logging.getLogger(__name__)
 
+
+@api_view(["POST"])
+def FlowServiceAPI(request):
+    """
+    This is the entry point for the monitoring flow.
+    """
+    api_key = request.headers.get("Internal-Api-Key")
+    print(api_key, settings.INTERNAL_API_KEY)
+    logger.info(f"FlowServiceAPI called with api_key: {api_key}")
+
+    if api_key != settings.INTERNAL_API_KEY:
+        return Response(
+            {"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    data = request.data
+    triggered_by = data.get("triggered_by")
+
+    objects = SmartContract.objects.filter(
+        address=triggered_by
+    )
+
+    first_obj = objects.first()
+
+    if not first_obj: # no object(s) found
+        return Response(
+            {"error": "Object being monitored not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    
+    object_ids = [obj.id for obj in objects]
+
+    transaction = data.get("data", {}).get(
+        "latestTransaction", {}
+    )
+
+    if first_obj.chain.lower() != Chain.FLOW.lower():
+        return Response(
+            {"error": "Only FLOW smart contracts are supported"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    events = transaction.get("events", [])
+    final_events = []
+    for event in events.get("edges", []):
+        final_event = {}
+
+        node = event.get("node", {})
+        fn_name = node.get("type", {}).get("id", "") # A.1654653399040a61.FlowToken.TokensWithdrawn
+
+        final_event["event_name"] = fn_name
+        final_event["event_fields"] = node.get("fields", [])
+
+        final_events.append(final_event)
+    
+    transaction["events"] = final_events
+    
+    monitoring_flow.delay(
+        triggered_by=triggered_by,
+        object_ids=object_ids,
+        transaction=transaction,
+    )
+
+    return Response({"message": "success"}, status=status.HTTP_200_OK)
+
+
 """
     Ideally, a lot of what happens in this file should be moved to a cronjob
-    that runs every day at 00:00 UTC for every organization.
+    that runs every day at 00:00 UTC for every organization, eventually.
 """
-
 
 @api_view(["GET"])
 @permission_classes([IsMember])

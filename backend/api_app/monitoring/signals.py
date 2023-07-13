@@ -1,3 +1,5 @@
+import redis
+
 from celery.signals import task_failure, task_success
 from celery.utils.log import get_task_logger
 from django.conf import settings
@@ -7,7 +9,7 @@ from django.dispatch import receiver
 from api_app.monitoring import tasks
 from api_app.monitoring.models import MonitoringTasks, Notification
 from api_app.monitoring.serializers import NotificationAPISerializer
-from api_app.smartcontract.models import Chain, SmartContract
+from api_app.smartcontract.models import Chain, ObjectType, SmartContract
 
 logger = get_task_logger(__name__)
 
@@ -16,16 +18,29 @@ demo_instance = settings.DEMO_INSTANCE
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
-    if created and not demo_instance and instance.chain == Chain.ETH: # monitoring task only supported for eth
-        # do on create
-        monitoring_task = MonitoringTasks.objects.create(
-            SmartContract=instance,
-        )
+    if created and not demo_instance:
+        if instance.chain.lower() == Chain.ETH.lower(): # monitoring task only supported for eth
+            # do on create
+            monitoring_task = MonitoringTasks.objects.create(
+                SmartContract=instance,
+            )
 
-        # this calls the next signal
-        # which is for the monitoring task
-        monitoring_task.save()
+            # this calls the next signal
+            # which is for the monitoring task
+            monitoring_task.save()
+        
+        else:
+            # connect to redis and LPush to queue
+            r = redis.Redis(
+                host=settings.REDIS_HOST, 
+                port=settings.REDIS_PORT, 
+                db=settings.REDIS_DB
+            )
 
+            if instance.object_type.lower() == ObjectType.CONTRACT.lower():
+                r.lpush('smart_contracts:flow', instance.address)
+            else:
+                r.lpush('accounts:flow', instance.address)
 
 @receiver(post_save, sender=MonitoringTasks)
 def monitoring_task_post_save(sender, instance, created, **kwargs):
