@@ -8,5 +8,6 @@ export default interface User {
   updated_at: string;
   avatar: string;
   is_staff: boolean;
+  wallet_address:string;
   organizations: Array<Organization>;
 }
