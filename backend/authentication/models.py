@@ -56,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseMixin):
         max_length=255, blank=False, null=False, default=AUTH_PROVIDERS.get("email")
     )
     avatar = models.URLField(blank=True, null=True)
+    wallet_address = models.CharField(max_length=42, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

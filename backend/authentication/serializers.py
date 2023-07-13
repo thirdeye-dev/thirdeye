@@ -102,4 +102,5 @@ class UserSerializer(rfs.ModelSerializer):
             "updated_at",
             "avatar",
             "is_staff",
+            "wallet_address"
         )
