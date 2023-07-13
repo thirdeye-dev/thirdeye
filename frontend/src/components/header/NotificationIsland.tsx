@@ -22,7 +22,7 @@ import NotificationListItem from "./NotificationListItem";
 
 dayjs.extend(relativeTime);
 
-export function NotificationIsland() {
+export default function NotificationIsland() {
   const [notifications, setNotifications] = useState<Array<Record<any, any>>>([
     {
       contract_name: "Alpha",
