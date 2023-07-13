@@ -19,7 +19,7 @@ demo_instance = settings.DEMO_INSTANCE
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
     if created and not demo_instance:
-        if instance.chain == Chain.ETH: # monitoring task only supported for eth
+        if instance.chain.lower() == Chain.ETH.lower(): # monitoring task only supported for eth
             # do on create
             monitoring_task = MonitoringTasks.objects.create(
                 SmartContract=instance,
@@ -37,7 +37,7 @@ def smart_contract_post_save(sender, instance, created, **kwargs):
                 db=settings.REDIS_DB
             )
 
-            if instance.object_type == ObjectType.CONTRACT:
+            if instance.object_type.lower() == ObjectType.CONTRACT.lower():
                 r.lpush('smart_contracts:flow', instance.address)
             else:
                 r.lpush('accounts:flow', instance.address)

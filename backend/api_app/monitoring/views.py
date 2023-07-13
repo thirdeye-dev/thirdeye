@@ -62,7 +62,7 @@ def FlowServiceAPI(request):
         "latestTransaction", {}
     )
 
-    if first_obj.chain != Chain.FLOW:
+    if first_obj.chain.lower() != Chain.FLOW.lower():
         return Response(
             {"error": "Only FLOW smart contracts are supported"},
             status=status.HTTP_400_BAD_REQUEST,

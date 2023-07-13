@@ -39,7 +39,7 @@ def entrypoint(self):
 
     smart_contracts = SmartContract.objects.filter(active=True) # only ethereum chain is supported here
     for contract in smart_contracts:
-        if contract.chain == Chain.ETH:
+        if contract.chain.lower() == Chain.ETH.lower():
             monitoring_task = MonitoringTasks.objects.create(
                 SmartContract=contract,
             )
@@ -48,7 +48,7 @@ def entrypoint(self):
             # for the monitoring task
             monitoring_task.save()
         else: # FLOW blockchain
-            if contract.object_type == ObjectType.CONTRACT:
+            if contract.object_type.lower() == ObjectType.CONTRACT.lower():
                 rd.rpush("smart_contracts:flow", contract.address)
             else:
                 rd.rpush("accounts:flow", contract.address)

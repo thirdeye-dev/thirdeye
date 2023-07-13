@@ -82,7 +82,7 @@ def monitoring_flow(self, triggered_by, object_ids, transaction):
     objects = SmartContract.objects.filter(id__in=object_ids)
     for obj in objects:
         alerts = Alerts.objects.filter(
-            SmartContract=obj,
+            smart_contract=obj,
         )
         for alert in alerts:
             alert_runner = BlockchainAlertRunner(alert, transaction)
