@@ -31,7 +31,7 @@ export default function WalletConnector({ web3, onSuccess }: { web3: IWeb3Contex
   return (
     <Stack>
       <Button loading={connecting} variant="outline" color="teal" onClick={start}>{user.loggedIn ? `Continue as ${user.addr}` : "Connect Wallet"}</Button>
-      <Button variant="light" size="sm" onClick={() => web3.logout()}>Logout</Button>
+      {user.loggedIn ? <Button variant="light" size="sm" onClick={() => web3.logout()}>Logout</Button> : null}
     </Stack>
   );
 }

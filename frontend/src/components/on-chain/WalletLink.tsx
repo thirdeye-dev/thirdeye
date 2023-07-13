@@ -69,8 +69,8 @@ export default function WalletLink() {
           orientation="vertical"
           allowNextStepsSelect={false}
         >
-          {steps.map((step) => (
-            <Stepper.Step label={step.label} description={step.description} />
+          {steps.map((step, idx) => (
+            <Stepper.Step key={idx} label={step.label} description={step.description} />
           ))}
         </Stepper>
 

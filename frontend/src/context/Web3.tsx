@@ -40,8 +40,7 @@ export const Web3ContextProvider = ({
     null,
   );
   const [transactionError, setTransactionError] = useState('');
-  const [txId, setTxId] = useState(null);
-  const [client, setClient] = useState(null);
+  const [txId, setTxId] = useState<string | null>(null);
 
   useEffect(() => {
     const {
@@ -67,7 +66,9 @@ export const Web3ContextProvider = ({
     });
   }, []);
 
-  useEffect(() => fcl.currentUser.subscribe(setUser), []);
+  useEffect(() => {
+    fcl.currentUser.subscribe(setUser);
+  }, []);
 
   const connect = useCallback(() => {
     fcl.authenticate()
