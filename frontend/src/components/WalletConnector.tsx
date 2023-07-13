@@ -2,7 +2,13 @@ import { IWeb3Context } from "@/context/Web3";
 import { Button, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 
-export default function WalletConnector({ web3, onSuccess }: { web3: IWeb3Context,  onSuccess: () => void; }) {
+export default function WalletConnector({
+  web3,
+  onSuccess,
+}: {
+  web3: IWeb3Context;
+  onSuccess: () => void;
+}) {
   const user = web3.user;
 
   const [connecting, setConnecting] = useState(false);
@@ -11,7 +17,7 @@ export default function WalletConnector({ web3, onSuccess }: { web3: IWeb3Contex
     if (user.loggedIn) {
       setConnecting(false);
     }
-  }, [user.loggedIn])
+  }, [user.loggedIn]);
 
   const start = () => {
     if (user.loggedIn) {
@@ -24,14 +30,25 @@ export default function WalletConnector({ web3, onSuccess }: { web3: IWeb3Contex
     try {
       web3.connect();
     } catch {
-      console.log("erorr ocurred")
+      console.log("erorr ocurred");
     }
-  }
+  };
 
   return (
     <Stack>
-      <Button loading={connecting} variant="outline" color="teal" onClick={start}>{user.loggedIn ? `Continue as ${user.addr}` : "Connect Wallet"}</Button>
-      {user.loggedIn ? <Button variant="light" size="sm" onClick={() => web3.logout()}>Logout</Button> : null}
+      <Button
+        loading={connecting}
+        variant="outline"
+        color="teal"
+        onClick={start}
+      >
+        {user.loggedIn ? `Continue as ${user.addr}` : "Connect Wallet"}
+      </Button>
+      {user.loggedIn ? (
+        <Button variant="light" size="sm" onClick={() => web3.logout()}>
+          Logout
+        </Button>
+      ) : null}
     </Stack>
   );
 }

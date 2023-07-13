@@ -1,5 +1,5 @@
-import { getFlowNetwork } from '@/flow-config';
-import * as fcl from '@onflow/fcl';
+import { getFlowNetwork } from "@/flow-config";
+import * as fcl from "@onflow/fcl";
 import {
   createContext,
   ReactNode,
@@ -7,7 +7,7 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 
 export interface IWeb3Context {
   connect: () => void;
@@ -34,12 +34,12 @@ export const Web3ContextProvider = ({
   children: ReactNode;
   network?: string;
 }) => {
-  const [user, setUser] = useState({ loggedIn: null, addr: '' });
+  const [user, setUser] = useState({ loggedIn: null, addr: "" });
   const [transactionInProgress, setTransactionInProgress] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<number | null>(
-    null,
+    null
   );
-  const [transactionError, setTransactionError] = useState('');
+  const [transactionError, setTransactionError] = useState("");
   const [txId, setTxId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,17 +51,17 @@ export const Web3ContextProvider = ({
       walletDiscoveryInclude,
       addresses,
     } = getFlowNetwork();
-    const iconUrl = window.location.origin + '/img/logo.jpeg';
-    const appTitle = process.env.NEXT_PUBLIC_APP_NAME || 'ThirdEye';
+    const iconUrl = window.location.origin + "/img/logo.jpeg";
+    const appTitle = process.env.NEXT_PUBLIC_APP_NAME || "ThirdEye";
 
     fcl.config({
-      'app.detail.title': appTitle,
-      'app.detail.icon': iconUrl,
-      'accessNode.api': accessApi, // connect to Flow
-      'flow.network': flowNetwork,
-      'discovery.wallet': walletDiscovery, // use wallets on public discovery
-      'discovery.authn.endpoint': walletDiscoveryApi, // public discovery api endpoint
-      'discovery.authn.include': walletDiscoveryInclude, // opt-in wallets
+      "app.detail.title": appTitle,
+      "app.detail.icon": iconUrl,
+      "accessNode.api": accessApi, // connect to Flow
+      "flow.network": flowNetwork,
+      "discovery.wallet": walletDiscovery, // use wallets on public discovery
+      "discovery.authn.endpoint": walletDiscoveryApi, // public discovery api endpoint
+      "discovery.authn.include": walletDiscoveryInclude, // opt-in wallets
       // TODO: add contracts mapping here
     });
   }, []);
@@ -71,7 +71,7 @@ export const Web3ContextProvider = ({
   }, []);
 
   const connect = useCallback(() => {
-    fcl.authenticate()
+    fcl.authenticate();
   }, []);
 
   const logout = useCallback(async () => {
@@ -103,7 +103,7 @@ export const Web3ContextProvider = ({
         });
       }
     },
-    [],
+    []
   );
 
   const executeScript = useCallback(
@@ -117,7 +117,7 @@ export const Web3ContextProvider = ({
         console.error(error);
       }
     },
-    [],
+    []
   );
 
   const providerProps = useMemo(
@@ -144,7 +144,7 @@ export const Web3ContextProvider = ({
       executeTransaction,
       executeScript,
       user,
-    ],
+    ]
   );
 
   return (

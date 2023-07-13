@@ -5,7 +5,13 @@ import WalletConnector from "@/components/WalletConnector";
 import { useWeb3Context } from "@/hooks/use-web3";
 import { IWeb3Context } from "@/context/Web3";
 
-function ConnectWalletStep({ web3, done }: { web3: IWeb3Context, done: () => void; }) {
+function ConnectWalletStep({
+  web3,
+  done,
+}: {
+  web3: IWeb3Context;
+  done: () => void;
+}) {
   return (
     <Stack>
       <Text weight="lighter">
@@ -70,7 +76,11 @@ export default function WalletLink() {
           allowNextStepsSelect={false}
         >
           {steps.map((step, idx) => (
-            <Stepper.Step key={idx} label={step.label} description={step.description} />
+            <Stepper.Step
+              key={idx}
+              label={step.label}
+              description={step.description}
+            />
           ))}
         </Stepper>
 

@@ -9,7 +9,12 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/router";
 
-import { AiFillAlert, AiFillEye, AiFillHome, AiOutlineLink } from "react-icons/ai";
+import {
+  AiFillAlert,
+  AiFillEye,
+  AiFillHome,
+  AiOutlineLink,
+} from "react-icons/ai";
 import { FaFileContract } from "react-icons/fa";
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
@@ -97,7 +102,12 @@ const navLinks: NavLink[] = [
     href: "contracts",
   },
   { icon: AiFillAlert, label: "Alerts", name: "alerts", href: "alerts/create" },
-  { icon: AiOutlineLink, label: "On-Chain Interactions", name: "on-chain", href: "on-chain" }
+  {
+    icon: AiOutlineLink,
+    label: "On-Chain Interactions",
+    name: "on-chain",
+    href: "on-chain",
+  },
 ];
 
 export default function NavbarMinimal({
