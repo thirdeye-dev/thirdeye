@@ -1,15 +1,29 @@
+import redis
+
 from celery import signals
 from celery.utils.log import get_task_logger
 
 from api_app.monitoring.models import MonitoringTasks
-from api_app.smartcontract.models import Chain, SmartContract
+from api_app.smartcontract.models import Chain, ObjectType, SmartContract
 from backend.celery import app
+
+from django.conf import settings
 
 logger = get_task_logger(__name__)
 
 
-@app.task(bind=True)
+@app.task(bind=True, max_retries=3)
 def entrypoint(self):
+    # Clean all redis entries with keys "smart_contracts:flow"
+    # and "accounts:flow" and then add them again
+    rd = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB
+    )
+    rd.delete("smart_contracts:flow")
+    rd.delete("accounts:flow")
+
     # first celery task that runs when the server starts
     # checks all active alerts for smart contracts
     # and then start a thread for a contract.
@@ -23,16 +37,21 @@ def entrypoint(self):
     tasks_to_delete = MonitoringTasks.objects.all()
     tasks_to_delete.delete()
 
-    smart_contracts = SmartContract.objects.filter(active=True, chain=Chain.ETH) # only ethereum chain is supported here
+    smart_contracts = SmartContract.objects.filter(active=True) # only ethereum chain is supported here
     for contract in smart_contracts:
-        monitoring_task = MonitoringTasks.objects.create(
-            SmartContract=contract,
-        )
+        if contract.chain == Chain.ETH:
+            monitoring_task = MonitoringTasks.objects.create(
+                SmartContract=contract,
+            )
 
-        # this calls the signal which is
-        # for the monitoring task
-        monitoring_task.save()
-
+            # this calls the signal which is
+            # for the monitoring task
+            monitoring_task.save()
+        else: # FLOW blockchain
+            if contract.object_type == ObjectType.CONTRACT:
+                rd.rpush("smart_contracts:flow", contract.address)
+            else:
+                rd.rpush("accounts:flow", contract.address)
 
 # TODO: add a celery-beat task to check if the main monitoring task for a
 #  smart contract is running. If not, start it again.

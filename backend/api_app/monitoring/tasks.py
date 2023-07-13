@@ -10,6 +10,7 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
 from api_app.monitoring.models import Alerts, MonitoringTasks, Notification
+from api_app.smartcontract.models import SmartContract
 from backend.celery import app
 
 from .serializers import BlockchainAlertRunner
@@ -73,8 +74,22 @@ def send_webhook(self, notification_id):
     notification.save()
 
 
+@app.task(bind=True, max_retries=3)
+def monitoring_flow(self, triggered_by, object_ids, transaction):
+    """
+    This is the main monitoring FLOW blockchain for all the objects
+    """
+    objects = SmartContract.objects.filter(id__in=object_ids)
+    for obj in objects:
+        alerts = Alerts.objects.filter(
+            SmartContract=obj,
+        )
+        for alert in alerts:
+            alert_runner = BlockchainAlertRunner(alert, transaction)
+            alert_runner.run()
+
 """
-The main monitior task!
+The main monitior task for ETH!
 
 Future plans:
 

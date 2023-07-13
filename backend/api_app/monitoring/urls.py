@@ -10,6 +10,7 @@ from .views import (
     SmartContractAlertListViewSet,
     get_pre_written_alerts,
     set_pre_written_alerts,
+    FlowServiceAPI
 )
 
 urlpatterns = [
@@ -24,4 +25,6 @@ urlpatterns = [
     ),
     path("overview-data", OverviewDataAPIView, name="overview-data"),
     path("overview-stats", OverviewStatsAPIView, name="overview-stats"),
+    path("flow", FlowServiceAPI, name="flow"),
+
 ]

@@ -9,12 +9,18 @@ import (
 	"os"
 	"time"
 	"log"
+	"net/http"
+	"bytes"
 
 	"github.com/r3labs/sse/v2"
 	"github.com/redis/go-redis/v9"
 )
 
 var ctx = context.Background()
+var backendUrl = os.Getenv("BACKEND_URL")
+var apiKey = os.Getenv("INTERNAL_KEY")
+
+
 
 type LatestTransaction struct {
 	Hash          string     `json:"hash"`
@@ -29,8 +35,8 @@ type LatestTransaction struct {
 		Type     string     `json:"type"`
 		Value    interface{} `json:"value"`
 	} `json:"arguments"`
-	HasError     bool       `json:"hasError"`
-	Error       interface{} `json:"error"`
+	HasERROR     bool       `json:"hasERROR"`
+	ERROR       interface{} `json:"ERROR"`
 	EventCount   int        `json:"eventCount"`
 	Time         string     `json:"time"`
 	Payer        struct {
@@ -64,6 +70,7 @@ type Data struct {
 
 type Root struct {
 	Data Data `json:"data"`
+	TriggerdBy string `json:"triggered_by"`
 }
 
 
@@ -96,7 +103,6 @@ func connectToRedis() (*redis.Client, error) {
 		Password: "",               // Replace with your Redis server password
 		DB:       redisDbInt,                // Replace with your Redis database number
 	})
-
 	fmt.Println("[INFO] Trying to ping Redis on:", host + ":" + port)
 	// Ping the Redis server to check if the connection is successful
 	pong, err := client.Ping(context.Background()).Result()
@@ -112,7 +118,7 @@ func connectToRedis() (*redis.Client, error) {
 func setTestValues(rdb *redis.Client) {
 	fmt.Println("[INFO] Setting test values")
 	// array of smart contract ids
-	var smartContracts = [...]string{"A.0b2a3299cc857e29.TopShot"}
+	var smartContracts = [...]string{"A.1654653399040a61.FlowToken"}
 	
 	marshaledSmartContracts, err := json.Marshal(smartContracts)
 	if err != nil {
@@ -131,16 +137,25 @@ func setTestValues(rdb *redis.Client) {
 func main() {
 	fmt.Println("[INFO] Starting Flow Support Service at: ", time.Now().Format(time.RFC3339))
 
+	if backendUrl == "" {
+		fmt.Println("[ERROR] BACKEND_URL is not set")
+		return
+	}
+
+	if apiKey == "" {
+		fmt.Println("[ERROR] INTERNAL_KEY is not set")
+		return
+	}
+
 	rdb, err := connectToRedis()
-	setTestValues(rdb)
+	// setTestValues(rdb)
 
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("[INFO] Starting SSE client")
-    url := "https://query.flowgraph.co/?query=subscription%20TransactionStreamSubscription%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20latestTransaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20...TransactionStreamItemFragment%20%20%20%20%7D%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fragment%20TransactionStreamItemFragment%20on%20Transaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hash%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20height%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20index%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20status%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20keyIndex%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sequenceNumber%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20gasLimit%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20script%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20arguments%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hasError%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20error%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20eventCount%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20time%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20payer%20%7B%20address%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20proposer%20%7B%20%20%20%20%20%20address%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20authorizers%20%7B%20address%20%7D%20%20events%20%7B%20%20%20%20%20%20edges%20%7B%20%20%20%20%20%20%20%20node%20%7B%20%20%20%20%20%20%20%20%20%20type%20%7B%20%20%20%20%20%20%20%20%20%20%20%20id%20%20%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20fields%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%7D%20%20%20%20%7D%20%20%20%20%20%7D&token=5a477c43abe4ded25f1e8cc778a34911134e0590"
-
+    url := "https://query.flowgraph.co/?query=subscription%20TransactionStreamSubscription%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20latestTransaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20...TransactionStreamItemFragment%20%20%20%20%7D%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fragment%20TransactionStreamItemFragment%20on%20Transaction%20%7B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hash%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20height%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20index%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20status%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20keyIndex%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sequenceNumber%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20gasLimit%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20script%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20arguments%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hasError%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20error%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20eventCount%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20time%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20payer%20%7B%20address%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20proposer%20%7B%20%20%20%20%20%20address%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20authorizers%20%7B%20address%20%7D%20%20events%20%7B%20%20%20%20%20%20edges%20%7B%20%20%20%20%20%20%20%20node%20%7B%20%20%20%20%20%20%20%20%20%20type%20%7B%20%20%20%20%20%20%20%20%20%20%20%20id%20%20%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%20%20%20%20fields%20%20%20%20%20%20%20%20%7D%20%20%20%20%20%20%7D%20%20%20%20%7D%20%20%20%20%20%7D&token=5a477c43abe4ded25f1e8cc778a34911134e0590"	
 	// query:
 	// subscription TransactionStreamSubscription {             
 	// latestTransaction {                   
@@ -149,7 +164,7 @@ func main() {
 	// hash                  height                  index                  
 	// status                  keyIndex                  sequenceNumber                  
 	// gasLimit                  script                  arguments                  
-	// hasError                  error                  eventCount                  
+	// hasError                  error                  eventCount                  	
 	// time                  payer { address }                    proposer {      
 	// address    }   authorizers { address }  events { edges {        node {          
 	// type {            id          }          
@@ -157,7 +172,7 @@ func main() {
 
 	client := sse.NewClient(url)
 
-	err = client.SubscribeRaw(func(msg *sse.Event) {
+	err_ := client.SubscribeRaw(func(msg *sse.Event) {
 		fmt.Println("[INFO] Received message from SSE client at ", time.Now().Format(time.RFC3339))
 
 		// Got some data!
@@ -169,35 +184,78 @@ func main() {
 		// Unmarshal the JSON string into the struct.
 		err := decoder.Decode(&root)
 		if err != nil {
-			fmt.Println("Error decoding JSON: ", err)
+			fmt.Println("ERROR decoding JSON: ", err)
 		}
+
+		fmt.Println("[INFO] Received data: ", dataString)
+
+		fmt.Println("[INFO] Received data: ", root)
 		
 		fmt.Println("[INFO] Checking for matches in redis values")
 		// check all the values in redis for key "smart_contracts:flow"
-		values, err := rdb.LRange(ctx, "smart_contracts:flow", 0, -1).Result()
-
-		var fetchedSmartContracts []string
-		err = json.Unmarshal([]byte(values[0]), &fetchedSmartContracts)
-
+		fetchedContracts, err := rdb.LRange(ctx, "smart_contracts:flow", 0, -1).Result()
 		if err != nil {
-			fmt.Println("[Error] Error getting values from redis: ", err)
+			fmt.Println("[ERROR] ERROR getting values from redis: ", err)
 		}
 
-		if values == nil {
+		// check all the values in redis for key "accounts:flow"
+		fetchedAccounts, err := rdb.LRange(ctx, "accounts:flow", 0, -1).Result()
+		if err != nil {
+			fmt.Println("[ERROR] ERROR getting values from redis: ", err)
+		}
+
+		var fetchedValues []string
+		
+		fetchedValues = append(fetchedContracts, fetchedAccounts...)
+
+		if err != nil {
+			fmt.Println("[ERROR] ERROR getting values from redis: ", err)
+		}
+
+		if len(fetchedValues) == 0 {
 			fmt.Println("[INFO] No values found in redis")
 		} else {
 			fmt.Println("[INFO] Values found in redis")
 			// Print the values
-			for _,  smartContract := range fetchedSmartContracts {
-				smartContractID := string(smartContract)
-				if strings.Contains(dataString, smartContractID) {
-					fmt.Println("[INFO] Found a match: ", smartContractID)
-				} else {
-					fmt.Println("[INFO] No match found for this value")
+			for _,  value := range fetchedValues {
+				ID := string(value)
+				if strings.Contains(dataString, ID) {
+					fmt.Println("[INFO] Found a match: ", ID)
+					webhookURL := fmt.Sprintf("%s/monitoring/flow", backendUrl)
+
+					fmt.Printf("[INFO] Sending info to webhook %s", webhookURL)
+					
+					root.TriggerdBy = ID
+
+					jsonRoot, _ := json.Marshal(root)
+
+					req, err := http.NewRequest("POST", webhookURL, bytes.NewBuffer(jsonRoot))
+					if err != nil {
+						fmt.Println("[ERROR] ERROR creating request: ", err)
+					}
+
+					req.Header.Set("Content-Type", "application/json")
+					req.Header.Set("Internal-Api-Key", apiKey)
+
+					client := &http.Client{}
+					resp, err := client.Do(req)
+					if err != nil {
+						fmt.Println("[ERROR] ERROR sending request: ", err)
+					}
+
+					if resp.StatusCode != 200 {
+						fmt.Println("[ERROR] ERROR sending request. got response with status code: ", resp.Status)
+						fmt.Printf("[ERROR] Message: %s\n", resp.Body)
+					}
+
+					defer resp.Body.Close()
 				}
 			}
 		}
 	})
-	fmt.Printf("[INFO] Error in SSE client connection: %s\n", err)
+
+	if err_ != nil {
+		fmt.Printf("[ERROR] ERROR in SSE client connection: %s\n", err_)
+	}
 	fmt.Printf("[INFO] Service terminated at %s\n", time.Now().Format(time.RFC3339))
 }
