@@ -18,6 +18,7 @@ import { RouterTransition } from "@/components/RouterTransition";
 import axiosInstance from "@/axios";
 
 import "@/styles/globals.css";
+import { Web3ContextProvider } from "@/context/Web3";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -89,7 +90,9 @@ export default function App(props: AppPropsWithLayout) {
                     axiosInstance.get(url).then((res) => res.data), // default fetcher
                 }}
               >
-                {getLayout(<Component {...pageProps} />)}
+                <Web3ContextProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </Web3ContextProvider>
               </SWRConfig>
             </RootLayout>
           </ModalsProvider>
