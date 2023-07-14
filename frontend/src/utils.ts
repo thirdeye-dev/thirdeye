@@ -1,3 +1,5 @@
+import { Chain } from "./models/contract";
+
 export const toSentenceCase = (str: string) => {
   const words = str.split("_");
   const capitalizedWords = words.map(
@@ -19,3 +21,12 @@ export const getColorByTag = (tag: string) => {
       return "gray";
   }
 };
+
+export const gradientByChain = (chain: Chain) => {
+  switch (chain.toLowerCase()) {
+    case Chain.ETH:
+      return {from: "indigo", to: "cyan"}
+    case Chain.FLOW:
+      return {from: "teal", to: "green"}
+  }
+}

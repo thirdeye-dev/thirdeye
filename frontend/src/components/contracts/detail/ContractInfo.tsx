@@ -1,67 +1,12 @@
 import CopyToClipboard from "@/components/CopyToClipboard";
-import Contract from "@/models/contract";
-import { Text, Box, Flex, Stack, Divider } from "@mantine/core";
-
-function Features({
-  contract,
-  numAlerts,
-}: {
-  contract: Contract;
-  numAlerts: number;
-}) {
-  const features = [
-    {
-      name: "Total Alerts",
-      value: numAlerts,
-    },
-    {
-      name: "Chain",
-      value: contract.chain,
-    },
-    {
-      name: "Network",
-      value: contract.network,
-    },
-  ];
-
-  const FeatureItem = ({
-    name,
-    value,
-    renderDivider,
-  }: {
-    name: string;
-    value: string | number;
-    renderDivider: boolean;
-  }) => (
-    <>
-      <Stack align="center">
-        <Text size="lg" weight="bold">
-          {name}
-        </Text>
-        <Text size="md">{value}</Text>
-      </Stack>
-
-      {renderDivider && <Divider orientation="vertical" />}
-    </>
-  );
-
-  return (
-    <Flex justify="space-evenly">
-      {features.map((feature, idx) => (
-        <FeatureItem
-          key={idx}
-          name={feature.name}
-          value={feature.value}
-          renderDivider={idx !== features.length - 1}
-        />
-      ))}
-    </Flex>
-  );
-}
+import Contract, { Chain } from "@/models/contract";
+import { gradientByChain } from "@/utils";
+import { Text, Flex, Stack, Divider, Paper, Group, Button, Badge } from "@mantine/core";
+import { AiFillLock, AiFillUnlock } from "react-icons/ai";
 
 export default function ContractInfo({
   contract,
-  numAlerts,
+  numAlerts, // FIXME: give this a place :p
 }: {
   contract: Contract | undefined;
   numAlerts: number;
@@ -69,7 +14,7 @@ export default function ContractInfo({
   if (!contract) return null;
 
   return (
-    <Box
+    <Paper
       h="100%"
       p="lg"
       sx={(theme) => ({
@@ -81,13 +26,26 @@ export default function ContractInfo({
       })}
     >
       <Stack>
-        <Text size="2.5em" weight="bold" color="yellow" align="center">
-          {contract.name}
-        </Text>
+        <Flex direction="row" justify="space-between">
+          <Group>
+            <Text size="2.5em" weight="bold" color="yellow">
+              {contract.name}
+            </Text>
+
+            <Badge variant="gradient" gradient={gradientByChain(contract.chain)}>{contract.chain}</Badge>
+            <Badge variant="dot">{contract.network}</Badge>
+          </Group>
+
+          <Group>
+            <Button variant="light" color="red" rightIcon={<AiFillLock />}>Lock</Button>
+            <Button variant="light" color="green" rightIcon={<AiFillUnlock />}>Unlock</Button>
+          </Group>
+        </Flex>
+
+        <Divider />
 
         <CopyToClipboard textToCopy={contract.address} />
-        <Features contract={contract} numAlerts={numAlerts} />
       </Stack>
-    </Box>
+    </Paper>
   );
 }
