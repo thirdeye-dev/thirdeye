@@ -24,7 +24,7 @@
 		"ThirdEyeVerification": {
       "source": "cadence/contracts/ThirdEyeVerification.cdc",
       "aliases": {
-        "testnet": "db516136ebe1fabe"
+        "testnet": "cb025d5f1d46e13c"
       }
     }
 	},
@@ -43,8 +43,8 @@
 			"key": "6d12eebfef9866c9b6fa92b97c6e705c26a1785b1e7944da701fc545a51d4673"
 		},
 		"testnet-account": {
-			"address": "db516136ebe1fabe",
-			"key": "757c857c77de328fb433066c23ba5f157aaabd7efb2ad8be271bdcbe5e84d9bb"
+			"address": "0xcb025d5f1d46e13c",
+			"key": "9aafad76ca0bf6c4d8212c7dc610e037b4d8bb905ff4cf31309528963cc858bd"
 		}
 	},
 	"deployments": {

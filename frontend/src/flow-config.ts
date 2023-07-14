@@ -26,7 +26,7 @@ const NETWORKS = {
       NonFungibleToken: '0x631e88ae7f1d7c20',
       MetadataViews: '0x631e88ae7f1d7c20',
       FungibleToken: '0x9a0766d93b6608b7',
-      ThirdEyeVerification: "0xdb516136ebe1fabe",
+      ThirdEyeVerification: "0xcb025d5f1d46e13c",
     },
   },
   mainnet: {
