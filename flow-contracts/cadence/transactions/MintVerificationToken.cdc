@@ -2,7 +2,7 @@ import ThirdEyeVerification from "../contracts/ThirdEyeVerification.cdc"
 import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
 import MetadataViews from "../contracts/MetadataViews.cdc"
 
-transaction(type: String, url: String){
+transaction(unique_hash: String, image_url: String){
     let recipientCollection: &ThirdEyeVerification.Collection{NonFungibleToken.CollectionPublic}
 
     prepare(signer: AuthAccount) {
@@ -16,7 +16,7 @@ transaction(type: String, url: String){
       }
 
     execute {
-      ThirdEyeVerification.mintNFT(recipient: self.recipientCollection, type: type, url: url)
+      ThirdEyeVerification.mintNFT(recipient: self.recipientCollection, unique_hash: unique_hash, image_url: image_url)
 
       log("Successfully Minted Verification Token")
     }

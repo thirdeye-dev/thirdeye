@@ -15,29 +15,29 @@ pub contract ThirdEyeVerification: NonFungibleToken {
 
     pub struct VerificationTokenData{
         pub let id: UInt64
-        pub let type: String
-        pub let url: String
+        pub let unique_hash: String
+        pub let image_url: String
 
-        init(_id: UInt64, _type: String, _url: String){
+        init(_id: UInt64, _unique_hash: String, _image_url: String){
             self.id = _id
-            self.type = _type
-            self.url = _url
+            self.unique_hash = _unique_hash
+            self.image_url = _image_url
         }
     }
 
     pub resource NFT: NonFungibleToken.INFT, MetadataViews.Resolver {
         pub let id: UInt64
-        pub let type: String
-        pub let url: String
+        pub let unique_hash: String
+        pub let image_url: String
     
         init(
             id: UInt64,
-            type: String,
-            url: String,
+            unique_hash: String,
+            image_url: String,
         ) {
             self.id = id
-            self.type = type
-            self.url = url
+            self.unique_hash = unique_hash
+            self.image_url = image_url
         }
     
         pub fun getViews(): [Type] {
@@ -49,8 +49,8 @@ pub contract ThirdEyeVerification: NonFungibleToken {
                 case Type<VerificationTokenData>():
                 return VerificationTokenData(
                     _id: self.id,
-                    _type: self.type,
-                    _url: self.url
+                    _unique_hash: self.unique_hash,
+                    _image_url: self.image_url
                 )
             }
             return nil
@@ -141,15 +141,15 @@ pub contract ThirdEyeVerification: NonFungibleToken {
 
      pub fun mintNFT(
             recipient: &{NonFungibleToken.CollectionPublic},
-            type: String,
-            url: String,
+            unique_hash: String,
+            image_url: String,
         ) {
 
             // create a new NFT
             var newNFT <- create NFT(
                 id: ThirdEyeVerification.totalSupply,
-                type: type,
-                url: url
+                unique_hash: unique_hash,
+                image_url: image_url
             )
 
             // deposit it in the recipient's account using their reference
