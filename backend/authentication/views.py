@@ -103,6 +103,17 @@ class MeAPIView(generics.RetrieveAPIView):
         user_data["organizations"] = org_data
         return Response(user_data)
 
+class SetWalletAddressAPIView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        if (wallet_address := request.query_params.get("wallet_address", None)) is None:
+            return Response({"error": "wallet_address is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.wallet_address = wallet_address
+        request.user.save()
+
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
 
 def github_login(request):
     # for development

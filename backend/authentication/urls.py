@@ -6,6 +6,7 @@ from .views import (
     LoginAPIView,
     LogoutAPIView,
     MeAPIView,
+    SetWalletAddressAPIView,
     github_login,
 )
 
@@ -23,5 +24,10 @@ urlpatterns = [
         "me",
         MeAPIView.as_view(),
         name="my-user-info",
+    ),
+    path(
+        "set_wallet_address",
+        SetWalletAddressAPIView.as_view(),
+        name="set-wallet-address",
     ),
 ]

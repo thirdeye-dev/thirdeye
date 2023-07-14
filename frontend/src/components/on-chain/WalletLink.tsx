@@ -139,9 +139,7 @@ function FullAccessStep({ done }: { done: () => void; }) {
   );
 }
 
-export default function WalletLink({ onSuccess }: { onSuccess: () => void; }) {
-  const web3 = useWeb3Context();
-
+export default function WalletLink({ web3, onSuccess }: { web3: IWeb3Context, onSuccess: () => void; }) {
   const [activeStep, setActiveStep] = useState(0);
 
   const incStep = () => setActiveStep((active) => active + 1);
