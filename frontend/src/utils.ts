@@ -28,5 +28,13 @@ export const getColorByChain = (chain: Chain) => {
   }
 
   return "gray";
-};
+}
 
+export const gradientByChain = (chain: Chain) => {
+  switch (chain.toLowerCase()) {
+    case Chain.ETH:
+      return {from: "indigo", to: "cyan"}
+    default:
+      return {from: "gray", to: "gray"} 
+  }
+}

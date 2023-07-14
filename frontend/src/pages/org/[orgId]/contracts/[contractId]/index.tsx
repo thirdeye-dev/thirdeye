@@ -55,11 +55,11 @@ export default function ContractDetailed() {
 
       <Flex w="100%" h="82vh" justify="space-between" gap="md">
         <Stack w="60%" h="100%">
-          <Paper w="100%" h="40%">
+          <Paper w="100%">
             <ContractInfo contract={contract} numAlerts={alerts?.length ?? 0} />
           </Paper>
 
-          <Paper withBorder w="100%" h="60%">
+          <Paper withBorder w="100%" h="100%">
             <ContractAlertTable
               alerts={alerts}
               addNewAlert={addNewAlert}
@@ -69,7 +69,7 @@ export default function ContractDetailed() {
           </Paper>
         </Stack>
 
-        <Box w="40%" h="100%">
+        <Box w="40%">
           <Paper withBorder h="100%" w="100%">
             <Flex direction="column" h="100%">
               <ContractABIControls contractId={contractId} />
