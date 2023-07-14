@@ -40,7 +40,7 @@ function OnChainAutomation() {
 
 export default function OnChain() {
   const web3 = useWeb3Context();
-  
+
   const { user } = useCurrentUser();
   const hasLinkedWallet = user?.wallet_address !== null;
 
@@ -59,7 +59,7 @@ export default function OnChain() {
     await setWalletAddress(web3.user.addr);
 
     closeWalletLinkingModal();
-  }
+  };
 
   return (
     <>

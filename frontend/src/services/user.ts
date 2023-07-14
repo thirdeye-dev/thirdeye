@@ -10,9 +10,9 @@ export async function fetchCurrentUser(): Promise<User> {
 export async function setWalletAddress(walletAddress: string) {
   const resp = await axios.get("/authentication/set_wallet_address", {
     params: {
-      wallet_address: walletAddress
-    }
-  })
+      wallet_address: walletAddress,
+    },
+  });
 
-  return resp.data
+  return resp.data;
 }
