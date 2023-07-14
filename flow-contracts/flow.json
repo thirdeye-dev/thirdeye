@@ -47,6 +47,11 @@
 			"default": [
 				"ThirdEyeVerification"
 			]
+		},
+		"testnet": {
+			"testnet-account": [
+				"ThirdEyeVerification"
+			]
 		}
 	}
 }
