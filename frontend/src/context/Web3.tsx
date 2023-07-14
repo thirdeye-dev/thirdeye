@@ -63,10 +63,16 @@ export const Web3ContextProvider = ({
       "discovery.wallet": walletDiscovery, // use wallets on public discovery
       "discovery.authn.endpoint": walletDiscoveryApi, // public discovery api endpoint
       "discovery.authn.include": walletDiscoveryInclude, // opt-in wallets
+      
+      // @ts-ignore
       '0xFungibleToken': addresses.FungibleToken,
+      // @ts-ignore
       '0xFlowToken': addresses.FlowToken,
+      // @ts-ignore
       '0xNonFungibleToken': addresses.NonFungibleToken,
+      // @ts-ignore
       '0xMetadataViews': addresses.MetadataViews,
+      // @ts-ignore
       '0xThirdEyeVerification': addresses.ThirdEyeVerification,
     });
   }, []);
