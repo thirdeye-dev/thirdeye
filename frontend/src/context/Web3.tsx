@@ -1,5 +1,3 @@
-import { getFlowNetwork } from "@/flow-config";
-import * as fcl from "@onflow/fcl";
 import {
   createContext,
   ReactNode,
@@ -8,6 +6,9 @@ import {
   useMemo,
   useState,
 } from "react";
+
+import { getFlowNetwork } from "@/flow-config";
+import * as fcl from "@onflow/fcl";
 
 export interface IWeb3Context {
   connect: () => void;
@@ -62,7 +63,11 @@ export const Web3ContextProvider = ({
       "discovery.wallet": walletDiscovery, // use wallets on public discovery
       "discovery.authn.endpoint": walletDiscoveryApi, // public discovery api endpoint
       "discovery.authn.include": walletDiscoveryInclude, // opt-in wallets
-      // TODO: add contracts mapping here
+      '0xFungibleToken': addresses.FungibleToken,
+      '0xFlowToken': addresses.FlowToken,
+      '0xNonFungibleToken': addresses.NonFungibleToken,
+      '0xMetadataViews': addresses.MetadataViews,
+      '0xThirdEyeVerification': addresses.ThirdEyeVerification,
     });
   }, []);
 
@@ -79,7 +84,7 @@ export const Web3ContextProvider = ({
   }, []);
 
   const executeTransaction = useCallback(
-    async (cadence: string, args: any = () => [], options: any = {}) => {
+    async (cadence: string, args: fcl.ArgFn, options: any = {}) => {
       setTransactionInProgress(true);
       setTransactionStatus(-1);
 

@@ -1,5 +1,7 @@
-import { Flex, Paper, Space, Stack, Stepper, Text } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { Button, Flex, Paper, Space, Stack, Stepper, Text } from "@mantine/core";
+import * as fcl from "@onflow/fcl"
 
 import WalletConnector from "@/components/WalletConnector";
 import { useWeb3Context } from "@/hooks/use-web3";
@@ -25,8 +27,45 @@ function ConnectWalletStep({
   );
 }
 
-function MintNFTStep() {
-  return <>Mint an NFT now</>;
+function MintNFTStep({ web3 }: { web3: IWeb3Context }) {
+  useEffect(() => {
+    console.log(web3.transaction)
+    console.log(web3.transaction.id)
+  }, [web3.transaction])
+
+  const mint = (unique_hash: string) => {
+    web3.executeTransaction(
+      `import ThirdEyeVerification from 0xThirdEyeVerification
+        import NonFungibleToken from 0xNonFungibleToken
+        import MetadataViews from 0xMetadataViews
+
+        transaction(unique_hash: String, image_url: String) {
+          let recipientCollection: &ThirdEyeVerification.Collection{NonFungibleToken.CollectionPublic}
+
+          prepare(signer: AuthAccount) {
+            if signer.borrow<&ThirdEyeVerification.Collection>(from: ThirdEyeVerification.CollectionStoragePath) == nil {
+              signer.save(<- ThirdEyeVerification.createEmptyCollection(), to: ThirdEyeVerification.CollectionStoragePath)
+              signer.link<&ThirdEyeVerification.Collection{NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(ThirdEyeVerification.CollectionPublicPath, target: ThirdEyeVerification.CollectionStoragePath)
+            }
+
+            self.recipientCollection = signer.getCapability(ThirdEyeVerification.CollectionPublicPath)
+                                  .borrow<&ThirdEyeVerification.Collection{NonFungibleToken.CollectionPublic}>()!
+          }
+
+          execute {
+            ThirdEyeVerification.mintNFT(recipient: self.recipientCollection, unique_hash: unique_hash, image_url: image_url)
+
+            log("Successfully Minted Verification Token")
+          }
+      }`,
+      (arg: any, t: any) => [
+        arg(unique_hash, t.String),
+        arg(`${window.location.origin}/img/logo.jpeg`, t.String)
+      ],
+    )
+  }
+
+  return <Button onClick={() => mint("pretend-this-is-a-hash")}>Mint an NFT now</Button>;
 }
 
 function FullAccessStep() {
@@ -49,7 +88,12 @@ export default function WalletLink() {
     {
       label: "Step 2",
       description: "Mint a verification NFT",
-      children: <MintNFTStep />,
+      children: <MintNFTStep web3={web3} />,
+    },
+    {
+      label: "Step 3",
+      description: "Validate your ownership",
+      children: <></>
     },
     {
       label: "Step 3",

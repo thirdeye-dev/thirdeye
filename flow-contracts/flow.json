@@ -21,7 +21,12 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
-		"ThirdEyeVerification": "cadence/contracts/ThirdEyeVerification.cdc"
+		"ThirdEyeVerification": {
+      "source": "cadence/contracts/ThirdEyeVerification.cdc",
+      "aliases": {
+        "testnet": "db516136ebe1fabe"
+      }
+    }
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
