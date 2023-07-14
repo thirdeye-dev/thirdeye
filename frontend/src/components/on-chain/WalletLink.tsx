@@ -79,7 +79,7 @@ function MintNFTStep({ web3, done }: { web3: IWeb3Context, done: () => void;}) {
 
   return (
     <Stack h="100%">
-      <Text weight="lighter">{alreadyMinted ? "Already Minted" : "Click on the button below to start the minting process:"}</Text>
+      <Text weight="lighter">{alreadyMinted ? "Already Minted" : "This NFT will come in handy for you and us to verify the FLOW account which owns the ThirdEye account."}</Text>
       {minting ? <Progress value={(web3.transaction.status ?? 0) * 100 / 4} /> : null}
 
       <Button loading={minting} variant="outline" color="teal" onClick={() => {
@@ -163,7 +163,7 @@ export default function WalletLink({ onSuccess }: { onSuccess: () => void; }) {
       children: <ValidateOwnershipStep web3={web3} done={() => incStep()} />
     },
     {
-      label: "Step 3",
+      label: "Step 4",
       description: "Get full access",
       children: <FullAccessStep done={() => onSuccess()} />,
     },
