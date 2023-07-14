@@ -63,7 +63,7 @@ export default function OnChain() {
         closeOnClickOutside={false}
         centered
       >
-        <WalletLink />
+        <WalletLink onSuccess={closeWalletLinkingModal} />
       </Modal>
       <Flex direction="row" gap="md" h="88vh">
         <Paper withBorder w="100%" h="100%" p="md">

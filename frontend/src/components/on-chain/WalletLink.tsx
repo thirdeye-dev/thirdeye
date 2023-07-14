@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { Button, Flex, Paper, Space, Stack, Stepper, Text } from "@mantine/core";
-import * as fcl from "@onflow/fcl"
+import { Anchor, Button, Flex, Loader, Paper, Progress, Space, Stack, Stepper, Text, ThemeIcon } from "@mantine/core";
 
 import WalletConnector from "@/components/WalletConnector";
 import { useWeb3Context } from "@/hooks/use-web3";
 import { IWeb3Context } from "@/context/Web3";
+import { AiOutlineArrowRight, AiOutlineCheckCircle, AiOutlineLoading } from "react-icons/ai";
 
 function ConnectWalletStep({
   web3,
@@ -27,10 +27,20 @@ function ConnectWalletStep({
   );
 }
 
-function MintNFTStep({ web3 }: { web3: IWeb3Context }) {
+function MintNFTStep({ web3, done }: { web3: IWeb3Context, done: () => void;}) {
+  const [minting, setMinting] = useState(false);
+  const [alreadyMinted, setAlreadyMinted] = useState(false);
+
+  const onNftSuccess = () => {
+    console.log("NFT Mint successful");
+    setAlreadyMinted(true);
+  }
+
   useEffect(() => {
-    console.log(web3.transaction)
-    console.log(web3.transaction.id)
+    if (web3.transaction.status == 4 && web3.transaction.errorMessage == '') {
+      setMinting(false);
+      onNftSuccess()
+    }
   }, [web3.transaction])
 
   const mint = (unique_hash: string) => {
@@ -62,17 +72,74 @@ function MintNFTStep({ web3 }: { web3: IWeb3Context }) {
         arg(unique_hash, t.String),
         arg(`${window.location.origin}/img/logo.jpeg`, t.String)
       ],
-    )
+    );
+
+    setMinting(true);
   }
 
-  return <Button onClick={() => mint("pretend-this-is-a-hash")}>Mint an NFT now</Button>;
+  return (
+    <Stack h="100%">
+      <Text weight="lighter">{alreadyMinted ? "Already Minted" : "Click on the button below to start the minting process:"}</Text>
+      {minting ? <Progress value={(web3.transaction.status ?? 0) * 100 / 4} /> : null}
+
+      <Button loading={minting} variant="outline" color="teal" onClick={() => {
+        if (alreadyMinted) return done();
+
+        mint("pretend-this-is-a-hash")
+      }}>
+        {alreadyMinted ? "Continue with validation": "Mint an NFT now"}
+      </Button>
+    </Stack>
+  );
 }
 
-function FullAccessStep() {
-  return <></>;
+function ValidateOwnershipStep({ web3, done }: { web3: IWeb3Context, done: () => void; }) {
+  const [checking, setChecking] = useState(true);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setChecking(false);
+      setSuccess(true);
+    }, 3000)
+  }, [])
+
+  if (success) {
+    return (
+      <Stack h="100%" justify="center" align="center">
+        <AiOutlineCheckCircle size="6rem" />
+        <Text>Your ownership has been verified!</Text>
+        
+        <Button variant="light" onClick={done}>Continue</Button>
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack h="100%" justify="center" align="center">
+      <Loader size="xl" />
+      <Text weight="lighter">We are validating your ownership - Hang Tight!</Text>
+    </Stack>
+  );
 }
 
-export default function WalletLink() {
+function FullAccessStep({ done }: { done: () => void; }) {
+  return (
+    <Stack h="100%" justify="space-between">
+      <Text weight="bold" size="xl">Welcome to ThirdEye Automations</Text>
+      <Space />
+
+      <Text weight="lighter">
+        You can now implement custom on chain logic using our <Anchor>Cadence SDK</Anchor> for use cases like Multi-Sig, Single-Sig, etc.
+      </Text>
+
+      <Space />
+      <Button w="100%" variant="gradient" rightIcon={<AiOutlineArrowRight />} onClick={done}>Start Building</Button>
+    </Stack>
+  );
+}
+
+export default function WalletLink({ onSuccess }: { onSuccess: () => void; }) {
   const web3 = useWeb3Context();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -88,17 +155,17 @@ export default function WalletLink() {
     {
       label: "Step 2",
       description: "Mint a verification NFT",
-      children: <MintNFTStep web3={web3} />,
+      children: <MintNFTStep web3={web3} done={() => incStep()} />,
     },
     {
       label: "Step 3",
       description: "Validate your ownership",
-      children: <></>
+      children: <ValidateOwnershipStep web3={web3} done={() => incStep()} />
     },
     {
       label: "Step 3",
       description: "Get full access",
-      children: <FullAccessStep />,
+      children: <FullAccessStep done={() => onSuccess()} />,
     },
   ];
 
