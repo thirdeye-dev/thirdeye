@@ -11,9 +11,11 @@ import AppShellLayout from "@/layouts/AppShellLayout";
 import useAlerts from "@/hooks/use-alerts";
 import ContractABIControls from "@/components/contracts/detail/ContractABIControls";
 import ContractABIViewer from "@/components/contracts/detail/ContractABIViewer";
+import { useWeb3Context } from "@/hooks/use-web3";
 
 export default function ContractDetailed() {
   const router = useRouter();
+  const web3 = useWeb3Context();
 
   const organizationId = router.query.orgId as string;
   const contractId = router.query.contractId as string;
@@ -56,7 +58,7 @@ export default function ContractDetailed() {
       <Flex w="100%" h="82vh" justify="space-between" gap="md">
         <Stack w="60%" h="100%">
           <Paper w="100%">
-            <ContractInfo contract={contract} numAlerts={alerts?.length ?? 0} />
+            <ContractInfo web3={web3} contract={contract} numAlerts={alerts?.length ?? 0} />
           </Paper>
 
           <Paper withBorder w="100%" h="100%">
