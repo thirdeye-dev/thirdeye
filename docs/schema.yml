@@ -86,6 +86,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
           description: ''
+  /authentication/set_wallet_address:
+    get:
+      operationId: authentication_set_wallet_address_retrieve
+      tags:
+      - authentication
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /authentication/token/refresh:
     post:
       operationId: authentication_token_refresh_create
@@ -220,6 +232,20 @@ paths:
                 items:
                   $ref: '#/components/schemas/AlertsAPI'
           description: ''
+  /monitoring/flow:
+    post:
+      operationId: monitoring_flow_create
+      description: This is the entry point for the monitoring flow.
+      tags:
+      - monitoring
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /monitoring/notifications:
     get:
       operationId: monitoring_notifications_list
@@ -842,6 +868,14 @@ components:
         * `EMAIL` - Email
         * `SMS` - Sms
         * `WEBHOOK` - Webhook
+    ObjectTypeEnum:
+      enum:
+      - CONTRACT
+      - ACCOUNT
+      type: string
+      description: |-
+        * `CONTRACT` - contract
+        * `ACCOUNT` - account
     Organization:
       type: object
       properties:
@@ -907,6 +941,8 @@ components:
         id:
           type: integer
           readOnly: true
+        object_type:
+          $ref: '#/components/schemas/ObjectTypeEnum'
         name:
           type: string
           maxLength: 100
@@ -926,6 +962,8 @@ components:
         id:
           type: integer
           readOnly: true
+        object_type:
+          $ref: '#/components/schemas/ObjectTypeEnum'
         name:
           type: string
           maxLength: 100
@@ -996,6 +1034,10 @@ components:
           maxLength: 200
         is_staff:
           type: boolean
+        wallet_address:
+          type: string
+          nullable: true
+          maxLength: 42
       required:
       - created_at
       - email
