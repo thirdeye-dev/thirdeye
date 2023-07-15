@@ -104,7 +104,7 @@ const navLinks: NavLink[] = [
   { icon: AiFillAlert, label: "Alerts", name: "alerts", href: "alerts/create" },
   {
     icon: AiOutlineLink,
-    label: "On-Chain Interactions",
+    label: "On-Chain Automation",
     name: "on-chain",
     href: "on-chain",
   },

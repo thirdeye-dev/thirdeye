@@ -3,15 +3,15 @@ import useCurrentUser from "@/hooks/use-current-user";
 import { useWeb3Context } from "@/hooks/use-web3";
 import AppShellLayout from "@/layouts/AppShellLayout";
 import { setWalletAddress } from "@/services/user";
-import { Text, Flex, Paper, Stack, Table, Modal } from "@mantine/core";
+import { Text, Paper, Stack, Table, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode, useEffect } from "react";
 
-function OnChainMonitoring() {
+function OnChainAutomation() {
   return (
     <Stack>
       <Text size="2.5em" weight="bold" color="yellow">
-        Monitoring
+        Automation
       </Text>
 
       <Table>
@@ -24,16 +24,6 @@ function OnChainMonitoring() {
           </tr>
         </thead>
       </Table>
-    </Stack>
-  );
-}
-
-function OnChainAutomation() {
-  return (
-    <Stack>
-      <Text size="2.5em" weight="bold" color="yellow">
-        Automation
-      </Text>
     </Stack>
   );
 }
@@ -75,15 +65,10 @@ export default function OnChain() {
       >
         <WalletLink web3={web3} onSuccess={onWalletLinkSuccess} />
       </Modal>
-      <Flex direction="row" gap="md" h="88vh">
-        <Paper withBorder w="100%" h="100%" p="md">
-          <OnChainMonitoring />
-        </Paper>
 
-        <Paper withBorder w="100%" h="100%" p="md">
-          <OnChainAutomation />
-        </Paper>
-      </Flex>
+      <Paper withBorder w="100%" h="100%" p="md">
+        <OnChainAutomation />
+      </Paper>
     </>
   );
 }
