@@ -12,6 +12,7 @@ import useAlerts from "@/hooks/use-alerts";
 import ContractABIControls from "@/components/contracts/detail/ContractABIControls";
 import ContractABIViewer from "@/components/contracts/detail/ContractABIViewer";
 import { useWeb3Context } from "@/hooks/use-web3";
+import { Chain } from "@/models/contract";
 
 export default function ContractDetailed() {
   const router = useRouter();
@@ -58,7 +59,11 @@ export default function ContractDetailed() {
       <Flex w="100%" h="82vh" justify="space-between" gap="md">
         <Stack w="60%" h="100%">
           <Paper w="100%">
-            <ContractInfo web3={web3} contract={contract} numAlerts={alerts?.length ?? 0} />
+            <ContractInfo
+              web3={web3}
+              contract={contract}
+              numAlerts={alerts?.length ?? 0}
+            />
           </Paper>
 
           <Paper withBorder w="100%" h="100%">
@@ -76,7 +81,10 @@ export default function ContractDetailed() {
             <Flex direction="column" h="100%">
               <ContractABIControls contractId={contractId} />
               <Divider />
-              <ContractABIViewer contractId={contractId} />
+              <ContractABIViewer
+                isFlow={contract?.chain == Chain.FLOW}
+                contractId={contractId}
+              />
             </Flex>
           </Paper>
         </Box>

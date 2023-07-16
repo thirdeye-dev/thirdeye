@@ -9,8 +9,10 @@ import AddContractABIForm from "@/components/contracts/detail/AddContractABIForm
 
 export default function ContractABIViewer({
   contractId,
+  isFlow,
 }: {
   contractId: string | undefined;
+  isFlow: boolean;
 }) {
   const { abi, mutate } = useContractABI(contractId);
 
@@ -51,17 +53,19 @@ export default function ContractABIViewer({
           gap="md"
         >
           <Text color="gray.7" size="2em" weight="bold" align="center">
-            No ABI added yet
+            {isFlow ? "Flow chain is not supported" : "No ABI Added Yet"}
           </Text>
 
-          <Button
-            size="md"
-            variant="light"
-            color="green"
-            onClick={openAddModal}
-          >
-            Add Now
-          </Button>
+          {isFlow ? null : (
+            <Button
+              size="md"
+              variant="light"
+              color="green"
+              onClick={openAddModal}
+            >
+              Add Now
+            </Button>
+          )}
         </Flex>
       </>
     );

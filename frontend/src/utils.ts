@@ -25,8 +25,8 @@ export const getColorByTag = (tag: string) => {
 export const gradientByChain = (chain: Chain) => {
   switch (chain.toLowerCase()) {
     case Chain.ETH:
-      return {from: "indigo", to: "cyan"}
+      return { from: "indigo", to: "cyan" };
     case Chain.FLOW:
-      return {from: "teal", to: "green"}
+      return { from: "teal", to: "green" };
   }
-}
+};

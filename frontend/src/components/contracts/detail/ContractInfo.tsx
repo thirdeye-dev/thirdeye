@@ -1,4 +1,13 @@
-import { Text, Flex, Stack, Divider, Paper, Group, Button, Badge } from "@mantine/core";
+import {
+  Text,
+  Flex,
+  Stack,
+  Divider,
+  Paper,
+  Group,
+  Button,
+  Badge,
+} from "@mantine/core";
 import { AiFillCheckCircle, AiFillLock, AiFillUnlock } from "react-icons/ai";
 import * as fcl from "@onflow/fcl";
 
@@ -9,16 +18,26 @@ import { IWeb3Context } from "@/context/Web3";
 import { useCallback, useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 
-const flowContractAddressRegexWithGroup = new RegExp("^[A-Z]\.([0-9a-fA-F]{16})\..*$");
+const flowContractAddressRegexWithGroup = new RegExp(
+  "^[A-Z].([0-9a-fA-F]{16})..*$"
+);
 
-function LockContractButton({ web3, contract, done }: { web3: IWeb3Context, contract: Contract, done: () => void; }) {
+function LockContractButton({
+  web3,
+  contract,
+  done,
+}: {
+  web3: IWeb3Context;
+  contract: Contract;
+  done: () => void;
+}) {
   const [locking, setLocking] = useState(false);
 
   const success = () => {
     setLocking(false);
 
     // To prevent infinite loop
-    web3.transaction.errorMessage = ""
+    web3.transaction.errorMessage = "";
 
     notifications.show({
       title: "Success",
@@ -28,18 +47,20 @@ function LockContractButton({ web3, contract, done }: { web3: IWeb3Context, cont
     });
 
     done();
-  }
+  };
 
   useEffect(() => {
-    console.log(web3.transaction)
+    console.log(web3.transaction);
 
     if (web3.transaction.errorMessage && !web3.transaction.inProgress) {
-      success()
+      success();
     }
-  }, [web3.transaction])
+  }, [web3.transaction]);
 
   const lock = () => {
-    const address = flowContractAddressRegexWithGroup.exec(contract.address)?.at(1) ?? contract.address
+    const address =
+      flowContractAddressRegexWithGroup.exec(contract.address)?.at(1) ??
+      contract.address;
 
     web3.executeTransaction(
       `
@@ -55,25 +76,40 @@ function LockContractButton({ web3, contract, done }: { web3: IWeb3Context, cont
           }
         }
       `
-    )
+    );
 
     setLocking(true);
-  }
+  };
 
   return (
-    <Button loading={locking} variant="light" color="red" rightIcon={<AiFillLock />} onClick={lock}>Lock</Button>
+    <Button
+      loading={locking}
+      variant="light"
+      color="red"
+      rightIcon={<AiFillLock />}
+      onClick={lock}
+    >
+      Lock
+    </Button>
   );
 }
 
-function UnlockContractButton({ web3, contract, done }: { web3: IWeb3Context, contract: Contract, done: () => void; }) {
+function UnlockContractButton({
+  web3,
+  contract,
+  done,
+}: {
+  web3: IWeb3Context;
+  contract: Contract;
+  done: () => void;
+}) {
   const [unlocking, setUnlocking] = useState(false);
 
   const success = () => {
     setUnlocking(false);
 
     // To prevent infinite loop
-    web3.transaction.errorMessage = ""
-
+    web3.transaction.errorMessage = "";
 
     notifications.show({
       title: "Success",
@@ -83,18 +119,20 @@ function UnlockContractButton({ web3, contract, done }: { web3: IWeb3Context, co
     });
 
     done();
-  }
+  };
 
   useEffect(() => {
-    console.log(web3.transaction)
+    console.log(web3.transaction);
 
     if (web3.transaction.errorMessage && !web3.transaction.inProgress) {
-      success()
+      success();
     }
-  }, [web3.transaction])
+  }, [web3.transaction]);
 
   const unlock = () => {
-    const address = flowContractAddressRegexWithGroup.exec(contract.address)?.at(1) ?? contract.address
+    const address =
+      flowContractAddressRegexWithGroup.exec(contract.address)?.at(1) ??
+      contract.address;
 
     web3.executeTransaction(
       `
@@ -110,25 +148,50 @@ function UnlockContractButton({ web3, contract, done }: { web3: IWeb3Context, co
           }
         }
       `
-    )
+    );
 
     setUnlocking(true);
-  }
+  };
 
   return (
-    <Button variant="light" color="green" rightIcon={<AiFillUnlock />} onClick={unlock}>Unlock</Button>
+    <Button
+      variant="light"
+      color="green"
+      rightIcon={<AiFillUnlock />}
+      onClick={unlock}
+    >
+      Unlock
+    </Button>
   );
 }
 
-const ContractLockUnlock = ({web3, contract}: {web3: IWeb3Context, contract: Contract}) => {
-  const [ isContractLocked, setIsContractLocked ] = useState(false);
+const ContractLockUnlock = ({
+  web3,
+  contract,
+}: {
+  web3: IWeb3Context;
+  contract: Contract;
+}) => {
+  const [isContractLocked, setIsContractLocked] = useState(false);
 
   if (isContractLocked) {
-    return <UnlockContractButton web3={web3} contract={contract} done={() => setIsContractLocked(false)} />
-  };
-  
-  return <LockContractButton web3={web3} contract={contract} done={() => setIsContractLocked(true)} />
-}
+    return (
+      <UnlockContractButton
+        web3={web3}
+        contract={contract}
+        done={() => setIsContractLocked(false)}
+      />
+    );
+  }
+
+  return (
+    <LockContractButton
+      web3={web3}
+      contract={contract}
+      done={() => setIsContractLocked(true)}
+    />
+  );
+};
 
 export default function ContractInfo({
   web3,
@@ -139,11 +202,10 @@ export default function ContractInfo({
   contract: Contract | undefined;
   numAlerts: number;
 }) {
-
   if (!contract) return null;
 
   // NOTE: only chain Flow is supported for lock / unlock
-  const shouldShowLockUnlock = contract.chain == Chain.FLOW
+  const shouldShowLockUnlock = contract.chain == Chain.FLOW;
 
   return (
     <Paper
@@ -164,11 +226,18 @@ export default function ContractInfo({
               {contract.name}
             </Text>
 
-            <Badge variant="gradient" gradient={gradientByChain(contract.chain)}>{contract.chain}</Badge>
+            <Badge
+              variant="gradient"
+              gradient={gradientByChain(contract.chain)}
+            >
+              {contract.chain}
+            </Badge>
             <Badge variant="dot">{contract.network}</Badge>
           </Group>
 
-          {shouldShowLockUnlock ? <ContractLockUnlock web3={web3} contract={contract} /> : null}
+          {shouldShowLockUnlock ? (
+            <ContractLockUnlock web3={web3} contract={contract} />
+          ) : null}
         </Flex>
 
         <Divider />
