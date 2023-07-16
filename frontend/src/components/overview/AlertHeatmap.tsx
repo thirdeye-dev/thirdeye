@@ -4,8 +4,6 @@ import dayjs from "dayjs";
 import { Button, Flex, Stack, Text, Tooltip } from "@mantine/core";
 
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
-import useOverviewData from "@/hooks/use-overview-data";
-import { OverviewData } from "@/models/overviewData";
 
 function HeatmapControls() {
   return (
@@ -36,29 +34,46 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
     ssr: false,
   });
 
-  const { data, isLoading } = useOverviewData(orgId, "yearly");
+  // const { data, isLoading } = useOverviewData(orgId, "yearly");
 
-  const mergeEntries = (data: OverviewData) => {
-    let result = [];
-
-    // FIXME: this could get buggy when dates would conflict between multiple contracts
-    // the graphing library may or may not handle that
-    for (const contract of data) {
-      for (const entry of contract.entries) {
-        result.push(entry);
+  const startDate = dayjs("2023-01-01");
+  const data = [
+    ...Array.from({ length: 365 }).map((_, i) => {
+      const today = startDate.add(i, "day"); 
+      
+      let executions = 0;
+      if (today.month() == 6) {
+        executions = Math.floor(Math.random() * 10);
       }
-    }
 
-    return result;
-  };
+      return ({
+      date: today.format("YYYY-MM-DD"),
+      executions: executions,
+      })
+    }),
+  ];
 
-  const dataMerged: { date: string; executions: number }[] = mergeEntries(
-    data ?? []
-  );
+  // const mergeEntries = (data: OverviewData) => {
+  //   let result = [];
+
+  //   // FIXME: this could get buggy when dates would conflict between multiple contracts
+  //   // the graphing library may or may not handle that
+  //   for (const contract of data) {
+  //     for (const entry of contract.entries) {
+  //       result.push(entry);
+  //     }
+  //   }
+
+  //   return result;
+  // };
+
+  // const dataMerged: { date: string; executions: number }[] = mergeEntries(
+  //   data ?? []
+  // );
 
   const chartCfg = {
     autoFit: true,
-    data: dataMerged,
+    data: data,
     height: 180,
     size: 10,
     dateField: "date",
@@ -82,10 +97,6 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
       }
     },
   };
-
-  if (isLoading) {
-    return <div>Loading..</div>;
-  }
 
   return (
     <Stack justify="center" h="100%" p="md">
