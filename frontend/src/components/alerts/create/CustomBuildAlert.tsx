@@ -13,7 +13,7 @@ const PLACEHOLDER_ALERT = `blockchain_alerts:
 - alert_type: every_transaction # alert_type can be: every_transaction & cron
   alerts:
     AlertName: # alert name can be arbitrary
-      condition: 'txn_gasPrice >= 100000' # condition (boolean) runs like python, but is not
+      condition: 'txn_gasLimit >= 100000' # condition (boolean) runs like python, but is not
       notifications: # options are: send_webhook, send_email, send_sms
       - send_webhook
       webhook_url: https://example.com/webhook # only if send_webhook is added above`;

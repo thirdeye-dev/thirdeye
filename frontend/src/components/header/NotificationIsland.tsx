@@ -41,7 +41,7 @@ export default function NotificationIsland() {
       type: "owner_balance_changed",
       type_description: "Occurs when the owner balance changes",
       tag: "warn",
-      body: "Owner balance changed by 1 ETH",
+      body: "Owner balance changed by 1 Flow",
       executed_at: dayjs().subtract(1, "hour"),
     },
     {
