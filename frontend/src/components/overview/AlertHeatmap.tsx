@@ -36,29 +36,31 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
     ssr: false,
   });
 
-  const { data, isLoading } = useOverviewData(orgId, "yearly");
+  // const { data, isLoading } = useOverviewData(orgId, "yearly");
 
-  const mergeEntries = (data: OverviewData) => {
-    let result = [];
+  // const mergeEntries = (data: OverviewData) => {
+  //   let result = [];
 
-    // FIXME: this could get buggy when dates would conflict between multiple contracts
-    // the graphing library may or may not handle that
-    for (const contract of data) {
-      for (const entry of contract.entries) {
-        result.push(entry);
-      }
-    }
+  //   // FIXME: this could get buggy when dates would conflict between multiple contracts
+  //   // the graphing library may or may not handle that
+  //   for (const contract of data) {
+  //     for (const entry of contract.entries) {
+  //       result.push(entry);
+  //     }
+  //   }
 
-    return result;
-  };
+  //   return result;
+  // };
 
-  const dataMerged: { date: string; executions: number }[] = mergeEntries(
-    data ?? []
-  );
+  // const dataMerged: { date: string; executions: number }[] = mergeEntries(
+  //   data ?? []
+  // );
 
+  const data: OverviewData[] = [];
+  
   const chartCfg = {
     autoFit: true,
-    data: dataMerged,
+    data: data,
     height: 180,
     size: 10,
     dateField: "date",
@@ -83,8 +85,14 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
     },
   };
 
-  if (isLoading) {
-    return <div>Loading..</div>;
+  if (!data || data.length === 0) {
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        <Text size="1.5em" color="dimmed">
+          Yearly / Monthly heatmap will show here
+        </Text>
+      </Flex>
+    );
   }
 
   return (
