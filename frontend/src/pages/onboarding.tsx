@@ -1,3 +1,4 @@
+import useCurrentUser from "@/hooks/use-current-user";
 import Organization from "@/models/organization";
 import { createOrganization } from "@/services/organizations";
 import {
@@ -11,12 +12,19 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { CgOrganisation } from "react-icons/cg";
 
 export default function Onboarding() {
   const router = useRouter();
+  const { user, isLoading: isUserLoading } = useCurrentUser();
+
   const form = useForm({});
+
+  useEffect(() => {
+    form.setFieldValue('organizationName', `${user?.username}'s Organization`);
+  }, [isUserLoading])
 
   const handleSubmit = async (organizationName: string) => {
     if (!organizationName) return;
