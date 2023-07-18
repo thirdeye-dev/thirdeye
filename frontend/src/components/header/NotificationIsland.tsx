@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import {
+    Accordion,
   ActionIcon,
   Badge,
   Code,
@@ -50,11 +51,17 @@ export default function NotificationIsland() {
   const NotificationListHover = () => {
     return (
       <ScrollArea h="50vh">
-        {notifications
-          .filter((notif) => notif !== latestNotification)
-          .map((notif, idx) => {
-            return <NotificationListItem key={idx} notif={notif} />;
-          })}
+        <Accordion>
+          {notifications
+            .filter((notif) => notif !== latestNotification)
+            .map((notif, idx) => {
+              return (
+                <Accordion.Item value={notif.id.toString()} key={idx}>
+                  <NotificationListItem notif={notif} />
+                </Accordion.Item>
+              );
+            })}
+        </Accordion>
       </ScrollArea>
     );
   };
