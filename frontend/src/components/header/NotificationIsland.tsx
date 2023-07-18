@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 import {
   ActionIcon,
@@ -19,60 +20,74 @@ import { BsRecordCircle, BsThreeDots } from "react-icons/bs";
 
 import { getColorByTag } from "@/utils";
 import NotificationListItem from "./NotificationListItem";
+import useNotificationsWS from "@/hooks/use-notifications-ws";
+import Notification from "@/models/notification";
 
 dayjs.extend(relativeTime);
 
 export default function NotificationIsland() {
-  const [notifications, setNotifications] = useState<Array<Record<any, any>>>([
-    {
-      contract_name: "Alpha",
-      contract_id: 1,
-      alert_name: "Gas Threshold Exceed",
-      type: "gas_threshold_reached",
-      type_description: "Occurs when the gas threshold is reached",
-      tag: "success",
-      body: "Gas threshold of 1000 was reached",
-      executed_at: dayjs(),
-    },
-    {
-      contract_name: "Beta",
-      contract_id: 1,
-      alert_name: "Change in balance",
-      type: "owner_balance_changed",
-      type_description: "Occurs when the owner balance changes",
-      tag: "warn",
-      body: "Owner balance changed by 1 ETH",
-      executed_at: dayjs().subtract(1, "hour"),
-    },
-    {
-      contract_name: "Beta",
-      contract_id: 1,
-      alert_name: "Too many Failed Transactions",
-      type: "too_many_failed_transactions",
-      type_description:
-        "Occurs when there are too many failed transactions in the set duration",
-      tag: "error",
-      body: "Too many failed transactions in the last 24 hours",
-      executed_at: dayjs().subtract(3, "day"),
-    },
-  ]);
+  const router = useRouter();
+  const organizationId = router.query.orgId as string;
+
+  const { notification, ...swr } = useNotificationsWS(organizationId);
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Detect a new notification
+  useEffect(() => {
+    if (!notification) return;
+
+    setNotifications((notifs) => [...notifs, notification]);
+  }, [notification]);
 
   const [
     isListDropdownOpen,
     { close: closeListDropdown, open: openListDropdown },
   ] = useDisclosure(false);
 
-  var latestNotification = notifications.at(0);
+  var latestNotification = notifications.at(-1);
 
   const NotificationListHover = () => {
     return (
       <ScrollArea h="50vh">
         {notifications
           .filter((notif) => notif !== latestNotification)
-          .map((notif) => {
-            return <NotificationListItem key={notif.id} notif={notif} />;
+          .map((notif, idx) => {
+            return <NotificationListItem key={idx} notif={notif} />;
           })}
       </ScrollArea>
+    );
+  };
+
+  const LatestNotification = () => {
+    return (
+      <Group
+        pl="xs"
+        sx={{
+          "&:hover": {
+            opacity: 0.8,
+          },
+        }}
+      >
+        <BsRecordCircle
+          size="1.2em"
+          color={getColorByTag(latestNotification!.tag ?? "success")} // FIXME: not supplied by backend yet
+        />
+
+        <Badge>{latestNotification!.contract_name}</Badge>
+        <Text size="sm" weight="bold" color="gray">
+          triggered alert
+        </Text>
+
+        <Code>{latestNotification!.alert_name}</Code>
+
+        <Text size="xs" color="gray">
+          •
+        </Text>
+        <Text size="xs" color="gray">
+          {dayjs(latestNotification!.created_at).fromNow()}
+        </Text>
+      </Group>
     );
   };
 
@@ -90,7 +105,7 @@ export default function NotificationIsland() {
             : theme.colors.gray[1],
       })}
     >
-      {notifications.length === 0 ? (
+      {!notifications || notifications.length === 0 ? (
         <Flex direction="column" align="center" justify="center" h="100%">
           <Text size="lg" weight="bold" color="gray">
             Notifications will appear here
@@ -107,36 +122,10 @@ export default function NotificationIsland() {
               h="100%"
               onMouseLeave={closeListDropdown}
             >
-              <Group
-                pl="xs"
-                sx={{
-                  "&:hover": {
-                    opacity: 0.8,
-                  },
-                }}
-              >
-                <BsRecordCircle
-                  size="1.2em"
-                  color={getColorByTag(latestNotification!.tag)}
-                />
-
-                <Badge>{latestNotification!.contract_name}</Badge>
-                <Text size="sm" weight="bold" color="gray">
-                  triggered alert
-                </Text>
-
-                <Code>{latestNotification!.alert_name}</Code>
-
-                <Text size="xs" color="gray">
-                  •
-                </Text>
-                <Text size="xs" color="gray">
-                  {dayjs(latestNotification!.executed_at).fromNow()}
-                </Text>
-              </Group>
+              <LatestNotification />
 
               <Group pr="sm">
-                <Indicator processing>
+                <Indicator size="lg" processing label={notifications.length}>
                   <ActionIcon onClick={openListDropdown}>
                     <BsThreeDots
                       size="1.2em"

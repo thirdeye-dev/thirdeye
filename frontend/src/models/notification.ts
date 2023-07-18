@@ -1,22 +1,23 @@
-import Alert from "./alert";
-
-enum NotificationType {
+export enum NotificationType {
   EMAIL = "EMAIL",
   SMS = "SMS",
   WEBHOOK = "WEBHOOK",
 }
 
-enum NotificationStatus {
+export enum NotificationStatus {
   PENDING = "PENDING",
   SENT = "SENT",
   FAILED = "FAILED",
 }
 
-interface Notification {
+export default interface Notification {
   id: number;
-  alert: Alert;
+  alert_name: string;
+  alert_description: string;
+  contract_name: string;
+  created_at: string;
   notification_type: NotificationType;
-  notification_body: string;
+  notification_body: Map<string, string>;
   notification_target: string;
   trigger_transaction_hash: string;
   meta_logs: string;
