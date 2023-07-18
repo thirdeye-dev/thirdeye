@@ -3,7 +3,7 @@ import redis
 from celery.signals import task_failure, task_success
 from celery.utils.log import get_task_logger
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from api_app.monitoring import tasks
@@ -15,6 +15,20 @@ logger = get_task_logger(__name__)
 
 # demo_instance = settings.DEMO_INSTANCE
 
+@receiver(pre_delete, sender=SmartContract)
+def smart_contract_pre_delete(sender, instance, **kwargs):
+    if instance.chain.lower() == Chain.FLOW.lower():
+        # connect to redis and LRem from queue
+        r = redis.Redis(
+            host=settings.REDIS_HOST, 
+            port=settings.REDIS_PORT, 
+            db=settings.REDIS_DB
+        )
+
+        if instance.object_type.lower() == ObjectType.CONTRACT.lower():
+            r.lrem('smart_contracts:flow', 0, instance.address)
+        else:
+            r.lrem('accounts:flow', 0, instance.address)
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
