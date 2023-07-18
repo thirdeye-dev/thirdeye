@@ -162,7 +162,7 @@ DEMO_ALLOWED_LOGINS = [
     "kapersky1337",
 ]
 
-PROTOTYPE_DOMAIN = "demo.thirdeyelabs.xyz"
+PROTOTYPE_DOMAIN = "flow.thirdeyelabs.xyz"
 
 PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
 
@@ -193,13 +193,13 @@ DATABASES = {
 }
 
 
-if DEMO_INSTANCE:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+# if DEMO_INSTANCE:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
 
 
 # Password validation

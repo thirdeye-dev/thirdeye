@@ -1,16 +1,61 @@
 version: '3.8'
 
 services:
-   backend:
+  backend:
     container_name: backend_demo_app_third_eye
     expose:
       - "8000"
     image: ghcr.io/thirdeye-dev/thirdeye:latest
-    entrypoint: /app/backend/entrypoint.sh
-    ports:
-      - "8000:8000"
+    entrypoint: docker/entrypoint/entrypoint.sh
     env_file:
       - ./.env
     environment:
       - DEMO_INSTANCE=true
-  
+    networks:
+      - backend_network
+
+  redis:
+    container_name: redis_demo_app_third_eye
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_network
+
+  postgres:
+    container_name: postgres_demo_app_third_eye
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - backend_network
+
+  celery:
+    container_name: celery_demo_app_third_eye
+    image: ghcr.io/thirdeye-dev/thirdeye:latest
+    entrypoint: docker/entrypoint/entrypoint_celery.sh
+    env_file:
+      - ./.env
+    environment:
+      - DEMO_INSTANCE=true
+    networks:
+      - backend_network
+
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3-management
+    networks:
+      - backend_network
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass  # Redis - result backend
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
