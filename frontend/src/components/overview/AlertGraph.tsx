@@ -11,12 +11,23 @@ import {
 
 import { OverviewContract, OverviewData } from "@/models/overviewData";
 import useOverviewData from "@/hooks/use-overview-data";
+import { Flex, Text } from "@mantine/core";
 
 export default function AlertGraph({ orgId }: { orgId: string | undefined }) {
   let { data, isLoading } = useOverviewData(orgId, "weekly");
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        <Text size="1.5em" color="dimmed">
+          Alert executions will appear here
+        </Text>
+      </Flex>
+    );
   }
 
   return (
