@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 import { Button, Flex, Stack, Text, Tooltip } from "@mantine/core";
 
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import useOverviewData from "@/hooks/use-overview-data";
+import { OverviewData } from "@/models/overviewData";
 
 function HeatmapControls() {
   return (
@@ -36,23 +38,6 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
 
   // const { data, isLoading } = useOverviewData(orgId, "yearly");
 
-  const startDate = dayjs("2023-01-01");
-  const data = [
-    ...Array.from({ length: 365 }).map((_, i) => {
-      const today = startDate.add(i, "day"); 
-      
-      let executions = 0;
-      if (today.month() == 6) {
-        executions = Math.floor(Math.random() * 10);
-      }
-
-      return ({
-      date: today.format("YYYY-MM-DD"),
-      executions: executions,
-      })
-    }),
-  ];
-
   // const mergeEntries = (data: OverviewData) => {
   //   let result = [];
 
@@ -71,6 +56,8 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
   //   data ?? []
   // );
 
+  const data: OverviewData[] = [];
+  
   const chartCfg = {
     autoFit: true,
     data: data,
@@ -97,6 +84,16 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
       }
     },
   };
+
+  if (!data || data.length === 0) {
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        <Text size="1.5em" color="dimmed">
+          Yearly / Monthly heatmap will show here
+        </Text>
+      </Flex>
+    );
+  }
 
   return (
     <Stack justify="center" h="100%" p="md">
