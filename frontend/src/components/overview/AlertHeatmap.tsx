@@ -7,6 +7,35 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import useOverviewData from "@/hooks/use-overview-data";
 import { OverviewData } from "@/models/overviewData";
 
+
+interface ComposedExecutionDay {
+  date: string;
+  executions: number;
+}
+
+function composeOverviewData(inputData: OverviewData): ComposedExecutionDay[] {
+  const output: { [date: string]: ComposedExecutionDay } = {};
+
+  for (const item of inputData) {
+    // @ts-ignore: entries is a field name, not a function
+    for (const entry of item.entries) {
+
+      // Add up executions, if the date already exists
+      if (output.hasOwnProperty(entry.date)) {
+        output[entry.date].executions += entry.executions;
+        continue;
+      }
+
+      output[entry.date] = {
+        date: entry.date,
+        executions: entry.executions,
+      };
+    }
+  }
+
+  return Object.values(output);
+}
+
 function HeatmapControls() {
   return (
     <Flex justify="space-evenly" align="center">
@@ -36,31 +65,15 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
     ssr: false,
   });
 
-  // const { data, isLoading } = useOverviewData(orgId, "yearly");
+  const { data } = useOverviewData(orgId, "yearly");
 
-  // const mergeEntries = (data: OverviewData) => {
-  //   let result = [];
-
-  //   // FIXME: this could get buggy when dates would conflict between multiple contracts
-  //   // the graphing library may or may not handle that
-  //   for (const contract of data) {
-  //     for (const entry of contract.entries) {
-  //       result.push(entry);
-  //     }
-  //   }
-
-  //   return result;
-  // };
-
-  // const dataMerged: { date: string; executions: number }[] = mergeEntries(
-  //   data ?? []
-  // );
-
-  const data: OverviewData[] = [];
+  const dataComposed: ComposedExecutionDay[] = composeOverviewData(
+    data ?? []
+  );
   
   const chartCfg = {
     autoFit: true,
-    data: data,
+    data: dataComposed,
     height: 180,
     size: 10,
     dateField: "date",
