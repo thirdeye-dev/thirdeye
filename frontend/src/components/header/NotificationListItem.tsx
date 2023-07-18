@@ -1,16 +1,11 @@
 import { Box, Code, Flex, Stack, Text } from "@mantine/core";
 import dayjs from "dayjs";
-import { useRouter } from "next/router";
 import { BsRecordCircle } from "react-icons/bs";
 
 import { getColorByTag } from "@/utils";
+import Notification from "@/models/notification";
 
-// FIXME: construct a type for this
-export default function NotificationListItem({ notif }: Record<string, any>) {
-  const router = useRouter();
-
-  if (!notif) return null;
-
+export default function NotificationListItem({ notif }: { notif: Notification }) {
   return (
     <Box
       p="md"
@@ -31,7 +26,7 @@ export default function NotificationListItem({ notif }: Record<string, any>) {
     >
       <Stack>
         <Flex direction="row" justify="flex-start" gap="md">
-          <BsRecordCircle size="1.5em" color={getColorByTag(notif.tag)} />
+          <BsRecordCircle size="1.5em" color={getColorByTag("success")} /> {/* hardcoded tag right now */}
 
           <Code>{notif.contract_name}</Code>
           <Text size="sm" weight="bold" color="gray">
@@ -41,10 +36,10 @@ export default function NotificationListItem({ notif }: Record<string, any>) {
           <Code>{notif.alert_name}</Code>
         </Flex>
 
-        <Text>{notif.body}</Text>
+        <Text>{!notif.alert_description ? "No alert description" : notif.alert_description}</Text>
 
         <Text size="sm" color="gray">
-          {dayjs(notif.executed_at).fromNow()}
+          {dayjs(notif.created_at).fromNow()}
         </Text>
       </Stack>
     </Box>
