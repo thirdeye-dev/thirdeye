@@ -23,8 +23,8 @@ export default function Onboarding() {
   const form = useForm({});
 
   useEffect(() => {
-    form.setFieldValue('organizationName', `${user?.username}'s Organization`);
-  }, [isUserLoading])
+    form.setFieldValue("organizationName", `${user?.username}'s Organization`);
+  }, [isUserLoading]);
 
   const handleSubmit = async (organizationName: string) => {
     if (!organizationName) return;

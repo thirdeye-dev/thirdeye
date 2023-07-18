@@ -7,7 +7,6 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import useOverviewData from "@/hooks/use-overview-data";
 import { OverviewData } from "@/models/overviewData";
 
-
 interface ComposedExecutionDay {
   date: string;
   executions: number;
@@ -19,7 +18,6 @@ function composeOverviewData(inputData: OverviewData): ComposedExecutionDay[] {
   for (const item of inputData) {
     // @ts-ignore: entries is a field name, not a function
     for (const entry of item.entries) {
-
       // Add up executions, if the date already exists
       if (output.hasOwnProperty(entry.date)) {
         output[entry.date].executions += entry.executions;
@@ -67,10 +65,8 @@ export default function AlertHeatmap({ orgId }: { orgId: string | undefined }) {
 
   const { data } = useOverviewData(orgId, "yearly");
 
-  const dataComposed: ComposedExecutionDay[] = composeOverviewData(
-    data ?? []
-  );
-  
+  const dataComposed: ComposedExecutionDay[] = composeOverviewData(data ?? []);
+
   const chartCfg = {
     autoFit: true,
     data: dataComposed,
