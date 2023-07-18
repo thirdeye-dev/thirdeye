@@ -109,12 +109,6 @@ def validate_configuration(yaml_data):
     return serializer.validated_data
 
 
-class NotificationAPISerializer(rfs.ModelSerializer):
-    class Meta:
-        model = Notification
-        exclude = ["task_id"]
-
-
 class AlertsAPISerializer(rfs.ModelSerializer):
     class CustomYAMLField(rfs.Field):
         @classmethod
@@ -252,3 +246,13 @@ class BlockchainAlertRunner:
             trigger_transaction_hash=self.transaction.hash,
         )
         notification.save()
+
+class NotificationAPISerializer(rfs.ModelSerializer):
+    alert_name = rfs.CharField(source="alert.name")
+    alert_description = rfs.CharField(source="alert.description")
+    contract_name = rfs.CharField(source="alert.smart_contract.name")
+
+    class Meta:
+        model = Notification
+        exclude = ["task_id"]
+
