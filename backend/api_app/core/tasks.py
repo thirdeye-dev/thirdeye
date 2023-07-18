@@ -49,9 +49,9 @@ def entrypoint(self):
             monitoring_task.save()
         else: # FLOW blockchain
             if contract.object_type.lower() == ObjectType.CONTRACT.lower():
-                rd.rpush("smart_contracts:flow", contract.address)
+                rd.lpush("smart_contracts:flow", contract.address)
             else:
-                rd.rpush("accounts:flow", contract.address)
+                rd.lpush("accounts:flow", contract.address)
 
 # TODO: add a celery-beat task to check if the main monitoring task for a
 #  smart contract is running. If not, start it again.
