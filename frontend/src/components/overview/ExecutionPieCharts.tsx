@@ -1,5 +1,5 @@
 import useOverviewData from "@/hooks/use-overview-data";
-import { Stack, Text } from "@mantine/core";
+import { Flex, Stack, Text } from "@mantine/core";
 import {
   Cell,
   Legend,
@@ -58,6 +58,16 @@ export default function ExecutionPieCharts({
       </text>
     );
   };
+
+  if (!alertTriggers || alertTriggers.length === 0) {
+    return (
+      <Flex h="100%" w="100%" justify="center" align="center">
+        <Text size="1.5em" color="dimmed" align="center">
+          Alerts / Executions PieCharts will appear here
+        </Text>
+      </Flex>
+    );
+  }
 
   return (
     <Stack h="100%">
