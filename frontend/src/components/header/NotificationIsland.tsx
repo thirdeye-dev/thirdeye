@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import {
-    Accordion,
+  Accordion,
   ActionIcon,
   Badge,
   Code,
@@ -78,7 +78,7 @@ export default function NotificationIsland() {
       >
         <BsRecordCircle
           size="1.2em"
-          color={getColorByTag(latestNotification!.tag ?? "success")} // FIXME: not supplied by backend yet
+          color={getColorByTag("success")} // FIXME: not supplied by backend yet
         />
 
         <Badge>{latestNotification!.contract_name}</Badge>

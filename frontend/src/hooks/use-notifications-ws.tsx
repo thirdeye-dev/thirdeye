@@ -8,14 +8,17 @@ export default function useNotificationsWS(organizationId: string) {
   const { data, ...swr } = useSWRSubscription<Notification, Error, string>(
     `ws://${BACKEND_URL}/ws/notifications/${organizationId}?token=${getAccessToken()}`,
     (key, { next }) => {
-      const socket = new WebSocket(key)
+      const socket = new WebSocket(key);
 
-      socket.addEventListener('message', (event) => next(null, JSON.parse(event.data)))
+      socket.addEventListener("message", (event) =>
+        next(null, JSON.parse(event.data))
+      );
       // @ts-ignore
-      socket.addEventListener('error', (event) => next(event.error))
+      socket.addEventListener("error", (event) => next(event.error));
 
-      return () => socket.close()
-  })
+      return () => socket.close();
+    }
+  );
 
   return {
     notification: data,
