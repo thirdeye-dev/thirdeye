@@ -1,12 +1,12 @@
 import useSWRSubscription from "swr/subscription";
 
-import { BACKEND_URL } from "@/constants";
+import { WEBSOCKET_URL } from "@/constants";
 import { getAccessToken } from "@/cookies";
 import Notification from "@/models/notification";
 
 export default function useNotificationsWS(organizationId: string) {
   const { data, ...swr } = useSWRSubscription<Notification, Error, string>(
-    `ws://${BACKEND_URL}/ws/notifications/${organizationId}?token=${getAccessToken()}`,
+    `${WEBSOCKET_URL}/ws/notifications/${organizationId}?token=${getAccessToken()}`,
     (key, { next }) => {
       const socket = new WebSocket(key);
 

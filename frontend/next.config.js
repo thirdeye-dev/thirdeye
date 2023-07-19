@@ -2,7 +2,7 @@
 
 const removeImports = require("next-remove-imports")();
 
-const backendUrl = process.env.BACKEND_HOST || "localhost:8000";
+const backendUrl = process.env.BACKEND_URL || "localhost:8000";
 
 const nextConfig = {
   experimental: {
@@ -27,7 +27,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:slug*",
-        destination: `http://${backendUrl}/:slug*`,
+        destination: `${backendUrl}/:slug*`,
       },
     ];
   },
