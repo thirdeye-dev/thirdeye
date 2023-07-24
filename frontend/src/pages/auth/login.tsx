@@ -1,5 +1,5 @@
 import { Text, Flex, Button, Space } from "@mantine/core";
-import { FiGithub } from "react-icons/fi";
+import { FiGithub, FiGoogle } from "react-icons/fi";
 import Link from "next/link";
 
 export default function Page() {
@@ -23,6 +23,20 @@ export default function Page() {
               <Text color="orange.5">Login with Github</Text>
             </Button>
           </Link>
+
+          <Space w="md" />
+
+          <Link href={"/api/authentication/google"}>
+            <Button
+              variant={"subtle"}
+              size="lg"
+              color={"blue"}
+              leftIcon={<FiGoogle />}
+            >
+              <Text color="blue.5">Login with Google</Text>
+            </Button>
+          </Link>
+
         </Flex>
       </main>
     </>
