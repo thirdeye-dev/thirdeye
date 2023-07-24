@@ -1,6 +1,8 @@
 import logging
 import os
 
+import secrets
+
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
 from django.conf import settings
@@ -245,21 +247,30 @@ class GoogleLoginCallbackView(APIView):
             # Not giving out the actual error as we risk exposing the client secret
             raise AuthenticationFailed("OAuth authentication error.")
 
-        user = token.get("userinfo")
-        user_email = user.get("email")
-        user_name = user.get("name")
-        # image = user.get("image").get("url")
+        resp = oauth.google.get("https://openidconnect.googleapis.com/v1/userinfo", token=token)
+        resp.raise_for_status()
+        body = resp.json()
+
+        user_email = body.get("email")
+        user_name = body.get("name")
+        image = body.get("picture")
+
 
         try:
+            users = User.objects.filter(username=user_name)
+            if users:
+                user_name += secrets.token_hex(3)
+
             return User.objects.get(email=user_email)
         except User.DoesNotExist:
             logging.info("[Google Oauth] User does not exist. Creating new one.")
+
             return User.objects.create_user(
                 email=user_email,
                 username=user_name,
                 password=None,
                 auth_provider="google",
-                # avatar=image,
+                avatar=image,
             )
 
     def get(self, request):

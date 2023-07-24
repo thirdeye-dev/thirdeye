@@ -1,6 +1,8 @@
-import { Text, Flex, Button, Space } from "@mantine/core";
-import { FiGithub, FiGoogle } from "react-icons/fi";
 import Link from "next/link";
+
+import { Text, Flex, Button, Space } from "@mantine/core";
+import { FiGithub } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 
 export default function Page() {
   return (
@@ -31,7 +33,7 @@ export default function Page() {
               variant={"subtle"}
               size="lg"
               color={"blue"}
-              leftIcon={<FiGoogle />}
+              leftIcon={<FcGoogle />}
             >
               <Text color="blue.5">Login with Google</Text>
             </Button>
