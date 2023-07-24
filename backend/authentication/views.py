@@ -132,6 +132,32 @@ def google_login(request):
         raise error
 
 
+def google_login(request):
+    # for development
+    REPLACEMENT_DOMAIN = "localhost:3000"
+
+    if settings.DEMO_INSTANCE:
+        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+
+    REPLACEMENT_DOMAIN += "/api"
+
+    current_domain = request.get_host()
+
+    redirect_uri = request.build_absolute_uri(reverse("oauth_google_callback")).replace(
+        current_domain, REPLACEMENT_DOMAIN
+    )
+
+    if settings.DEMO_INSTANCE:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
+    try:
+        return oauth.google.authorize_redirect(request, redirect_uri)
+    except AttributeError as error:
+        if "No such client: " in str(error):
+            raise AuthenticationFailed("Google OAuth is not configured.")
+        raise error
+
+
 def github_login(request):
     # for development
     REPLACEMENT_DOMAIN = "localhost:3000"
