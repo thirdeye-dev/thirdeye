@@ -1,6 +1,8 @@
 import logging
 import os
 
+import secrets
+
 from authlib.integrations.base_client import OAuthError
 from authlib.oauth2 import OAuth2Error
 from django.conf import settings
@@ -115,6 +117,32 @@ class SetWalletAddressAPIView(generics.GenericAPIView):
 
         return Response({"message": "success"}, status=status.HTTP_200_OK)
 
+def google_login(request):
+    # for development
+    REPLACEMENT_DOMAIN = "localhost:3000"
+
+    if settings.DEMO_INSTANCE:
+        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+
+    REPLACEMENT_DOMAIN += "/api"
+
+    current_domain = request.get_host()
+
+    redirect_uri = request.build_absolute_uri(reverse("oauth_google_callback")).replace(
+        current_domain, REPLACEMENT_DOMAIN
+    )
+
+    if settings.DEMO_INSTANCE:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
+    try:
+        return oauth.google.authorize_redirect(request, redirect_uri)
+    except AttributeError as error:
+        if "No such client: " in str(error):
+            raise AuthenticationFailed("Google OAuth is not configured.")
+        raise error
+
+
 def github_login(request):
     # for development
     REPLACEMENT_DOMAIN = "localhost:3000"
@@ -206,3 +234,61 @@ class GithubLoginCallbackView(APIView):
             f"{settings.FRONTEND_URL}auth/social?access"
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
+    
+class GoogleLoginCallbackView(APIView):
+    @staticmethod
+    def validate_and_return_user(request):
+        try:
+            token = oauth.google.authorize_access_token(request)
+        except (
+            OAuthError,
+            OAuth2Error,
+        ):
+            # Not giving out the actual error as we risk exposing the client secret
+            raise AuthenticationFailed("OAuth authentication error.")
+
+        resp = oauth.google.get("https://openidconnect.googleapis.com/v1/userinfo", token=token)
+        resp.raise_for_status()
+        body = resp.json()
+
+        user_email = body.get("email")
+        user_name = body.get("name")
+        image = body.get("picture")
+
+
+        try:
+            users = User.objects.filter(username=user_name)
+            if users:
+                user_name += secrets.token_hex(3)
+
+            return User.objects.get(email=user_email)
+        except User.DoesNotExist:
+            logging.info("[Google Oauth] User does not exist. Creating new one.")
+
+            return User.objects.create_user(
+                email=user_email,
+                username=user_name,
+                password=None,
+                auth_provider="google",
+                avatar=image,
+            )
+
+    def get(self, request):
+        return self.post(request)
+
+    def post(self, request):
+        user = self.validate_and_return_user(request)
+        print(user)
+
+        tokens = user.tokens()
+        access_token = tokens.get("access")
+        refresh_token = tokens.get("refresh")
+
+        # Uncomment this for local testing
+        return redirect(
+            f"{settings.FRONTEND_URL}/auth/social?access"
+            f"={access_token}&refresh={refresh_token}&username={user.username}"
+        )
+        # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
+
+
