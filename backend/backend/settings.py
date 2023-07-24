@@ -309,9 +309,3 @@ SPECTACULAR_SETTINGS = {
         {"url": "http://localhost:3000/", "description": "Localhost API base URL"},
     ],
 }
-
-# os.environ['DJANGO_SETTINGS_MODULE'] =  "backend.settings"
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
-
-
-# django.setup()
