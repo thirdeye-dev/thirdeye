@@ -30,12 +30,3 @@ jobs:
         file: docker/Dockerfile
         push: true
         tags: ghcr.io/thirdeye-dev/thirdeye:latest
-
-    - name: Build and push Docker flow support image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: flowSupport/Dockerfile
-        push: true
-        tags: ghcr.io/thirdeye-dev/thirdeye:flowsupport
-      
