@@ -247,6 +247,7 @@ class BlockchainAlertRunner:
         )
         notification.save()
 
+
 class NotificationAPISerializer(rfs.ModelSerializer):
     alert_name = rfs.CharField(source="alert.name")
     alert_description = rfs.CharField(source="alert.description")
@@ -255,4 +256,3 @@ class NotificationAPISerializer(rfs.ModelSerializer):
     class Meta:
         model = Notification
         exclude = ["task_id"]
-
