@@ -1,22 +1,21 @@
 import Contract from "@/models/contract";
-import { deleteContract } from "@/services/contracts";
 import {
   Avatar,
+  Box,
   Button,
   Card,
   Flex,
   Group,
-  Paper,
   Stack,
   Text,
+  ThemeIcon,
   Tooltip,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/router";
-import { AiFillCopy } from "react-icons/ai";
-import { FaEthereum, FaTrash } from "react-icons/fa";
-import { TbPolygon } from "react-icons/tb";
+import { FaTrash } from "react-icons/fa";
 import CopyToClipboard from "../CopyToClipboard";
+import { getColorByChain } from "@/utils";
+import ChainIcon from "@/components/ChainIcon";
 
 export default function ContractCard({
   contract,
@@ -58,18 +57,18 @@ export default function ContractCard({
           </Text>
 
           <Group spacing={"0.2rem"}>
-            <Tooltip label={contract.chain} color="gray">
+            <Tooltip label={contract.chain.toUpperCase()} color="gray">
               <Avatar
-                color={contract.chain === "ETH" ? "blue" : "violet"}
+                color={getColorByChain(contract.chain)}
                 size="sm"
               >
-                {contract.chain === "ETH" ? <FaEthereum /> : <TbPolygon />}
+                <ChainIcon chain={contract.chain} />
               </Avatar>
             </Tooltip>
 
-            <Tooltip label={contract.network} color="gray">
+            <Tooltip label={contract.network.toUpperCase()} color="gray">
               <Avatar color="blue" size="sm">
-                {contract.network.at(0)}
+                {contract.network.at(0)?.toUpperCase()}
               </Avatar>
             </Tooltip>
           </Group>

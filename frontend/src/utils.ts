@@ -1,3 +1,5 @@
+import { Chain } from "@/models/contract";
+
 export const toSentenceCase = (str: string) => {
   const words = str.split("_");
   const capitalizedWords = words.map(
@@ -19,3 +21,12 @@ export const getColorByTag = (tag: string) => {
       return "gray";
   }
 };
+
+export const getColorByChain = (chain: Chain) => {
+  if (chain === Chain.ETH) {
+    return "blue";
+  }
+
+  return "gray";
+};
+
