@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - flow
     paths:
       - '**.py'
       - '**.sh'
