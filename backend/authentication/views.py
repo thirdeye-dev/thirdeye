@@ -1,6 +1,5 @@
 import logging
 import os
-
 import secrets
 
 from authlib.integrations.base_client import OAuthError
@@ -258,7 +257,8 @@ class GithubLoginCallbackView(APIView):
             f"{settings.FRONTEND_URL}auth/social?access"
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
-    
+
+
 class GoogleLoginCallbackView(APIView):
     @staticmethod
     def validate_and_return_user(request):
@@ -271,14 +271,15 @@ class GoogleLoginCallbackView(APIView):
             # Not giving out the actual error as we risk exposing the client secret
             raise AuthenticationFailed("OAuth authentication error.")
 
-        resp = oauth.google.get("https://openidconnect.googleapis.com/v1/userinfo", token=token)
+        resp = oauth.google.get(
+            "https://openidconnect.googleapis.com/v1/userinfo", token=token
+        )
         resp.raise_for_status()
         body = resp.json()
 
         user_email = body.get("email")
         user_name = body.get("name")
         image = body.get("picture")
-
 
         try:
             users = User.objects.filter(username=user_name)
@@ -314,5 +315,3 @@ class GoogleLoginCallbackView(APIView):
             f"={access_token}&refresh={refresh_token}&username={user.username}"
         )
         # return redirect(self.request.build_absolute_uri(f"/login?token={token}"))
-
-
