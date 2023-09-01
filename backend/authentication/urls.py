@@ -3,12 +3,12 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (
     GithubLoginCallbackView,
+    GoogleLoginCallbackView,
     LoginAPIView,
     LogoutAPIView,
     MeAPIView,
     github_login,
     google_login,
-    GoogleLoginCallbackView
 )
 
 urlpatterns = [
