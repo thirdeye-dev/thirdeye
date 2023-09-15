@@ -144,6 +144,7 @@ export default function NavbarMinimal({
           <NavbarLink
             icon={SettingsIcon}
             label="Settings"
+            active={activeLink === "settings"}
             onClick={onClickSettings}
           />
           <NavbarLink
