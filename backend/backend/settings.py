@@ -162,9 +162,9 @@ DEMO_ALLOWED_LOGINS = [
     "kapersky1337",
 ]
 
-PROTOTYPE_DOMAIN = "ipfs.thirdeyelabs.xyz"
+API_DOMAIN = "api.thirdeyelabs.xyz:8000"
 
-PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
+API_DOMAIN = f"http://{API_DOMAIN}/"
 
 FRONTEND_URL = (
     PROTOTYPE_URL
@@ -302,7 +302,7 @@ CELERY_ENABLE_UTC = True
 # Spectacular settings
 SPECTACULAR_SETTINGS = {
     "TITLE": "ThirdEye",
-    "DESCRIPTION": "ThirdEyeEye OpenAPI Documentation",
+    "DESCRIPTION": "ThirdEye OpenAPI Documentation",
     "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVERS": [

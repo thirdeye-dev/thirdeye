@@ -110,7 +110,7 @@ def google_login(request):
     REPLACEMENT_DOMAIN = "localhost:3000"
 
     if settings.DEMO_INSTANCE:
-        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+        REPLACEMENT_DOMAIN = settings.API_DOMAIN
 
     REPLACEMENT_DOMAIN += "/api"
 
@@ -136,7 +136,7 @@ def google_login(request):
     REPLACEMENT_DOMAIN = "localhost:3000"
 
     if settings.DEMO_INSTANCE:
-        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+        REPLACEMENT_DOMAIN = settings.API_DOMAIN
 
     REPLACEMENT_DOMAIN += "/api"
 
@@ -162,7 +162,7 @@ def github_login(request):
     REPLACEMENT_DOMAIN = "localhost:3000"
 
     if settings.DEMO_INSTANCE:
-        REPLACEMENT_DOMAIN = settings.PROTOTYPE_DOMAIN
+        REPLACEMENT_DOMAIN = settings.API_DOMAIN
 
     REPLACEMENT_DOMAIN += "/api"
 
