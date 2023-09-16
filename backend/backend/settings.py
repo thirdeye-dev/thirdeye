@@ -162,7 +162,7 @@ DEMO_ALLOWED_LOGINS = [
     "kapersky1337",
 ]
 
-PROTOTYPE_DOMAIN = "demo.thirdeyelabs.xyz"
+PROTOTYPE_DOMAIN = "ipfs.thirdeyelabs.xyz"
 
 PROTOTYPE_URL = f"https://{PROTOTYPE_DOMAIN}/"
 
