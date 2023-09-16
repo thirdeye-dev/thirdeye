@@ -166,8 +166,11 @@ API_DOMAIN = "api.thirdeyelabs.xyz:8000"
 
 API_DOMAIN = f"http://{API_DOMAIN}/"
 
+FRONTEND_URL_MAIN = "https://thirdeyelabs.xyz/"
+FRONTEND_URL_IPFS = "https://ipfs.thirdeyelabs.xyz/"
+
 FRONTEND_URL = (
-    PROTOTYPE_URL
+    FRONTEND_URL_IPFS
     if DEMO_INSTANCE
     else os.environ.get("FRONTEND_URL", "http://localhost:3000/")
 )
