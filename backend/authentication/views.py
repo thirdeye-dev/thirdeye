@@ -146,8 +146,8 @@ def google_login(request):
         current_domain, REPLACEMENT_DOMAIN
     )
 
-    if settings.DEMO_INSTANCE:
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    # if settings.DEMO_INSTANCE:
+    #     redirect_uri = redirect_uri.replace("http://", "https://")
 
     try:
         return oauth.google.authorize_redirect(request, redirect_uri)
@@ -172,8 +172,8 @@ def github_login(request):
         current_domain, REPLACEMENT_DOMAIN
     )
 
-    if settings.DEMO_INSTANCE:
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    # if settings.DEMO_INSTANCE:
+    #     redirect_uri = redirect_uri.replace("http://", "https://")
 
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)
