@@ -1,6 +1,6 @@
 channels
 channels-redis
-django==3.2.19
+django==3.2.20
 gunicorn==20.1.*
 djangorestframework-simplejwt
 djangorestframework-jwt
