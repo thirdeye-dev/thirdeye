@@ -164,7 +164,7 @@ DEMO_ALLOWED_LOGINS = [
 
 API_DOMAIN = "api.thirdeyelabs.xyz:8000"
 
-API_DOMAIN = f"http://{API_DOMAIN}/"
+API_URL = f"http://{API_DOMAIN}/"
 
 FRONTEND_URL_MAIN = "https://thirdeyelabs.xyz/"
 FRONTEND_URL_IPFS = "https://ipfs.thirdeyelabs.xyz/"
