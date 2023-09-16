@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import {
@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
 import AppShellLayout from "@/layouts/AppShellLayout";
@@ -21,6 +21,7 @@ import { deleteContract } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
 import ContractCard from "@/components/contracts/ContractCard";
 import useContracts from "@/hooks/use-contracts";
+import DeploySuggestion from "@/components/contracts/DeploySuggestion";
 
 export default function Contracts() {
   const router = useRouter();
@@ -28,8 +29,14 @@ export default function Contracts() {
   const organizationId = router.query.orgId as string;
   const { contracts, isLoading, mutate } = useContracts(organizationId); // FIXME: sometimes organizationId is undefined, causing a failed request
 
+  const [isDeploySuggestionOpened, { open: openDeploySuggestion, close: closeDeploySuggestion }] =
+    useDisclosure(false);
   const [isAddModalOpened, { open: openAddModal, close: closeAddModal }] =
     useDisclosure(false);
+
+  useHotkeys([
+    ['ctrl+K', openDeploySuggestion],
+  ]);
 
   const handleContractDelete = async (contract: Contract) => {
     await deleteContract(contract.id, organizationId);
@@ -57,6 +64,15 @@ export default function Contracts() {
 
   return (
     <>
+      <Modal
+        opened={isDeploySuggestionOpened}
+        onClose={closeDeploySuggestion}
+        title={<Text size="1.4rem">Welcome</Text>}
+        centered
+      >
+        <DeploySuggestion close={closeDeploySuggestion} />
+      </Modal>
+
       <Modal
         opened={isAddModalOpened}
         onClose={closeAddModal}

@@ -12,11 +12,11 @@ export default function Settings() {
       <Flex h="100%" direction="column" align="stretch" gap="md">
         <SettingsCategory title="Wallet" subtitle="ThirdEye generates a wallet for your automation needs.">
           <CopyToClipboard label="Wallet Address" textToCopy="0xE69abdd271495248Cb41e1650fBE8F42e2Ce6c28" />
-          <CopyToClipboard label="Private Key" textToCopy="1137dc03f5157d6166b7bb07dbb82df7f7390a57ac21181b26326516b28311d7" />
+          <CopyToClipboard label="Private Key" textToCopy="******************************************" />
         </SettingsCategory>
 
         <SettingsCategory title="API Key" subtitle="Triggers Automations over an API">
-          <CopyToClipboard textToCopy="aow2302jdiewoj0932ncfe9uf2390fj290jf" />
+          <CopyToClipboard textToCopy="************************************" />
         </SettingsCategory>
       </Flex>  
     </Flex>

@@ -1,5 +1,7 @@
 import { Chain } from "@/models/contract";
 
+const ethContractAddressRegex = new RegExp(/^0x([A-Fa-f0-9]{40})$/);
+
 export const toSentenceCase = (str: string) => {
   const words = str.split("_");
   const capitalizedWords = words.map(
@@ -37,4 +39,8 @@ export const gradientByChain = (chain: Chain) => {
     default:
       return {from: "gray", to: "gray"} 
   }
+}
+
+export const validateEthereumAddress = (address: string) => {
+  return ethContractAddressRegex.test(address);
 }

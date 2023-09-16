@@ -1,9 +1,8 @@
 import { Chain, Network } from "@/models/contract";
 import { createContract } from "@/services/contracts";
+import { validateEthereumAddress } from "@/utils";
 import { Button, SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-
-const ethContractAddressRegex = new RegExp(/^0x([A-Fa-f0-9]{40})$/);
 
 export default function AddContractForm({
   organizationId,
@@ -23,7 +22,7 @@ export default function AddContractForm({
       const validateEthAddress = () => {
         if (vals.address.length === 0) return "address is required";
 
-        if (!ethContractAddressRegex.test(vals.address)) {
+        if (!validateEthereumAddress(vals.address)) {
           return "invalid eth contract address";
         }
 
