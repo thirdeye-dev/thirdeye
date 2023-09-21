@@ -166,7 +166,8 @@ API_DOMAIN = "api.thirdeyelabs.xyz:8000"
 
 API_URL = f"http://{API_DOMAIN}/"
 
-FRONTEND_URL_MAIN = "https://demo.thirdeyelabs.xyz/"
+FRONTEND_DOMAIN = "demo.thirdeyelabs.xyz"
+FRONTEND_URL_MAIN = f"https://{FRONTEND_DOMAIN}/"
 
 FRONTEND_URL = (
     FRONTEND_URL_MAIN
