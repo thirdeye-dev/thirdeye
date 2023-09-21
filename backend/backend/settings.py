@@ -312,3 +312,5 @@ SPECTACULAR_SETTINGS = {
         {"url": "http://localhost:3000/", "description": "Localhost API base URL"},
     ],
 }
+
+# Some change
