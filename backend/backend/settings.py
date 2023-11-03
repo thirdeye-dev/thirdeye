@@ -86,7 +86,7 @@ INSTALLED_APPS = [
 ]
 
 APPEND_SLASH = False
-FRONTEND_URL = "http://localhost:3000/"
+FRONTEND_URL = "http://localhost:3001/"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
@@ -172,7 +172,7 @@ FRONTEND_URL_MAIN = f"https://{FRONTEND_DOMAIN}/"
 FRONTEND_URL = (
     FRONTEND_URL_MAIN
     if DEMO_INSTANCE
-    else os.environ.get("FRONTEND_URL", "http://localhost:3000/")
+    else os.environ.get("FRONTEND_URL", "http://localhost:3001/")
 )
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -309,7 +309,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVERS": [
-        {"url": "http://localhost:3000/", "description": "Localhost API base URL"},
+        {"url": "http://localhost:3001/", "description": "Localhost API base URL"},
     ],
 }
 
