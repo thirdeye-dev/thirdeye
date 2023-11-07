@@ -14,6 +14,7 @@ class MonitoringTasks(BaseMixin):
 
     SmartContract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
 
+
     # celery task id
     task_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
@@ -24,13 +25,14 @@ class MonitoringTasks(BaseMixin):
 
     def __str__(self):
         return f"{self.SmartContract.address} - {self.task_id}"
-
+    
 
 class Alerts(BaseMixin):
     smart_contract = models.ForeignKey(SmartContract, on_delete=models.CASCADE)
     alert_yaml = YAMLField()
     name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.smart_contract.address} - {self.name}"
