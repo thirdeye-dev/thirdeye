@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView , UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -293,41 +293,16 @@ class AlertCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-class AlertUpdateAPIView(UpdateAPIView):
-    serializer_class = AlertsAPISerializer
-    permission_classes = [AlertCanBeAccessedPermissions]
-    
-    def get_queryset(self):
-        queryset = Alerts.objects.all()
-        return queryset
-    
-    def patch(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, include_alert_yaml=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
-class AlertDeleteAPIView(UpdateAPIView):
-    serializer_class = AlertsAPISerializer
-    permission_classes = [AlertCanBeAccessedPermissions]
 
-    def get_queryset(self):
-        queryset = Alerts.objects.all()
-        return queryset
-    
-    def delete(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
 class NotificationListViewSet(ListAPIView):
     serializer_class = NotificationAPISerializer
     permission_classes = [IsMember]
 
     def get_queryset(self):
         queryset = self.serializer_class.Meta.model.objects.filter(
-            alert__smart_contract__owner_organization=self.request.query_params.get("owner_organization")
+            alert__smart_contract__owner_organization=self.request.query_params.get(
+                "owner_organization"
+            )
         )
         return queryset

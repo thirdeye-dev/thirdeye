@@ -220,8 +220,7 @@ def monitor_contract(self, monitoring_task_id):
                 transaction["fn_name"] = fn_name
 
                 alerts = Alerts.objects.filter(
-                    active=True,
-                    smart_contract=monitoring_task.SmartContract,
+                    smart_contract=monitoring_task.SmartContract
                 )
 
                 for alert in alerts:
