@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -19,7 +19,7 @@ from .permissions import (
     SmartContractAlertPermissions,
     SmartContractNotificationAndAlertsPermissions,
 )
-from .serializers import AlertsAPISerializer, NotificationAPISerializer
+from .serializers import AlertUpdateSerializer, AlertsAPISerializer, NotificationAPISerializer
 
 logger = logging.getLogger(__name__)
 
@@ -293,7 +293,30 @@ class AlertCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class AlertDeleteAPIView(DestroyAPIView):
+    queryset = Alerts.objects.all()
+    permission_classes = [AlertCanBeAccessedPermissions]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class AlertUpdateAPIView(UpdateAPIView):
+    serializer_class = AlertUpdateSerializer
+    permission_classes = [AlertCanBeAccessedPermissions]
+    
+    def get_queryset(self):
+        queryset = Alerts.objects.all()
+        return queryset
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class NotificationListViewSet(ListAPIView):
     serializer_class = NotificationAPISerializer

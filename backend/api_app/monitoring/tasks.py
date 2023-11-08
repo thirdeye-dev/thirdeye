@@ -38,8 +38,8 @@ def call_smart_contract_function(self, monitoring_task_id):
 def send_webhook(self, notification_id):
     notification = Notification.objects.filter(id=notification_id).first()
 
-    if not notification:
-        error_msg = f"Notification with id {notification_id} not found"
+    if (not notification) and (notification.alert.active is False):
+        error_msg = f"Active notification with id {notification_id} not found"
         logger.error(error_msg)
         raise Exception(error_msg)
 
@@ -51,8 +51,10 @@ def send_webhook(self, notification_id):
     webhook_url = notification.notification_target
     webhook_body = notification.notification_body
 
+    headers = {"Content-Length": str(len(webhook_body))}
+
     try:
-        response = requests.post(webhook_url, json=webhook_body)
+        response = requests.post(webhook_url, json=webhook_body, headers=headers)
         notification.meta_logs = {
             "timestamp": datetime.now().isoformat(),
             "response": response.text,
@@ -220,8 +222,13 @@ def monitor_contract(self, monitoring_task_id):
                 transaction["fn_name"] = fn_name
 
                 alerts = Alerts.objects.filter(
+                    active=True,
                     smart_contract=monitoring_task.SmartContract
                 )
+
+                if len(alerts) == 0:
+                    logger.info("No alerts found for this contract")
+                    break
 
                 for alert in alerts:
                     alert_runner = BlockchainAlertRunner(alert, transaction)

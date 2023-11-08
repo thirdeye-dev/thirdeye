@@ -31,6 +31,7 @@ class Alerts(BaseMixin):
     alert_yaml = YAMLField()
     name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.smart_contract.address} - {self.name}"
