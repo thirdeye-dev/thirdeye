@@ -38,8 +38,8 @@ def call_smart_contract_function(self, monitoring_task_id):
 def send_webhook(self, notification_id):
     notification = Notification.objects.filter(id=notification_id).first()
 
-    if not notification:
-        error_msg = f"Notification with id {notification_id} not found"
+    if (not notification) and (notification.alert.active is False):
+        error_msg = f"Active notification with id {notification_id} not found"
         logger.error(error_msg)
         raise Exception(error_msg)
 

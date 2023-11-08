@@ -4,6 +4,7 @@ from .views import (
     AlertCreateAPIView,
     AlertRetrieveAPIView,
     AlertUpdateAPIView,
+    AlertDeleteAPIView,
     NotificationListViewSet,
     OrganizationAlertListViewSet,
     OverviewDataAPIView,
@@ -19,6 +20,7 @@ urlpatterns = [
     path("alerts/<int:pk>", AlertRetrieveAPIView.as_view(), name="alert-retrieve"),
     path("alerts", AlertCreateAPIView.as_view(), name="alert-create"),
     path("alerts/update/<int:pk>", AlertUpdateAPIView.as_view(), name="alert-update"),
+    path("alerts/delete/<int:pk>", AlertDeleteAPIView.as_view(), name="alert-delete"),
     path("notifications", NotificationListViewSet.as_view(), name="notification-list"),
     path("pre-written-alerts", get_pre_written_alerts, name="pre-written-alerts"),
     path(

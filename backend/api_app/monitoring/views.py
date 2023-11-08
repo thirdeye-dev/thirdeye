@@ -294,6 +294,15 @@ class AlertCreateAPIView(CreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
+class AlertDeleteAPIView(DestroyAPIView):
+    queryset = Alerts.objects.all()
+    permission_classes = [AlertCanBeAccessedPermissions]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 class AlertUpdateAPIView(UpdateAPIView):
     serializer_class = AlertUpdateSerializer
     permission_classes = [AlertCanBeAccessedPermissions]
