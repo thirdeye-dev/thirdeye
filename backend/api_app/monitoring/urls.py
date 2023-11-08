@@ -2,9 +2,9 @@ from django.urls import path
 
 from .views import (
     AlertCreateAPIView,
+    AlertDeleteAPIView,
     AlertRetrieveAPIView,
     AlertUpdateAPIView,
-    AlertDeleteAPIView,
     NotificationListViewSet,
     OrganizationAlertListViewSet,
     OverviewDataAPIView,

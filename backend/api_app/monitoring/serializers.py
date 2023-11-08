@@ -108,10 +108,16 @@ def validate_configuration(yaml_data):
     serializer.is_valid(raise_exception=True)
     return serializer.validated_data
 
+
 class AlertUpdateSerializer(rfs.ModelSerializer):
     class Meta:
         model = Alerts
-        fields = ('name', 'smart_contract', 'alert_yaml', 'active')  # Include the fields you want to allow for update
+        fields = (
+            "name",
+            "smart_contract",
+            "alert_yaml",
+            "active",
+        )  # Include the fields you want to allow for update
 
     def validate(self, data):
         if "alert_yaml" in data:
@@ -122,9 +128,15 @@ class AlertUpdateSerializer(rfs.ModelSerializer):
                 logger.error(e)
                 raise rfs.ValidationError(e)
         if "smart_contract" in data:
-            if data["smart_contract"].owner_organization != self.instance.smart_contract.owner_organization:
-                raise rfs.ValidationError("Cannot change smart contract to a different organization")
+            if (
+                data["smart_contract"].owner_organization
+                != self.instance.smart_contract.owner_organization
+            ):
+                raise rfs.ValidationError(
+                    "Cannot change smart contract to a different organization"
+                )
         return data
+
 
 class AlertsAPISerializer(rfs.ModelSerializer):
     class CustomYAMLField(rfs.Field):

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('monitoring', '0005_alter_notification_notification_body'),
+        ("monitoring", "0005_alter_notification_notification_body"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='alerts',
-            name='active',
+            model_name="alerts",
+            name="active",
             field=models.BooleanField(default=True),
         ),
     ]
