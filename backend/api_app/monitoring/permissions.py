@@ -20,9 +20,11 @@ class AlertCanBeAccessedPermissions(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        alert = Alerts.objects.filter(id=view.kwargs["pk"]).first()
+        id = view.kwargs.get("pk")
+
+        alert = Alerts.objects.filter(id=id).first()
         if alert is None:
-            self.message = f"Alert with id {view.kwargs['pk']} does not exist."
+            self.message = f"Alert with id {id} does not exist."
             return False
 
         return Membership.is_member(
