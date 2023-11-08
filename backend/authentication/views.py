@@ -162,9 +162,9 @@ def github_login(request):
     REPLACEMENT_DOMAIN = "localhost:3000"
 
     if settings.DEMO_INSTANCE:
-        REPLACEMENT_DOMAIN = settings.API_DOMAIN
+        REPLACEMENT_DOMAIN = settings.FRONTEND_DOMAIN
 
-    # REPLACEMENT_DOMAIN += "/api
+    REPLACEMENT_DOMAIN += "/api"
 
     current_domain = request.get_host()
 
@@ -172,8 +172,8 @@ def github_login(request):
         current_domain, REPLACEMENT_DOMAIN
     )
 
-    # if settings.DEMO_INSTANCE:
-    #     redirect_uri = redirect_uri.replace("http://", "https://")
+    if settings.DEMO_INSTANCE:
+        redirect_uri = redirect_uri.replace("http://", "https://")
 
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)

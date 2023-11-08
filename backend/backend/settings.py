@@ -166,11 +166,11 @@ API_DOMAIN = "api.thirdeyelabs.xyz:8000"
 
 API_URL = f"http://{API_DOMAIN}/"
 
-FRONTEND_URL_MAIN = "https://thirdeyelabs.xyz/"
-FRONTEND_URL_IPFS = "https://ipfs.thirdeyelabs.xyz/"
+FRONTEND_DOMAIN = "demo.thirdeyelabs.xyz"
+FRONTEND_URL_MAIN = f"https://{FRONTEND_DOMAIN}/"
 
 FRONTEND_URL = (
-    FRONTEND_URL_IPFS
+    FRONTEND_URL_MAIN
     if DEMO_INSTANCE
     else os.environ.get("FRONTEND_URL", "http://localhost:3000/")
 )
@@ -312,3 +312,5 @@ SPECTACULAR_SETTINGS = {
         {"url": "http://localhost:3000/", "description": "Localhost API base URL"},
     ],
 }
+
+# Some change
