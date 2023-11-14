@@ -7,7 +7,7 @@ services:
       - "8000"
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.backend
     entrypoint: docker/entrypoint/entrypoint.sh
     ports:
       - "8000:8000"

@@ -11,6 +11,35 @@ services:
       - ../postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env
+  
+  frontend:
+    hostname: frontend
+    image: frontend_app_thirdeye
+    container_name: frontend_app_thirdeye
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.frontend
+    networks:
+      default:
+      internal:
+    volumes:
+      - ../:/app
+    env_file:
+      - ./.env
+    #ports:
+    #  - "3000:3000"
+
+  nginx:
+    hostname: nginx
+    image: nginx:alpine
+    container_name: nginx_app_thirdeye
+    networks:
+      default:
+      internal:
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
 
   backend:
     container_name: backend_app_thirdeye
@@ -20,8 +49,8 @@ services:
     expose:
       - "8000"
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile.backend
     entrypoint: docker/entrypoint/entrypoint.sh
     depends_on:
       - postgres
@@ -34,8 +63,8 @@ services:
 
   celery:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile.backend
     container_name: celery_thirdeye
     volumes:
       - ../:/app
@@ -51,8 +80,8 @@ services:
 
   celery_beat:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile.backend
     volumes:
       - ../:/app
     networks:
@@ -83,8 +112,7 @@ services:
       internal:
     image: redis:alpine
 
-
 networks:
-    default:
-    internal:
-        internal: true
+  default:
+  internal:
+    internal: true

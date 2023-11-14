@@ -27,6 +27,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: docker/Dockerfile
+        file: docker/Dockerfile.backend
         push: true
         tags: ghcr.io/thirdeye-dev/thirdeye:latest

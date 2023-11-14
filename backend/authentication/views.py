@@ -107,7 +107,7 @@ class MeAPIView(generics.RetrieveAPIView):
 
 def google_login(request):
     # for development
-    REPLACEMENT_DOMAIN = "localhost:3000"
+    REPLACEMENT_DOMAIN = "localhost"
 
     if settings.DEMO_INSTANCE:
         REPLACEMENT_DOMAIN = settings.API_DOMAIN
@@ -133,7 +133,7 @@ def google_login(request):
 
 def google_login(request):
     # for development
-    REPLACEMENT_DOMAIN = "localhost:3000"
+    REPLACEMENT_DOMAIN = "localhost"
 
     if settings.DEMO_INSTANCE:
         REPLACEMENT_DOMAIN = settings.API_DOMAIN
@@ -159,7 +159,7 @@ def google_login(request):
 
 def github_login(request):
     # for development
-    REPLACEMENT_DOMAIN = "localhost:3000"
+    REPLACEMENT_DOMAIN = "localhost"
 
     if settings.DEMO_INSTANCE:
         REPLACEMENT_DOMAIN = settings.FRONTEND_DOMAIN
