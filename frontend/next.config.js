@@ -23,14 +23,6 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:slug*",
-        destination: `${backendUrl}/:slug*`,
-      },
-    ];
-  },
 };
 
 module.exports = removeImports(nextConfig);

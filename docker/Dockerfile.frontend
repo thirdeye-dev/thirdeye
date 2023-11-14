@@ -1,0 +1,20 @@
+# Stage 1: Build frontend
+FROM node:alpine AS frontend
+
+WORKDIR /usr/app
+
+RUN npm install --global pm2
+
+COPY frontend/package*.json ./
+
+RUN npm install --production --force
+
+COPY frontend/ ./
+
+RUN npm run build
+
+EXPOSE 3000
+
+USER node
+
+CMD [ "pm2-runtime", "npm", "--", "start" ]
