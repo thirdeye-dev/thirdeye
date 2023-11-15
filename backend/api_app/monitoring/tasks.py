@@ -45,6 +45,9 @@ def send_webhook(self, notification_id):
 
     # just in case, we don't
     # want to send the same notification twice
+    if notification.alert.active != True:
+        return
+
     if notification.status == Notification.Status.SENT:
         return
 
