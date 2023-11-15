@@ -45,7 +45,12 @@ def send_webhook(self, notification_id):
 
     # just in case, we don't
     # want to send the same notification twice
-    if notification.alert.active != True:
+    if notification.alert and notification.alert.active != True:
+        logger.info(f"Alert {notification.alert.id} is not active for notification {notification.id}")
+        return
+
+    elif not notification.alert:
+        logger.info(f"Alert {notification.alert.id} is not active. Seems like it got deleted")
         return
 
     if notification.status == Notification.Status.SENT:
