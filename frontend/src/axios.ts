@@ -4,7 +4,7 @@ import { getAccessToken, removeUserCookie } from "@/cookies";
 import Router from "next/router";
 
 const instance = axios.create({
-  baseURL: "/api",
+  baseURL: "/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
