@@ -26,8 +26,8 @@ services:
       - ../:/app
     env_file:
       - ./.env
-    ports:
-     - "3000:3000"
+    # ports:
+    #  - "3000:3000"
 
   nginx:
     hostname: nginx
@@ -51,7 +51,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.backend
-    entrypoint: docker/entrypoint/entrypoint.sh
+    entrypoint: ./docker/entrypoint/entrypoint.sh
     depends_on:
       - postgres
     ports:
@@ -71,7 +71,7 @@ services:
     networks:
       default:
       internal:
-    entrypoint: docker/entrypoint/entrypoint_celery.sh
+    entrypoint: ./docker/entrypoint/entrypoint_celery.sh
     env_file:
       - ./.env
     depends_on:
@@ -88,7 +88,7 @@ services:
       default:
       internal:
     container_name: celery_beat_thirdeye
-    entrypoint: docker/entrypoint/entrypoint_beat_celery.sh
+    entrypoint: ./docker/entrypoint/entrypoint_beat_celery.sh
     env_file:
       - ./.env
     depends_on:
