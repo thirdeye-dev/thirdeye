@@ -164,7 +164,7 @@ def github_login(request):
     if settings.DEMO_INSTANCE:
         REPLACEMENT_DOMAIN = settings.FRONTEND_DOMAIN
 
-    REPLACEMENT_DOMAIN += "/api"
+    REPLACEMENT_DOMAIN += "/api/v1"
 
     current_domain = request.get_host()
 
