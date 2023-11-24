@@ -23,7 +23,7 @@ services:
       default:
       internal:
     volumes:
-      - ../:/app
+      - ../frontend:/usr/app
     env_file:
       - ./.env
     # ports:
@@ -40,6 +40,9 @@ services:
       - ./nginx/default.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
+    depends_on:
+      - frontend
+      - backend
 
   backend:
     container_name: backend_app_thirdeye
