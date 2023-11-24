@@ -15,7 +15,7 @@ export default function Page() {
 
           <Space w="md" />
 
-          <Link href={"/api/authentication/github"}>
+          <Link href={"/api/v1/authentication/github"}>
             <Button
               variant={"subtle"}
               size="lg"
@@ -28,7 +28,7 @@ export default function Page() {
 
           <Space w="md" />
 
-          <Link href={"/api/authentication/google"}>
+          <Link href={"/api/v1/authentication/google"}>
             <Button
               variant={"subtle"}
               size="lg"
