@@ -1,0 +1,2 @@
+#for windows so that git doesn't mess up line endings on checkout
+*.sh text eol=lf
