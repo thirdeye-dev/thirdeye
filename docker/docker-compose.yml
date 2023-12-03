@@ -114,8 +114,27 @@ services:
       default:
       internal:
     image: redis:alpine
+  
+  secondeye:
+    container_name: secondeye_app_thirdeye
+    networks:
+      default:
+      internal:
+    expose: 
+      - "8080"
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.secondeye
+    volumes:
+      - ../:/app
+    env_file:
+      - ./.env
+    ports:
+      - "8080:8080"
+    
 
 networks:
   default:
   internal:
     internal: true
+

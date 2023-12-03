@@ -10,6 +10,7 @@ import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"encoding/json"
+	"reflect"
 )
 
 type User struct {
@@ -45,7 +46,7 @@ func handleAuth(req *http.Request) (User, error) {
 			log.Println("[DEBUG] Unexpected signing method: %v", token.Header["alg"])
 			return user, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		// Return the secret key
+			// Return the secret key
 		return []byte(secretKey), nil
 	})
 
@@ -71,13 +72,13 @@ func handleAuth(req *http.Request) (User, error) {
 	}
 
 	// Get the user id from the claims
-	userId, ok := claims["user_id"].(int)
+	userId, ok := claims["user_id"].(float64)
 	if !ok {
-		return user, errors.New("Invalid user id")
+		return user, errors.New(fmt.Sprintf("invalid user id: %s", reflect.TypeOf(claims["user_id"])))
 	}
 
 	// overwrite user
-	user.UserId = userId
+	user.UserId = int(userId)
 
 	// Return the user
 	return user, nil
