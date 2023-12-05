@@ -1,20 +1,51 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
-	"log"
-	"os"
-	"fmt"
-	"strings"
-	"errors"
-	"github.com/dgrijalva/jwt-go"
 	"encoding/json"
-	"reflect"
+	"errors"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	UserId       int
+	UserId int
+}
+
+type AuthenticationUser struct {
+	ID            int64  `gorm:"column:id"`
+	Password      string `gorm:"column:password"`
+	LastLogin     time.Time `gorm:"column:last_login"`
+	IsSuperuser   bool   `gorm:"column:is_superuser"`
+	Username      string `gorm:"column:username"`
+	Email         string `gorm:"column:email"`
+	IsStaff       bool   `gorm:"column:is_staff"`
+	IsVerified    bool   `gorm:"column:is_verified"`
+	CreatedAt     time.Time `gorm:"column:created_at"`
+	UpdatedAt     time.Time `gorm:"column:updated_at"`
+	AuthProvider string `gorm:"column:auth_provider"`
+	Avatar        string `gorm:"column:avatar"`
+}
+
+
+func getDatabaseConfig() string {
+	host := "postgres"
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	name := os.Getenv("POSTGRES_DB")
+	port := "5432"
+	sslMode := "disable"
+	timeZone := "Asia/Kolkata"
+
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+		host, user, password, name, port, sslMode, timeZone)
 }
 
 func handleAuth(req *http.Request) (User, error) {
@@ -43,18 +74,18 @@ func handleAuth(req *http.Request) (User, error) {
 
 		// Validate the alg is what we expect
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			log.Println("[DEBUG] Unexpected signing method: %v", token.Header["alg"])
+			log.Printf("[DEBUG] Unexpected signing method: %v", token.Header["alg"])
 			return user, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-			// Return the secret key
+		// Return the secret key
 		return []byte(secretKey), nil
 	})
 
-	log.Println("[DEBUG] tokenString: ", tokenString)
+	log.Printf("[DEBUG] tokenString: %s", tokenString)
 
 	// Check for errors in parsing the token
 	if err != nil {
-		log.Println("[ERROR] There was an error: ", err)
+		log.Printf("[ERROR] There was an error: %v", err)
 		return user, err
 	}
 
@@ -63,7 +94,7 @@ func handleAuth(req *http.Request) (User, error) {
 		return user, errors.New("Invalid token")
 	}
 
-	log.Println("[DEBUG] token: ", token)
+	log.Printf("[DEBUG] token: %v", token)
 
 	// Get the claims
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -74,7 +105,7 @@ func handleAuth(req *http.Request) (User, error) {
 	// Get the user id from the claims
 	userId, ok := claims["user_id"].(float64)
 	if !ok {
-		return user, errors.New(fmt.Sprintf("invalid user id: %s", reflect.TypeOf(claims["user_id"])))
+		return user, errors.New(fmt.Sprintf("invalid user id: %s", ok))
 	}
 
 	// overwrite user
@@ -85,17 +116,39 @@ func handleAuth(req *http.Request) (User, error) {
 }
 
 func handleMeApi(resp http.ResponseWriter, req *http.Request) {
-	// return User struct
-	user, err := handleAuth(req)
+	// Database configuration
+	dsn := getDatabaseConfig()
 
+	// Database connection
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Printf("[ERROR] Failed to connect to the database: %v", err)
+		http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// JWT authentication
+	user, err := handleAuth(req)
 	if err != nil {
 		log.Printf("[DEBUG] Error: %v", err)
 		http.Error(resp, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
+	// Query the authentication_user table
+	var authUser AuthenticationUser
+	result := db.Table("authentication_user").Where("id = ?", user.UserId).First(&authUser)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			http.Error(resp, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(resp, result.Error.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
 	// marshal user to json
-	json, err := json.Marshal(user)
+	userJSON, err := json.Marshal(authUser)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusInternalServerError)
 		return
@@ -103,9 +156,10 @@ func handleMeApi(resp http.ResponseWriter, req *http.Request) {
 
 	// return json
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(json)
+	resp.Write(userJSON)
 	resp.WriteHeader(http.StatusOK)
 }
+
 
 func initHandlers() {
 	r := mux.NewRouter()
