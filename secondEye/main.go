@@ -15,12 +15,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	UserId int
-}
-
 type AuthenticationUser struct {
-	ID            int64  `gorm:"column:id"`
+	UserId         int  `gorm:"column:id"`
 	Password      string `gorm:"column:password"`
 	LastLogin     time.Time `gorm:"column:last_login"`
 	IsSuperuser   bool   `gorm:"column:is_superuser"`
@@ -34,6 +30,13 @@ type AuthenticationUser struct {
 	Avatar        string `gorm:"column:avatar"`
 }
 
+type Organization struct {
+	OrganizationId int `gorm:"column:id"`
+	Name string `gorm:"column:name"`
+	CreatedAt time.Time `gorm:"column:created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at"`
+
+}
 
 func getDatabaseConfig() string {
 	host := "postgres"
@@ -48,9 +51,9 @@ func getDatabaseConfig() string {
 		host, user, password, name, port, sslMode, timeZone)
 }
 
-func handleAuth(req *http.Request) (User, error) {
+func handleAuth(req *http.Request) (AuthenticationUser, error) {
 	tokenString := req.Header.Get("Authorization")
-	user := User{}
+	user := AuthenticationUser{}
 
 	// check for bearer "JWT"
 	if strings.HasPrefix(tokenString, "JWT ") {
@@ -154,6 +157,46 @@ func handleMeApi(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	func HandleMeOrganization(resp http.ResponseWriter, req *http.Request) {
+		// Database configuration
+		dsn := getDatabaseConfig()
+		
+		// Database connection
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Printf("[ERROR] Failed to connect to the database: %v", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// JWT authentication
+		user, err := handleAuth(req)
+		if err != nil {
+			log.Printf("[DEBUG] Error: %v", err)
+			http.Error(resp, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
+		// query the organizations_organization table
+		var org Organization
+		result := db.Table("organizations_organization").Where("id = ?", org.OrganizationId).First(&org)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				http.Error(resp, "Organization not found", http.StatusNotFound)
+			} else {
+				http.Error(resp, result.Error.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		// marshal user to json
+		orgJSON, err := json.Marshal(org)
+		if err != nil {
+			http.Error(resp, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+
 	// return json
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write(userJSON)
@@ -164,6 +207,7 @@ func handleMeApi(resp http.ResponseWriter, req *http.Request) {
 func initHandlers() {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v2/me", handleMeApi)
+	r.HandleFunc("/api/v2/me/organization", handleMeOrganization)
 
 	http.Handle("/", r)
 }
