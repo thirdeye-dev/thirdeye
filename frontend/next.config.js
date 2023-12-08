@@ -26,7 +26,3 @@ const nextConfig = {
 };
 
 module.exports = removeImports(nextConfig);
-
-module.exports.typescript = {
-  ignoreBuildErrors: true,
-};
