@@ -12,20 +12,20 @@ services:
     env_file:
       - ./.env
   
-  frontend:
-    hostname: frontend
-    image: frontend_app_thirdeye
-    container_name: frontend_app_thirdeye
-    build:
-      context: ../
-      dockerfile: ./docker/Dockerfile.frontend
-    networks:
-      default:
-      internal:
-    volumes:
-      - ../frontend:/usr/app
-    env_file:
-      - ./.env
+  # frontend:
+  #   hostname: frontend
+  #   image: frontend_app_thirdeye
+  #   container_name: frontend_app_thirdeye
+  #   build:
+  #     context: ../
+  #     dockerfile: ./docker/Dockerfile.frontend
+  #   networks:
+  #     default:
+  #     internal:
+  #   volumes:
+  #     - ../frontend:/usr/app
+  #   env_file:
+  #     - ./.env
     # ports:
     #  - "3000:3000"
 
@@ -41,7 +41,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - frontend
+      # - frontend
       - backend
 
   backend:
@@ -115,22 +115,22 @@ services:
       internal:
     image: redis:alpine
   
-  secondeye:
-    container_name: secondeye_app_thirdeye
-    networks:
-      default:
-      internal:
-    expose: 
-      - "8080"
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.secondeye
-    volumes:
-      - ../:/app
-    env_file:
-      - ./.env
-    ports:
-      - "8080:8080"
+  # secondeye:
+  #   container_name: secondeye_app_thirdeye
+  #   networks:
+  #     default:
+  #     internal:
+  #   expose: 
+  #     - "8080"
+  #   build:
+  #     context: ..
+  #     dockerfile: docker/Dockerfile.secondeye
+  #   volumes:
+  #     - ../:/app
+  #   env_file:
+  #     - ./.env
+  #   ports:
+  #     - "8080:8080"
     
 
 networks:
