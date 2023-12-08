@@ -3,7 +3,7 @@ import axios from "@/axios";
 
 export async function createOrganization(organization: { name: string }) {
   const response = await axios.post(
-    "/organizations/my/",
+    "/organizations/my",
     JSON.stringify(organization)
   );
 
