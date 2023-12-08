@@ -9,7 +9,8 @@ export default function useAlerts(contractId: string) {
   const { data, ...swr } = useSWR<Alert[]>(
     [`/monitoring/contract/${contractId}`, contractId],
     ([_key, contractId]: string[]) =>
-      fetchAlertsByContract(parseInt(contractId))
+      fetchAlertsByContract(parseInt(contractId)),
+    {}
   );
 
   return {

@@ -10,7 +10,8 @@ export default function useOverviewData(
 ) {
   const swr = useSWR<OverviewData>(
     ["/monitoring/overview-data", orgId, timeMode],
-    ([_, orgId, timeMode]: string[]) => fetchOverviewData(orgId, timeMode)
+    ([_, orgId, timeMode]: string[]) => fetchOverviewData(orgId, timeMode),
+    {}
   );
 
   return swr;
