@@ -23,6 +23,19 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    const rewrites = [];
+
+    // Proxy to backend if not localhost
+    if (!backendUrl.includes("localhost")) {
+      rewrites.push({
+        source: "/api/v1/:slug*",
+        destination: `${backendUrl}/:slug*`,
+      });
+    }
+      
+    return rewrites;
+  }
 };
 
 module.exports = removeImports(nextConfig);
