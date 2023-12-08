@@ -5,7 +5,8 @@ import useSWR from "swr";
 export default function useContracts(orgId: string) {
   const { data, ...swr } = useSWR<Contract[]>(
     ["/smartcontract/my", orgId],
-    ([_key, orgId]: string[]) => fetchContracts(orgId)
+    ([_key, orgId]: string[]) => fetchContracts(orgId),
+    {}
   );
 
   return {

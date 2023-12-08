@@ -10,7 +10,8 @@ export default function useOverviewStats(
 ) {
   const swr = useSWR<OverviewStats>(
     ["/monitoring/overview-stats", orgId, timeMode],
-    ([_, orgId, timeMode]: string[]) => fetchOverviewStats(orgId, timeMode)
+    ([_, orgId, timeMode]: string[]) => fetchOverviewStats(orgId, timeMode),
+    {}
   );
 
   return swr;
