@@ -174,7 +174,7 @@ def github_login(request):
 
     if settings.DEMO_INSTANCE:
         redirect_uri = redirect_uri.replace("http://", "https://")
-        redirect_uri = "https://demo.thirdeyelabs.xyz/api/v1v/authentication/github-callback"
+        redirect_uri = "https://demo.thirdeyelabs.xyz/api/v1/authentication/github-callback"
 
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)
