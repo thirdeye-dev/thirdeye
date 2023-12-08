@@ -29,20 +29,20 @@ services:
     # ports:
     #  - "3000:3000"
 
-  nginx:
-    hostname: nginx
-    image: nginx:alpine
-    container_name: nginx_app_thirdeye
-    networks:
-      default:
-      internal:
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    depends_on:
-      # - frontend
-      - backend
+  # nginx:
+  #   hostname: nginx
+  #   image: nginx:alpine
+  #   container_name: nginx_app_thirdeye
+  #   networks:
+  #     default:
+  #     internal:
+  #   volumes:
+  #     - ./nginx/default.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     # - frontend
+  #     - backend
 
   backend:
     container_name: backend_app_thirdeye

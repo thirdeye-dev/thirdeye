@@ -172,6 +172,8 @@ def github_login(request):
         current_domain, REPLACEMENT_DOMAIN
     )
 
+    redirect_uri = "http://localhost:3000/api/v1/authentication/github-callback"
+
     if settings.DEMO_INSTANCE:
         redirect_uri = redirect_uri.replace("http://", "https://")
         redirect_uri = "https://demo.thirdeyelabs.xyz/api/v1/authentication/github-callback"

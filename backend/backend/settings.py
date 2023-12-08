@@ -176,7 +176,7 @@ FRONTEND_URL_MAIN = f"https://{FRONTEND_DOMAIN}/"
 FRONTEND_URL = (
     FRONTEND_URL_MAIN
     if DEMO_INSTANCE
-    else os.environ.get("FRONTEND_URL", "http://localhost/")
+    else os.environ.get("FRONTEND_URL", "http://localhost:3000/")
 )
 
 # SECURITY WARNING: keep the secret key used in production secret!
