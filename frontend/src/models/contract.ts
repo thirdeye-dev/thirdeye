@@ -1,11 +1,12 @@
 export enum Chain {
-  ETH = "eth"
+  ETH = "eth",
+  ARB = "arb",
 }
 
 export enum Network {
   MAINNET = "mainnet",
   SEPOLIA = "sepolia",
-  GOERLI = "goerli"
+  // GOERLI = "goerli" TODO: Add support for Goerli
 }
 
 export default interface Contract {
