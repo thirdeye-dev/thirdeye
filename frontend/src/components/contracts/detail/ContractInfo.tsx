@@ -35,11 +35,6 @@ export default function ContractInfo({
             <Badge variant="gradient" gradient={gradientByChain(contract.chain)}>{contract.chain}</Badge>
             <Badge variant="dot">{contract.network}</Badge>
           </Group>
-
-          <Group>
-            <Button variant="light" color="red" rightIcon={<AiFillLock />}>Lock</Button>
-            <Button variant="light" color="green" rightIcon={<AiFillUnlock />}>Unlock</Button>
-          </Group>
         </Flex>
 
         <Divider />
