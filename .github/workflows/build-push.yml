@@ -32,10 +32,10 @@ jobs:
         push: true
         tags: ghcr.io/thirdeye-dev/thirdeye:latest
 
-    - name: Build and push Docker frontend image
-      uses: docker/build-push-action@v2
-      with:
-        context: ..
-        file: docker/Dockerfile.frontend
-        push: true
-        tags: ghcr.io/thirdeye-dev/thirdeye-frontend:latest
+    # - name: Build and push Docker frontend image
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     context: ..
+    #     file: docker/Dockerfile.frontend
+    #     push: true
+    #     tags: ghcr.io/thirdeye-dev/thirdeye-frontend:latest
