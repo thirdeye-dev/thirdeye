@@ -35,7 +35,7 @@ CHAINS_AND_NETWORKS = {
     },
     "arb": {
         "mainnet": ARBITRUM_RPC_URL,
-    }
+    },
 }
 
 ETH_NETWORK_IDS = {
