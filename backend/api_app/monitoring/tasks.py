@@ -118,29 +118,41 @@ def monitor_contract(self, monitoring_task_id):
         logger.error(error_msg)
         raise Exception(error_msg)
 
-    network_id = settings.ETH_NETWORK_IDS.get(network)
-    if not network_id:
-        error_msg = f"Network {network} not supported"
-        logger.error(error_msg)
-        raise Exception(error_msg)
+    # network_id = settings.ETH_NETWORK_IDS.get(network)
+    # if not network_id:
+    #     error_msg = f"Network {network} not supported"
+    #     logger.error(error_msg)
+    #     raise Exception(error_msg)
 
     w3 = Web3(Web3.WebsocketProvider(rpc_url))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-    if network_id != int(w3.net.version):
-        raise ValueError("Connected to the wrong Ethereum network")
+    # if network_id != int(w3.net.version):
+    #     raise ValueError("Connected to the wrong Ethereum network")
 
     ws = websocket.create_connection(rpc_url)
 
-    subscribe_data = {
-        "id": 1,
-        "jsonrpc": "2.0",
-        "method": "eth_subscribe",
-        "params": [
-            "alchemy_pendingTransactions",
-            {"address": contract_address, "fromBlock": "latest"},
-        ],
-    }
+    if chain == "eth":
+        subscribe_data = {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": "eth_subscribe",
+            "params": [
+                "alchemy_pendingTransactions",
+                {"address": contract_address, "fromBlock": "latest"},
+            ],
+        }
+    elif chain == "arb":
+        subscribe_data = {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": "eth_subscribe",
+            "params": [
+                "alchemy_minedTransactions",
+                {"address": contract_address, "fromBlock": "latest"},
+            ],
+        }
+
     ws.send(json.dumps(subscribe_data))
     subscription_id = None
 
@@ -216,14 +228,19 @@ def monitor_contract(self, monitoring_task_id):
             message = ws.recv()
             response = json.loads(message)
 
-            if "result" in response and response.get("id") == 1:
+            if "result" in response and response.get("id") == 1 and chain == "eth":
                 subscription_id = response["result"]
             elif (
                 subscription_id
                 and "params" in response
                 and response["params"]["subscription"] == subscription_id
-            ):
-                transaction_hash = response["params"]["result"]["hash"]
+            ) or (
+                "result" in response
+            ):  # this is for the arb chain
+                transaction_hash = response.get("hash")
+                if "eth" in chain:
+                    transaction_hash = response["params"]["result"]["hash"]
+
                 transaction = fetch_transaction_details(transaction_hash)
                 # fetch alerts from the database
                 # run the alerts

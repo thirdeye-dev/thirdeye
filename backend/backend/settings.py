@@ -25,12 +25,16 @@ DEBUGGING_WALLET = "0xEb87fcc7B227400D157dD976d1C4B18f42dC14fa"
 
 GOERLI_RPC_URL = os.environ.get("GOERLI_RPC_URL", "")
 MAINNET_RPC_URL = os.environ.get("MAINNET_RPC_URL", "")
+ARBITRUM_RPC_URL = os.environ.get("ARBITRUM_RPC_URL", "")
 
 # mapping of URLs to different ethereum based chains and networks
 CHAINS_AND_NETWORKS = {
     "eth": {
         "mainnet": MAINNET_RPC_URL,
         "goerli": GOERLI_RPC_URL,
+    },
+    "arb": {
+        "mainnet": ARBITRUM_RPC_URL,
     }
 }
 

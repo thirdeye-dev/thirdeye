@@ -7,9 +7,11 @@ from authentication.organizations.models import Organization
 User = get_user_model()
 
 
-# chain choices enum: "ETH", "BSC", "POLYGON"
+# chain choices enum: "ETH", "ARB"
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
+    ARB = "ARB", "arb"
+
 
 
 class Network(models.TextChoices):
