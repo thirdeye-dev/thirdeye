@@ -1,9 +1,8 @@
-import os
-import requests
-
 import logging
+import os
 from collections import OrderedDict
 
+import requests
 import yaml
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
@@ -17,35 +16,32 @@ from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
 
+
 def airstack_identities(wallet: str) -> dict:
-    url = 'https://api.airstack.xyz/gql'
-    
+    url = "https://api.airstack.xyz/gql"
+
     headers = {
-        'authorization': os.environ.get("AIRSTACK_API_KEY"),
-        'content-type': 'application/json',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        "authorization": os.environ.get("AIRSTACK_API_KEY"),
+        "content-type": "application/json",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
     }
-    
+
     query = f'{{"query":"query MyQuery {{ Wallet(input: {{identity: \\"{wallet}\\", blockchain: ethereum}}) {{ identity socials {{ dappName profileName }} }} }}","operationName":"MyQuery"}}'
-    
+
     response = requests.post(url, headers=headers, data=query)
-    
+
     if response.status_code == 200:
         data = response.json()
-        wallet_data = data.get('data', {}).get('Wallet', {})
-        
-        identity = wallet_data.get('identity', '')
-        socials = wallet_data.get('socials', [])
-        
-        result = {
-            'identity': identity,
-            'socials': socials
-        }
-        
+        wallet_data = data.get("data", {}).get("Wallet", {})
+
+        identity = wallet_data.get("identity", "")
+        socials = wallet_data.get("socials", [])
+
+        result = {"identity": identity, "socials": socials}
+
         return result
     else:
-        return {'error': f"Error: {response.status_code} - {response.text}"}
-
+        return {"error": f"Error: {response.status_code} - {response.text}"}
 
 
 # new code. This is the new serializer.
@@ -90,7 +86,7 @@ class Transaction:
             "s": self.s,
             "timestamp": self.timestamp,
             "output": self.output,
-            "airstack_identities": airstack_identities
+            "airstack_identities": airstack_identities,
         }
 
     def compile_to_dict(self):
