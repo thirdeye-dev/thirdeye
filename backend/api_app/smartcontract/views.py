@@ -75,7 +75,7 @@ def get_abi(request):
 
     if (abi := smart_contract.abi) is None:
         return Response(
-            {"error": "ABI not set for the contract"}, status=Status.HTTP_204_NO_CONTENT
+            {"error": "ABI not set for the contract"}, status=Status.HTTP_200_OK
         )
 
     return Response(abi, status=Status.HTTP_200_OK)

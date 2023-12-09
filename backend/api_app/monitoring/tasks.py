@@ -1,3 +1,5 @@
+import time
+
 import json
 import os
 from datetime import datetime
@@ -9,7 +11,7 @@ from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import Alerts, MonitoringTasks, Notification
+from api_app.monitoring.models import Alerts, MonitoringTasks, Notification, SmartContract
 from backend.celery import app
 
 from .serializers import BlockchainAlertRunner
@@ -124,6 +126,8 @@ def monitor_contract(self, monitoring_task_id):
     #     logger.error(error_msg)
     #     raise Exception(error_msg)
 
+    logger.info(f"[DEBUG] the chain URL is: {rpc_url}")
+
     w3 = Web3(Web3.WebsocketProvider(rpc_url))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
@@ -157,6 +161,8 @@ def monitor_contract(self, monitoring_task_id):
     subscription_id = None
 
     def fetch_transaction_details(transaction_hash):
+        logger.info(f"[DEBUG] Fetching transaction details for {transaction_hash}")
+
         request_data = {
             "id": 2,
             "jsonrpc": "2.0",
@@ -164,7 +170,14 @@ def monitor_contract(self, monitoring_task_id):
             "params": [transaction_hash],
         }
         ws.send(json.dumps(request_data))
+
+        logger.info(f"[DEBUG] Sent request to get transaction details for {transaction_hash}")
         response = json.loads(ws.recv())
+
+        if chain == "arb":
+            logger.info(f"[DEBUG] Received response: {response}")
+            response = response.get("params").get("result").get("transaction")
+
         response["transaction_hash"] = transaction_hash
 
         transaction_data = response["result"]
@@ -228,6 +241,10 @@ def monitor_contract(self, monitoring_task_id):
             message = ws.recv()
             response = json.loads(message)
 
+            # logger.info(response)
+            logger.info(f"[DEBUG] response for chain {chain} found")
+            # logger.info(f"[DEBUG] response: {response}")
+
             if "result" in response and response.get("id") == 1 and chain == "eth":
                 subscription_id = response["result"]
             elif (
@@ -235,13 +252,27 @@ def monitor_contract(self, monitoring_task_id):
                 and "params" in response
                 and response["params"]["subscription"] == subscription_id
             ) or (
-                "result" in response
+                chain == "arb"
             ):  # this is for the arb chain
-                transaction_hash = response.get("hash")
-                if "eth" in chain:
-                    transaction_hash = response["params"]["result"]["hash"]
+                # transaction_hash = response.get("hash")
 
-                transaction = fetch_transaction_details(transaction_hash)
+                logger.info(response)
+
+                if "eth" == chain:
+                    transaction_hash = response["params"]["result"]["hash"]
+                    transaction = fetch_transaction_details(transaction_hash)
+
+                elif "arb" == chain:
+                    transaction_hash = response.get("result")
+                    if transaction_hash is None:
+                        logger.info(f"[DEBUG] Transaction hash is none. Trying to see if it's in the params")
+                        transaction = response.get("params").get("result").get("transaction")
+                    else:
+                        transaction = fetch_transaction_details(transaction_hash)
+                
+                if transaction is None:
+                    logger.info(f"[DEBUG] Transaction is none. Response is {response}")
+
                 # fetch alerts from the database
                 # run the alerts
                 # decoded_input, decoded_output = trace_transaction(transaction_hash)
@@ -254,9 +285,19 @@ def monitor_contract(self, monitoring_task_id):
                     active=True, smart_contract=monitoring_task.SmartContract
                 )
 
-                if len(alerts) == 0:
-                    logger.info("No alerts found for this contract")
+                # check if smart contract still exists
+                smart_contract_search = SmartContract.objects.filter(
+                    address=contract_address
+                ).first()
+
+                if not smart_contract_search:
+                    logger.info(f"[DEBUG] Smart contract {contract_address} not found")
                     break
+
+                if len(alerts) == 0:
+                    logger.log(f"[DEBUG] No alerts found for contract {contract_address}")
+                    time.sleep(2)
+                    continue
 
                 for alert in alerts:
                     alert_runner = BlockchainAlertRunner(alert, transaction)

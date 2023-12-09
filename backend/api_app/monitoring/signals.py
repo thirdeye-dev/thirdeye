@@ -55,7 +55,7 @@ def notification_post_save(sender, instance, created, **kwargs):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(  # shift this to a celery task
             str(instance.alert.smart_contract.owner_organization.id),
-            {"type": "send_notification", "notification": notification},
+            {"type": "send_notification", "notification": notification.id},
         )
 
 
