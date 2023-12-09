@@ -1,7 +1,6 @@
-import time
-
 import json
 import os
+import time
 from datetime import datetime
 
 import requests
@@ -11,7 +10,12 @@ from django.conf import settings
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from api_app.monitoring.models import Alerts, MonitoringTasks, Notification, SmartContract
+from api_app.monitoring.models import (
+    Alerts,
+    MonitoringTasks,
+    Notification,
+    SmartContract,
+)
 from backend.celery import app
 
 from .serializers import BlockchainAlertRunner
@@ -171,7 +175,9 @@ def monitor_contract(self, monitoring_task_id):
         }
         ws.send(json.dumps(request_data))
 
-        logger.info(f"[DEBUG] Sent request to get transaction details for {transaction_hash}")
+        logger.info(
+            f"[DEBUG] Sent request to get transaction details for {transaction_hash}"
+        )
         response = json.loads(ws.recv())
 
         if chain == "arb":
@@ -265,11 +271,15 @@ def monitor_contract(self, monitoring_task_id):
                 elif "arb" == chain:
                     transaction_hash = response.get("result")
                     if transaction_hash is None:
-                        logger.info(f"[DEBUG] Transaction hash is none. Trying to see if it's in the params")
-                        transaction = response.get("params").get("result").get("transaction")
+                        logger.info(
+                            f"[DEBUG] Transaction hash is none. Trying to see if it's in the params"
+                        )
+                        transaction = (
+                            response.get("params").get("result").get("transaction")
+                        )
                     else:
                         transaction = fetch_transaction_details(transaction_hash)
-                
+
                 if transaction is None:
                     logger.info(f"[DEBUG] Transaction is none. Response is {response}")
 
@@ -295,7 +305,9 @@ def monitor_contract(self, monitoring_task_id):
                     break
 
                 if len(alerts) == 0:
-                    logger.log(f"[DEBUG] No alerts found for contract {contract_address}")
+                    logger.log(
+                        f"[DEBUG] No alerts found for contract {contract_address}"
+                    )
                     time.sleep(2)
                     continue
 
