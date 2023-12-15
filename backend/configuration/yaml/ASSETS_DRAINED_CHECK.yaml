@@ -1,0 +1,8 @@
+blockchain_alerts:
+  - alert_type: 'cron_job'
+    alerts:
+      nameA:
+        condition: "check_forta_asset_drained(txn_contract)"
+        webhook_url: '${WEBHOOK_URL}'
+        notifications:
+          - send_webhook

@@ -16,5 +16,41 @@
                 "type": "str"
             }
         }
+    },
+    "TRACK_ADDRESSES_WITHOUT_IDENTITY" : {
+        "name": "TRACK_ADDRESSES_WITHOUT_IDENTITY",
+        "description": "Powered by Airstack!",
+        "alert_yaml": "TRACK_ADDRESSES_WITHOUT_IDENTITY.yaml",
+        "params": {
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str"
+            }
+        }
+    },
+    "ASSETS_DRAINED_CHECK" : {
+        "name": "ASSETS_DRAINED_CHECK",
+        "description": "Check if your contract was picked up by Forta as a drained contract every hour",
+        "alert_yaml": "ASSETS_DRAINED_CHECK.yaml",
+        "params": {
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str"
+            }
+        }
+    },
+    "SCAM_AND_ATTACK_DETECTION" : {
+        "name": "SCAM_AND_ATTACK_DETECTION",
+        "description": "Using public feeds for scaming and attacking contract addresses from forta",
+        "alert_yaml": "SCAM_AND_ATTACK_DETECTION.yaml",
+        "params": {
+            "WEBHOOK_URL": {
+                "name": "WEBHOOK_URL",
+                "description": "Webhook URL for sending alerts",
+                "type": "str"
+            }
+        }
     }
 }
