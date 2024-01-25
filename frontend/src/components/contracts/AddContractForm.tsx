@@ -4,6 +4,7 @@ import { Button, SegmentedControl, Select, Stack, TextInput } from "@mantine/cor
 import { useForm } from "@mantine/form";
 
 const ethContractAddressRegex = new RegExp(/^0x([A-Fa-f0-9]{40})$/);
+const solContractAddressRegex = new RegExp(/^[\w]{42,45}$/);
 
 export default function AddContractForm({
   organizationId,
@@ -29,11 +30,20 @@ export default function AddContractForm({
 
         return null;
       }
+      const validateSolAddress = () => {
+        if (vals.address.length === 0) return "address is required";
 
+        if (!solContractAddressRegex.test(vals.address)) {
+          return "invalid sol contract address";
+        }
+
+        return null;
+      }
       return {
         name: vals.name.length > 0 ? null : "name can't be empty",
-        address: validateEthAddress(), // NOTE: validate other chains if added
+        address: vals.chain===Chain.SOL?validateSolAddress():validateEthAddress(), // NOTE: validate other chains if added
       }
+      
     }
   });
 
