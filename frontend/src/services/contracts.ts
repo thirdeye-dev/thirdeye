@@ -24,7 +24,7 @@ export async function createContract(
     JSON.stringify(contract)
   );
 
-  return response.data;
+return response.data;
 }
 
 export async function fetchContract(
