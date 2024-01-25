@@ -1,10 +1,13 @@
 import re
+import logging
 
 from rest_framework import serializers
 
 from authentication.organizations.models import Organization
 
 from .models import SmartContract
+
+logger = logging.getLogger(__name__)
 
 
 class InputSerializer(serializers.Serializer):
@@ -62,8 +65,15 @@ class ABISerializer(serializers.Serializer):
 
 class SmartContractSerializer(serializers.ModelSerializer):
     def smart_contract_validator(value):
-        pattern = re.compile(r"^0x[a-fA-F0-9]{40}$")
-        if not pattern.match(value):
+        pattern_eth = re.compile(r"^0x[a-fA-F0-9]{40}$")
+        pattern_sol = re.compile(r"^[\w]{42,45}$")
+
+        pattern_sol_check = pattern_sol.match(value)
+        pattern_eth_check = pattern_eth.match(value)
+
+        logger.info(f"pattern_sol_check: {pattern_sol_check} and pattern_eth_check: {pattern_eth_check} for value: {value}")
+        
+        if not (pattern_sol_check or pattern_eth_check):
             raise serializers.ValidationError("Invalid smart contract address")
 
     address = serializers.CharField(validators=[smart_contract_validator])

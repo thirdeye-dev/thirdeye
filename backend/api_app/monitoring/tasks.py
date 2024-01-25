@@ -118,6 +118,10 @@ def monitor_contract(self, monitoring_task_id):
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
 
+    if chain == "sol":
+        logger.info(f"[DEBUG] Chain is sol. Skipping")
+        return
+
     rpc_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
     if not rpc_url:
         error_msg = f"Chain {chain} or network {network} not supported"

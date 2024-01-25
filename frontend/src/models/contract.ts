@@ -1,12 +1,11 @@
 export enum Chain {
   ETH = "eth",
-  ARB = "arb",
   SOL = "sol",
 }
 
 export enum Network {
   MAINNET = "mainnet",
-  SEPOLIA = "sepolia",
+  // SEPOLIA = "sepolia",
   // GOERLI = "goerli" TODO: Add support for Goerli
 }
 

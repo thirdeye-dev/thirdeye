@@ -10,8 +10,7 @@ User = get_user_model()
 # chain choices enum: "ETH", "ARB"
 class Chain(models.TextChoices):
     ETH = "ETH", "eth"
-    ARB = "ARB", "arb"
-
+    SOL = "SOL", "sol"
 
 class Network(models.TextChoices):
     # eth network choices
@@ -21,7 +20,7 @@ class Network(models.TextChoices):
 
 
 class SmartContract(BaseMixin):
-    address = models.CharField(max_length=42)
+    address = models.CharField(max_length=44)
     name = models.CharField(max_length=100)
     chain = models.CharField(max_length=16, choices=Chain.choices)
     network = models.CharField(
