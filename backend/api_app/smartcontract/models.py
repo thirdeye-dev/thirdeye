@@ -12,6 +12,7 @@ class Chain(models.TextChoices):
     ETH = "ETH", "eth"
     SOL = "SOL", "sol"
 
+
 class Network(models.TextChoices):
     # eth network choices
     MAINNET = "MAINNET", "mainnet"

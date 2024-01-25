@@ -1,5 +1,5 @@
-import re
 import logging
+import re
 
 from rest_framework import serializers
 
@@ -71,8 +71,10 @@ class SmartContractSerializer(serializers.ModelSerializer):
         pattern_sol_check = pattern_sol.match(value)
         pattern_eth_check = pattern_eth.match(value)
 
-        logger.info(f"pattern_sol_check: {pattern_sol_check} and pattern_eth_check: {pattern_eth_check} for value: {value}")
-        
+        logger.info(
+            f"pattern_sol_check: {pattern_sol_check} and pattern_eth_check: {pattern_eth_check} for value: {value}"
+        )
+
         if not (pattern_sol_check or pattern_eth_check):
             raise serializers.ValidationError("Invalid smart contract address")
 
