@@ -319,6 +319,9 @@ class BlockchainAlertRunner:
         if self.Alert.smart_contract.chain == "sol":
             # to support multiple transactions in a single block for solana
             hash_ = self.transaction.to_dict["blockhash"]
+        else:
+            hash_ = self.transaction.to_dict["hash"]
+        
         text = "transaction" if self.Alert.smart_contract.chain != "sol" else "block"
 
         alert_body = {
