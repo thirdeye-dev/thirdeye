@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from collections import OrderedDict
 
 import requests
@@ -43,6 +43,7 @@ def airstack_identities(wallet: str) -> dict:
     else:
         return {"error": f"Error: {response.status_code} - {response.text}"}
 
+
 class Transaction:
     def __init__(self, transaction_data):
         # base class for all transactions
@@ -53,13 +54,15 @@ class Transaction:
 
         dict_with_str = {str(x): y for x, y in dict_normal.items()}
         return dict_with_str
-    
+
+
 #     # what's the point of doing this anyway?
 #     def compile_to_dict_with_prefix(self, prefix: str = "txn_"):
 #         dict_normal = self.to_dict
 
 #         dict_with_str = {str(prefix + x): y for x, y in dict_normal.items()}
 #         return dict_with_str
+
 
 # new code. This is the new serializer.
 # Transaction class to map transaction attributes
@@ -108,9 +111,11 @@ class TransactionETH(Transaction):
             "airstack_identities": airstack_identities,
         }
 
+
 class TransactionSOL(Transaction):
     def __init__(self, transaction_data):
         self.to_dict = transaction_data
+
 
 class NotificationType(rfs.ChoiceField):
     def __init__(self, **kwargs):

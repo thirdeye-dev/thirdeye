@@ -169,23 +169,21 @@ def monitor_contract(self, monitoring_task_id):
                 {"address": contract_address, "fromBlock": "latest"},
             ],
         }
-    
+
     elif chain == "sol":
         subscribe_data = {
             "jsonrpc": "2.0",
             "id": "3106",
             "method": "blockSubscribe",
             "params": [
-            {
-                "mentionsAccountOrProgram": contract_address
-            },
-            {
-                "commitment": "finalized",
-                "encoding": "jsonParsed",
-                # "showRewards": True,
-                "transactionDetails": "full"
-            }
-            ]
+                {"mentionsAccountOrProgram": contract_address},
+                {
+                    "commitment": "finalized",
+                    "encoding": "jsonParsed",
+                    # "showRewards": True,
+                    "transactionDetails": "full",
+                },
+            ],
         }
 
     ws.send(json.dumps(subscribe_data))
@@ -278,7 +276,7 @@ def monitor_contract(self, monitoring_task_id):
             logger.info(f"[DEBUG] response for chain {chain} found")
             # logger.info(f"[DEBUG] response: {response}")
 
-            if ("result" in response and response.get("id") == 1 and chain == "eth"):
+            if "result" in response and response.get("id") == 1 and chain == "eth":
                 subscription_id = response["result"]
             elif (
                 subscription_id
@@ -321,7 +319,7 @@ def monitor_contract(self, monitoring_task_id):
                 # fetch alerts from the database
                 # run the alerts
                 # decoded_input, decoded_output = trace_transaction(transaction_hash)
-                    
+
                 if chain != "sol":
                     # to be added later in sol
                     fn_name, decoded_input = decode_input(transaction)
