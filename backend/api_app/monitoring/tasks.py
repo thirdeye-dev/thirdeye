@@ -166,7 +166,7 @@ def monitor_contract(self, monitoring_task_id):
         }
     
     elif chain == "sol":
-        subscription_data = {
+        subscribe_data = {
             "jsonrpc": "2.0",
             "id": "3106",
             "method": "blockSubscribe",
