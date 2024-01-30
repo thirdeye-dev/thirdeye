@@ -311,12 +311,13 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
 
-        if self.alert.smart_contract.chain == "sol":
+        if self.Alert.smart_contract.chain == "sol":
             # to support multiple transactions in a single block for solana
             hash_ = self.transaction.to_dict["blockhash"]
+        text = "transaction" if self.Alert.smart_contract.chain != "sol" else "block"
 
         alert_body = {
-            "message": f"Alert {self.Alert.name} triggered for transaction {hash_}",
+            "message": f"Alert {self.Alert.name} triggered for { text } {hash_}",
             "transaction": self.transaction.compile_to_dict(),
         }
 
@@ -328,6 +329,8 @@ class BlockchainAlertRunner:
             trigger_transaction_hash=hash_,
         )
         notification.save()
+
+        logger.info(f"Webhook notification triggered for {self.Alert.name}.")
 
 
 class NotificationAPISerializer(rfs.ModelSerializer):

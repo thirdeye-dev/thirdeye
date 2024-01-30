@@ -42,11 +42,13 @@ def call_smart_contract_function(self, monitoring_task_id):
 
 @app.task(bind=True, max_retries=3)
 def send_webhook(self, notification_id):
+    logger.info(f"Sending webhook for notification {notification_id}")
+
     notification = Notification.objects.filter(id=notification_id).first()
 
     if (not notification) and (notification.alert.active is False):
         error_msg = f"Active notification with id {notification_id} not found"
-        logger.error(error_msg)
+        logger.info(error_msg)
         raise Exception(error_msg)
 
     # just in case, we don't
@@ -71,6 +73,8 @@ def send_webhook(self, notification_id):
 
     headers = {"Content-Length": str(len(webhook_body))}
 
+    logger.info(f"Sending webhook to -- {webhook_url}")
+
     try:
         response = requests.post(webhook_url, json=webhook_body, headers=headers)
         notification.meta_logs = {
@@ -91,6 +95,7 @@ def send_webhook(self, notification_id):
         raise Exception(error_msg)
 
     notification.save()
+    logger.info(f"Webhook notification saved: {notification_id}")
 
 
 """
