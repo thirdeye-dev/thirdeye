@@ -213,7 +213,12 @@ def monitor_contract(self, monitoring_task_id):
         logger.info(f"[DEBUG] Received response while fetching txn details: {response}")
         response["transaction_hash"] = transaction_hash
 
-        transaction_data = response["result"]
+        transaction_data = response.get("params")
+        if not transaction_data:
+            transaction_data = response.get("result")
+        else:
+            # one of those weird edge cases
+            transaction_data = transaction_data.get("result")
 
         # converting most things into integers
         transaction_data["timestamp"] = datetime.now().timestamp()
@@ -222,6 +227,8 @@ def monitor_contract(self, monitoring_task_id):
         transaction_data["gas"] = int(transaction_data["gas"], 16)
         transaction_data["chainId"] = int(transaction_data["chainId"], 16)
         transaction_data["nonce"] = int(transaction_data["nonce"], 16)
+
+        logger.info(f"[DEBUG] Overwrote transaction data: {transaction_data}")
 
         return transaction_data
 
@@ -293,6 +300,8 @@ def monitor_contract(self, monitoring_task_id):
                 transaction_hash = response["params"]["result"]["hash"]
                 transaction = fetch_transaction_details(transaction_hash)
 
+                logger.info(f"[DEBUG] Got overwritten transaction: {transaction_hash}")
+
             # "arb" is retired for now
             elif "arb" == chain:
                 transaction_hash = response.get("result")
@@ -305,6 +314,7 @@ def monitor_contract(self, monitoring_task_id):
                     )
                 else:
                     transaction = fetch_transaction_details(transaction_hash)
+
             elif "sol" == chain:
                 sol_block = response.get("params").get("result").get("value")
 
@@ -349,6 +359,7 @@ def monitor_contract(self, monitoring_task_id):
                 continue
 
             for alert in alerts:
+                logger.info(f"[DEBUG] Running alert {alert.id}")
                 alert_runner = BlockchainAlertRunner(alert, transaction)
                 alert_runner.run()
 
