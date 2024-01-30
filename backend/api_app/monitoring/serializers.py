@@ -13,36 +13,9 @@ from api_app.monitoring.exceptions import (
     ContractFunctionError,
 )
 from api_app.monitoring.models import Alerts, Notification
+from api_app.monitoring.integrations import airstack_identities
 
 logger = logging.getLogger(__name__)
-
-
-def airstack_identities(wallet: str) -> dict:
-    url = "https://api.airstack.xyz/gql"
-
-    headers = {
-        "authorization": os.environ.get("AIRSTACK_API_KEY"),
-        "content-type": "application/json",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-    }
-
-    query = f'{{"query":"query MyQuery {{ Wallet(input: {{identity: \\"{wallet}\\", blockchain: ethereum}}) {{ identity socials {{ dappName profileName }} }} }}","operationName":"MyQuery"}}'
-
-    response = requests.post(url, headers=headers, data=query)
-
-    if response.status_code == 200:
-        data = response.json()
-        wallet_data = data.get("data", {}).get("Wallet", {})
-
-        identity = wallet_data.get("identity", "")
-        socials = wallet_data.get("socials", [])
-
-        result = {"identity": identity, "socials": socials}
-
-        return result
-    else:
-        return {"error": f"Error: {response.status_code} - {response.text}"}
-
 
 class Transaction:
     def __init__(self, transaction_data):
@@ -108,7 +81,7 @@ class TransactionETH(Transaction):
             "s": self.s,
             "timestamp": self.timestamp,
             "output": self.output,
-            "airstack_identities": airstack_identities,
+            # "airstack_identities": airstack_identities(),
         }
 
 
@@ -235,7 +208,7 @@ class BlockchainAlertRunner:
                 else:
                     # condition not met
                     pass
-
+ 
     def trigger_automations(self, automations):
         abi = self.Alert.smart_contract.abi
 
@@ -273,6 +246,7 @@ class BlockchainAlertRunner:
 
         variables = {
             "txn": txn_or_block,
+            "airstack_identities": airstack_identities,
         }
 
         if condition is None:
@@ -330,6 +304,8 @@ class BlockchainAlertRunner:
             "message": f"Alert {self.Alert.name} triggered for { text } {hash_}",
             "transaction": self.transaction.compile_to_dict(),
         }
+
+        logger.info("[INFO] Alert body: " + str(alert_body))
 
         notification = Notification.objects.create(
             alert=self.Alert,
