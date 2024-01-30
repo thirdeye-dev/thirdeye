@@ -273,14 +273,14 @@ def monitor_contract(self, monitoring_task_id):
             logger.info(f"[DEBUG] response for chain {chain} found")
             # logger.info(f"[DEBUG] response: {response}")
 
-            if "result" in response and response.get("id") == 1 and chain == "eth":
+            if ("result" in response and response.get("id") == 1 and chain == "eth"):
                 subscription_id = response["result"]
             elif (
                 subscription_id
                 and "params" in response
                 and response["params"]["subscription"] == subscription_id
             ) or (
-                chain == "arb"
+                chain == "arb" or chain == "sol"
             ):  # this is for the arb chain
                 # transaction_hash = response.get("hash")
 
@@ -303,6 +303,12 @@ def monitor_contract(self, monitoring_task_id):
                         transaction = fetch_transaction_details(transaction_hash)
                 elif "sol" == chain:
                     sol_block = response.get("params").get("result").get("value")
+
+                    # not exactly transaction, but instead a block here. who cares about code?
+                    # we haven't shipped shit yet. I started out wanting to write a business
+                    # from scratch. but this all bullshit. all of it is.
+                    transaction = sol_block.get("block")
+                    transaction["slot"] = sol_block.get("slot")
 
                 if transaction is None and chain != "sol":
                     logger.info(f"[DEBUG] Transaction is none. Response is {response}")

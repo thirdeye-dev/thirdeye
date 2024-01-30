@@ -263,8 +263,12 @@ class BlockchainAlertRunner:
             # call function with arguments
 
     def check_alert_condition(self, alert) -> bool:
-        variables = self.transaction.compile_to_dict()
+        txn_or_block = self.transaction.compile_to_dict()
         condition = alert.get("condition")
+
+        variables = {
+            "txn": txn_or_block,
+        }
 
         if condition is None:
             raise ConditionResultError("Condition not found in alert.")
