@@ -3,7 +3,7 @@ blockchain_alerts:
   - alert_type: "every_transaction"
     alerts:
       nameA:
-        if: "txn_gasPrice >= 100000 and txn_from == '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'"
+        if: "gasPrice >= 100000 and from == '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'"
         webhook_url: "https://eot0jnzvvvbvr8j.m.pipedream.net/alerts"
         notifications:
           - send_email

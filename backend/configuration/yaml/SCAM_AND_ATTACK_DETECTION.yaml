@@ -2,7 +2,7 @@ blockchain_alerts:
 - alert_type: every_transaction
   alerts:
     AlertName:
-      condition: 'check_forta_attack_detector_feed(txn_from) or check_scam_detector_feed((txn_from)'
+      condition: 'check_forta_attack_detector_feed(from) or check_scam_detector_feed((from)'
       notifications:
       - send_webhook
       webhook_url: '${WEBHOOK_URL}'

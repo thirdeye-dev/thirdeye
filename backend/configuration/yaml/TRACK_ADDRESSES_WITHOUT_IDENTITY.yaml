@@ -2,7 +2,7 @@ blockchain_alerts:
 - alert_type: every_transaction
   alerts:
     AlertName:
-      condition: 'airstack_identities(txn_from).get("socials") == None'
+      condition: 'airstack_identities(from).get("socials") == None'
       notifications:
       - send_webhook
       webhook_url: '${WEBHOOK_URL}'
