@@ -2,7 +2,7 @@ blockchain_alerts:
   - alert_type: 'every_transaction'
     alerts:
       nameA:
-        condition: "gasPrice  >= ${GAS_PRICE_THRESHOLD}"
+        condition: "txn['gasPrice']  >= ${GAS_PRICE_THRESHOLD}"
         webhook_url: '${WEBHOOK_URL}'
         notifications:
           - send_webhook
