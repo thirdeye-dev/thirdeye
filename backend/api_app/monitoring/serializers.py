@@ -310,8 +310,13 @@ class BlockchainAlertRunner:
 
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
+
+        if self.alert.smart_contract.chain == "sol":
+            # to support multiple transactions in a single block for solana
+            hash_ = self.transaction.to_dict["blockhash"]
+
         alert_body = {
-            "message": f"Alert {self.Alert.name} triggered for transaction {self.transaction.hash}",
+            "message": f"Alert {self.Alert.name} triggered for transaction {hash_}",
             "transaction": self.transaction.compile_to_dict(),
         }
 
@@ -320,7 +325,7 @@ class BlockchainAlertRunner:
             notification_type="send_webhook",
             notification_body=alert_body,
             notification_target=webhook_url,
-            trigger_transaction_hash=self.transaction.hash,
+            trigger_transaction_hash=hash_,
         )
         notification.save()
 
