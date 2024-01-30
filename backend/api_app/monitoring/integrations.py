@@ -2,7 +2,7 @@ import os
 import requests
 
 # move this to a separate file later
-def airstack_identities(self, wallet: str) -> dict:
+def airstack_identities(wallet: str) -> dict:
     url = "https://api.airstack.xyz/gql"
 
     headers = {

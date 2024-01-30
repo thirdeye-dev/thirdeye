@@ -246,21 +246,24 @@ class BlockchainAlertRunner:
 
         variables = {
             "txn": txn_or_block,
+        }
+
+        functions = {
             "airstack_identities": airstack_identities,
         }
 
         if condition is None:
-            raise ConditionResultError("Condition not found in alert.")
+            raise ConditionResultError("Condition not found in alert.", condition)
 
         try:
-            result: bool = simple_eval(condition, names=variables)
+            result: bool = simple_eval(condition, names=variables, functions=functions)
         except Exception as e:
-            raise ConditionResultError(e)
+            raise ConditionResultError(e, condition)
 
         if isinstance(result, bool):
             return result
 
-        raise ConditionResultError("Condition didn't return a boolean.")
+        raise ConditionResultError("Condition didn't return a boolean.", condition)
 
     def run_dummy_check(self):
         # implement this later
@@ -302,7 +305,7 @@ class BlockchainAlertRunner:
 
         alert_body = {
             "message": f"Alert {self.Alert.name} triggered for { text } {hash_}",
-            "transaction": self.transaction.compile_to_dict(),
+            text: self.transaction.compile_to_dict(),
         }
 
         logger.info("[INFO] Alert body: " + str(alert_body))

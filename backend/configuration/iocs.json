@@ -26,6 +26,11 @@
                 "name": "WEBHOOK_URL",
                 "description": "Webhook URL for sending alerts",
                 "type": "str"
+            },
+            "FROM": {
+                "name": "FROM",
+                "description": "Address to track",
+                "type": "str"
             }
         }
     },
