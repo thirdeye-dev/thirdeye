@@ -187,7 +187,6 @@ def monitor_contract(self, monitoring_task_id):
         }
 
     ws.send(json.dumps(subscribe_data))
-    subscription_id = None
 
     def fetch_transaction_details(transaction_hash):
         logger.info(f"[DEBUG] Fetching transaction details for {transaction_hash}")
@@ -352,9 +351,7 @@ def monitor_contract(self, monitoring_task_id):
                 break
 
             if len(alerts) == 0:
-                logger.log(
-                    f"[DEBUG] No alerts found for contract {contract_address}"
-                )
+                logger.log(f"[DEBUG] No alerts found for contract {contract_address}")
                 time.sleep(2)
                 continue
 

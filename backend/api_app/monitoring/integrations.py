@@ -1,5 +1,7 @@
 import os
+
 import requests
+
 
 # move this to a separate file later
 def airstack_identities(wallet: str) -> dict:

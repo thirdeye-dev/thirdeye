@@ -1,8 +1,6 @@
 import logging
-import os
 from collections import OrderedDict
 
-import requests
 import yaml
 from rest_framework import serializers as rfs
 from simpleeval import simple_eval
@@ -12,10 +10,11 @@ from api_app.monitoring.exceptions import (
     ConditionResultError,
     ContractFunctionError,
 )
-from api_app.monitoring.models import Alerts, Notification
 from api_app.monitoring.integrations import airstack_identities
+from api_app.monitoring.models import Alerts, Notification
 
 logger = logging.getLogger(__name__)
+
 
 class Transaction:
     def __init__(self, transaction_data):
@@ -208,7 +207,7 @@ class BlockchainAlertRunner:
                 else:
                     # condition not met
                     pass
- 
+
     def trigger_automations(self, automations):
         abi = self.Alert.smart_contract.abi
 
@@ -293,14 +292,16 @@ class BlockchainAlertRunner:
     def send_webhook(self, alert_data):
         webhook_url = alert_data.get("webhook_url")
 
-        logger.info(f"Attempting to trigger webhook notification for {self.Alert.name}.")
+        logger.info(
+            f"Attempting to trigger webhook notification for {self.Alert.name}."
+        )
 
         if self.Alert.smart_contract.chain == "sol":
             # to support multiple transactions in a single block for solana
             hash_ = self.transaction.to_dict["blockhash"]
         else:
             hash_ = self.transaction.to_dict["hash"]
-        
+
         text = "transaction" if self.Alert.smart_contract.chain != "sol" else "block"
 
         alert_body = {
