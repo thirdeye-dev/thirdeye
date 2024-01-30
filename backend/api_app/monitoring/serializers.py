@@ -1,5 +1,5 @@
-import logging
 import os
+import logging
 from collections import OrderedDict
 
 import requests
@@ -43,10 +43,27 @@ def airstack_identities(wallet: str) -> dict:
     else:
         return {"error": f"Error: {response.status_code} - {response.text}"}
 
+class Transaction:
+    def __init__(self, transaction_data):
+        # base class for all transactions
+        pass
+
+    def compile_to_dict(self):
+        dict_normal = self.to_dict
+
+        dict_with_str = {str(x): y for x, y in dict_normal.items()}
+        return dict_with_str
+    
+#     # what's the point of doing this anyway?
+#     def compile_to_dict_with_prefix(self, prefix: str = "txn_"):
+#         dict_normal = self.to_dict
+
+#         dict_with_str = {str(prefix + x): y for x, y in dict_normal.items()}
+#         return dict_with_str
 
 # new code. This is the new serializer.
 # Transaction class to map transaction attributes
-class Transaction:
+class TransactionETH(Transaction):
     def __init__(self, transaction_data):
         self.transaction_data = transaction_data
 
@@ -68,6 +85,8 @@ class Transaction:
         self.s = transaction_data.get("s")
         self.timestamp = transaction_data.get("timestamp")
 
+        # wait, why did i do this earlier?
+        # why not just use the transaction_data dict?
         self.to_dict = {
             "hash": self.hash,
             "nonce": self.nonce,
@@ -89,18 +108,9 @@ class Transaction:
             "airstack_identities": airstack_identities,
         }
 
-    def compile_to_dict(self):
-        dict_normal = self.to_dict
-
-        dict_with_str = {str(x): y for x, y in dict_normal.items()}
-        return dict_with_str
-
-    def compile_to_dict_with_prefix(self, prefix: str = "txn_"):
-        dict_normal = self.to_dict
-
-        dict_with_str = {str(prefix + x): y for x, y in dict_normal.items()}
-        return dict_with_str
-
+class TransactionSOL(Transaction):
+    def __init__(self, transaction_data):
+        self.to_dict = transaction_data
 
 class NotificationType(rfs.ChoiceField):
     def __init__(self, **kwargs):
@@ -207,7 +217,10 @@ class BlockchainAlertRunner:
     def __init__(self, Alert: Alerts, transaction_data: dict):
         self.Alert = Alert
         self.validated_data = validate_configuration(Alert.alert_yaml)
-        self.transaction = Transaction(transaction_data)
+        if Alert.smart_contract.chain == "sol":
+            self.transaction = TransactionSOL(transaction_data)
+        else:
+            self.transaction = TransactionETH(transaction_data)
 
     def run(self):
         for contract_address in self.validated_data["blockchain_alerts"]:
@@ -250,7 +263,7 @@ class BlockchainAlertRunner:
             # call function with arguments
 
     def check_alert_condition(self, alert) -> bool:
-        variables = self.transaction.compile_to_dict_with_prefix()
+        variables = self.transaction.compile_to_dict()
         condition = alert.get("condition")
 
         if condition is None:

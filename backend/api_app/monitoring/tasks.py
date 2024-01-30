@@ -118,9 +118,9 @@ def monitor_contract(self, monitoring_task_id):
     network = monitoring_task.SmartContract.network.lower()
     chain = monitoring_task.SmartContract.chain.lower()
 
-    if chain == "sol":
-        logger.info(f"[DEBUG] Chain is sol. Skipping")
-        return
+    # if chain == "sol":
+    #     logger.info(f"[DEBUG] Chain is sol. Skipping")
+    #     return
 
     rpc_url = CHAINS_AND_NETWORKS.get(chain, {}).get(network, None)
     if not rpc_url:
@@ -163,6 +163,24 @@ def monitor_contract(self, monitoring_task_id):
                 "alchemy_minedTransactions",
                 {"address": contract_address, "fromBlock": "latest"},
             ],
+        }
+    
+    elif chain == "sol":
+        subscription_data = {
+            "jsonrpc": "2.0",
+            "id": "3106",
+            "method": "blockSubscribe",
+            "params": [
+            {
+                "mentionsAccountOrProgram": contract_address
+            },
+            {
+                "commitment": "finalized",
+                "encoding": "jsonParsed",
+                # "showRewards": True,
+                "transactionDetails": "full"
+            }
+            ]
         }
 
     ws.send(json.dumps(subscribe_data))
@@ -283,17 +301,22 @@ def monitor_contract(self, monitoring_task_id):
                         )
                     else:
                         transaction = fetch_transaction_details(transaction_hash)
+                elif "sol" == chain:
+                    sol_block = response.get("params").get("result").get("value")
 
-                if transaction is None:
+                if transaction is None and chain != "sol":
                     logger.info(f"[DEBUG] Transaction is none. Response is {response}")
 
                 # fetch alerts from the database
                 # run the alerts
                 # decoded_input, decoded_output = trace_transaction(transaction_hash)
-                fn_name, decoded_input = decode_input(transaction)
-                transaction["input"] = decoded_input
-                transaction["output"] = ""
-                transaction["fn_name"] = fn_name
+                    
+                if chain != "sol":
+                    # to be added later in sol
+                    fn_name, decoded_input = decode_input(transaction)
+                    transaction["input"] = decoded_input
+                    transaction["output"] = ""
+                    transaction["fn_name"] = fn_name
 
                 alerts = Alerts.objects.filter(
                     active=True, smart_contract=monitoring_task.SmartContract
