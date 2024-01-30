@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('smartcontract', '0008_alter_smartcontract_chain'),
+        ("smartcontract", "0008_alter_smartcontract_chain"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='smartcontract',
-            name='address',
+            model_name="smartcontract",
+            name="address",
             field=models.CharField(max_length=44),
         ),
     ]
