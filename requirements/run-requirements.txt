@@ -1,6 +1,6 @@
 channels
 channels-redis
-django==3.2.23
+django==3.2.24
 gunicorn==20.1.*
 uvicorn
 daphne
