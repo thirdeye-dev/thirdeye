@@ -8,6 +8,7 @@ on:
       - '**.py'
       - '**.sh'
       - 'docker/Dockerfile.*'
+      - '**.yml'
 
 jobs:
   build-push:

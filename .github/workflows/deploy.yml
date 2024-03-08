@@ -1,14 +1,10 @@
 name: Deploy to server
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - '**.py'
-      - '**.sh'
-      - 'docker/Dockerfile.*'
-      - '**.yml'
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
 
 jobs:
   deploy:
