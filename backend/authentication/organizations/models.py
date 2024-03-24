@@ -30,6 +30,7 @@ def invite_user_from_email(email, invited_by, organization=None, token=None):
 class Organization(BaseMixin):
     id = models.UUIDField(primary_key=True, editable=False)
     name = models.CharField(max_length=100)
+    notification_limit = models.PositiveIntegerField(default=5)
 
     class Meta:
         verbose_name = _("Organization")

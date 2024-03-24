@@ -356,6 +356,16 @@ def monitor_contract(self, monitoring_task_id):
                 continue
 
             for alert in alerts:
+                notifications = Notification.objects.filter(
+                    alert__smart_contract__owner_organization=monitoring_task.SmartContract.owner_organization,
+                ).count()
+
+                if notifications >= monitoring_task.SmartContract.owner_organization.notification_limit:
+                    logger.info(
+                        f"[DEBUG] Notification limit reached for organization {monitoring_task.SmartContract.owner_organization}"
+                    )
+                    return # we don't want to run more alerts
+
                 logger.info(f"[DEBUG] Running alert {alert.id}")
                 alert_runner = BlockchainAlertRunner(alert, transaction)
                 alert_runner.run()
