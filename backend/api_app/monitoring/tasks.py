@@ -240,10 +240,15 @@ def monitor_contract(self, monitoring_task_id):
         contract = w3.eth.contract(address=contract_address, abi=abi)
 
         # decode the input
-        fn_name, decoded_input = contract.decode_function_input(
-            transaction_data["input"]
-        )
-        fn_name = fn_name.fn_name
+        try:
+            fn_name, decoded_input = contract.decode_function_input(
+                transaction_data["input"]
+            )
+            fn_name = fn_name.fn_name
+        except Exception as e:
+            logger.error(f"Error decoding input: {e}")
+            decoded_input = transaction_data["input"]
+            fn_name = ""
 
         return fn_name, decoded_input
 

@@ -99,9 +99,9 @@ def add_abi(request):
     # Parse abi as json
     abi = json.loads(abi)
 
-    serializer = ABIJSONSerializer(data=abi, many=True)
-    serializer.is_valid(raise_exception=True)
-    smart_contract.abi = serializer.data
+    # serializer = ABIJSONSerializer(data=abi, many=True)
+    # serializer.is_valid(raise_exception=True)
+    smart_contract.abi = abi
 
     smart_contract.save()
     return Response({"message": "abi added successfully"}, status=Status.HTTP_200_OK)
