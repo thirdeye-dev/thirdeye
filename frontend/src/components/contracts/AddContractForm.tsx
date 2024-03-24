@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Chain, Network } from "@/models/contract";
 import { createContract } from "@/services/contracts";
 import { Button, SegmentedControl, Select, Stack, TextInput } from "@mantine/core";

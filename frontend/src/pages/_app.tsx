@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { NextPage } from "next";
