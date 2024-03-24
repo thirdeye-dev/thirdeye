@@ -13,7 +13,7 @@ from authentication.organizations.models import Membership, Organization
 from authentication.organizations.permissions import IsMember
 
 from .models import SmartContract
-from .serializers import ABIJSONSerializer, SmartContractSerializer
+from .serializers import SmartContractSerializer
 
 
 class SmartContractViewSet(viewsets.ModelViewSet):
