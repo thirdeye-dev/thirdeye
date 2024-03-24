@@ -306,6 +306,12 @@ class BlockchainAlertRunner:
 
         alert_body = {
             "message": f"Alert {self.Alert.name} triggered for { text } {hash_}",
+            "notification_limit_details": {
+                "limit": self.Alert.smart_contract.owner_organization.notification_limit,
+                "current": Notification.objects.filter(
+                    alert=self.Alert, notification_type="send_webhook"
+                ).count(),
+            },
             text: self.transaction.compile_to_dict(),
         }
 

@@ -16,7 +16,9 @@ demo_instance = settings.DEMO_INSTANCE
 
 @receiver(post_save, sender=SmartContract)
 def smart_contract_post_save(sender, instance, created, **kwargs):
-    if created and not demo_instance:
+    # the following takes care of all the monitoring
+    # if created and not demo_instance:
+    if created:
         # do on create
         monitoring_task = MonitoringTasks.objects.create(
             SmartContract=instance,
