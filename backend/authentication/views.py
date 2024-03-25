@@ -135,6 +135,7 @@ def google_login(request):
             raise AuthenticationFailed("Google OAuth is not configured.")
         raise error
 
+
 def github_login(request):
     # for development
     REPLACEMENT_DOMAIN = "localhost"
