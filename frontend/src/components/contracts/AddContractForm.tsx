@@ -19,7 +19,7 @@ export default function AddContractForm({
     initialValues: {
       name: "",
       address: "",
-      chain: Chain.ETH,
+      chain: Chain.SOL,
       network: Network.MAINNET,
     },
     validate: (vals) => {
