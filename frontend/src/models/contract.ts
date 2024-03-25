@@ -1,5 +1,5 @@
 export enum Chain {
-  ETH = "eth",
+  // ETH = "eth",
   SOL = "sol",
 }
 
