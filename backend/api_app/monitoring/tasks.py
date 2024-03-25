@@ -209,7 +209,7 @@ def monitor_contract(self, monitoring_task_id):
             logger.info(f"[DEBUG] Received response: {response}")
             response = response.get("params").get("result").get("transaction")
 
-        logger.info(f"[DEBUG] Received response while fetching txn details: {response}")
+        # logger.info(f"[DEBUG] Received response while fetching txn details: {response}")
         response["transaction_hash"] = transaction_hash
 
         transaction_data = response.get("params")
@@ -227,7 +227,7 @@ def monitor_contract(self, monitoring_task_id):
         transaction_data["chainId"] = int(transaction_data["chainId"], 16)
         transaction_data["nonce"] = int(transaction_data["nonce"], 16)
 
-        logger.info(f"[DEBUG] Overwrote transaction data: {transaction_data}")
+        # logger.info(f"[DEBUG] Overwrote transaction data: {transaction_data}")
 
         return transaction_data
 
@@ -329,7 +329,8 @@ def monitor_contract(self, monitoring_task_id):
                 transaction["slot"] = sol_block.get("slot")
 
             if transaction is None and chain != "sol":
-                logger.info(f"[DEBUG] Transaction is none. Response is {response}")
+                # logger.info(f"[DEBUG] Transaction is none. Response is {response}")
+                pass
 
             # fetch alerts from the database
             # run the alerts
@@ -356,7 +357,7 @@ def monitor_contract(self, monitoring_task_id):
                 break
 
             if len(alerts) == 0:
-                logger.log(f"[DEBUG] No alerts found for contract {contract_address}")
+                # logger.log(f"[DEBUG] No alerts found for contract {contract_address}")
                 time.sleep(2)
                 continue
 
