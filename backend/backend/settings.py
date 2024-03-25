@@ -204,7 +204,7 @@ if DEMO_INSTANCE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME":  "/opt/db.sqlite3",
+            "NAME":  "/opt/db/db.sqlite3",
         }
     }
 
