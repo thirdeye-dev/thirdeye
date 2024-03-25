@@ -15,20 +15,24 @@ class InputSerializer(serializers.Serializer):
     name = serializers.CharField(allow_blank=True, required=False)
     type = serializers.CharField()
 
+
 class CompilerSerializer(serializers.Serializer):
     version = serializers.CharField()
+
 
 class OutputSerializer(serializers.Serializer):
     internalType = serializers.CharField(allow_blank=True, required=False)
     name = serializers.CharField(allow_blank=True, required=False)
     type = serializers.CharField()
 
+
 class ABIJSONSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
-    name = serializers.CharField(required=False, allow_blank=True) 
+    name = serializers.CharField(required=False, allow_blank=True)
     outputs = OutputSerializer(many=True)
     stateMutability = serializers.CharField()
     type = serializers.CharField()
+
 
 class MethodSerializer(serializers.Serializer):
     inputs = InputSerializer(many=True)
