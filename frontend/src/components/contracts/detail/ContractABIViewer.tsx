@@ -51,17 +51,17 @@ export default function ContractABIViewer({
           gap="md"
         >
           <Text color="gray.7" size="2em" weight="bold" align="center">
-            No ABI added yet
+            More sophisticated decoding options coming soon to solana!
           </Text>
 
-          <Button
+          {/* <Button
             size="md"
             variant="light"
             color="green"
             onClick={openAddModal}
           >
             Add Now
-          </Button>
+          </Button> */}
         </Flex>
       </>
     );

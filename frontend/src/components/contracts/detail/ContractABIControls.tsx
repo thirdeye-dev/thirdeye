@@ -30,7 +30,7 @@ export default function ContractABIControls({
   return (
     <Flex p="md" direction="row" justify="space-between">
       <Text size="2em" color="yellow" weight="bold">
-        ABI
+        Decoding tools
       </Text>
       {abi ? (
         <Button
