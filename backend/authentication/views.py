@@ -114,6 +114,8 @@ def google_login(request):
 
     REPLACEMENT_DOMAIN += "/api/v1"
 
+    sol = request.GET.get("sol") == "true"
+
     # REPLACEMENT_DOMAIN += "/api"
 
     current_domain = request.get_host()
@@ -127,6 +129,10 @@ def google_login(request):
         redirect_uri = (
             "https://demo.thirdeyelabs.xyz/api/v1/authentication/google-callback"
         )
+        if sol:
+            redirect_uri = (
+                "https://solana.thirdeyelabs.xyz/api/v1/authentication/google-callback?sol=true"
+            )
 
     try:
         return oauth.google.authorize_redirect(request, redirect_uri)
@@ -139,6 +145,8 @@ def google_login(request):
 def github_login(request):
     # for development
     REPLACEMENT_DOMAIN = "localhost"
+
+    sol = request.GET.get("sol") == "true"
 
     if settings.DEMO_INSTANCE:
         REPLACEMENT_DOMAIN = settings.FRONTEND_DOMAIN
@@ -158,6 +166,10 @@ def github_login(request):
         redirect_uri = (
             "https://demo.thirdeyelabs.xyz/api/v1/authentication/github-callback"
         )
+        if sol:
+            redirect_uri = (
+                "https://solana.thirdeyelabs.xyz/api/v1/authentication/github-callback?sol=true"
+            )
 
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)
