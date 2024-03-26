@@ -25,21 +25,20 @@ export const getColorByTag = (tag: string) => {
 export const getColorByChain = (chain: Chain) => {
   if (chain === Chain.ETH) {
     return "blue";
-  }
-  else if (chain === Chain.SOL) {
+  } else if (chain === Chain.SOL) {
     return "red";
   }
 
   return "gray";
-}
+};
 
 export const gradientByChain = (chain: Chain) => {
   switch (chain.toLowerCase()) {
     case Chain.ETH:
-      return {from: "indigo", to: "cyan"}
+      return { from: "indigo", to: "cyan" };
     case Chain.SOL:
-      return {from: "pink", to: "purple"}
+      return { from: "pink", to: "purple" };
     default:
-      return {from: "gray", to: "gray"} 
+      return { from: "gray", to: "gray" };
   }
-}
+};

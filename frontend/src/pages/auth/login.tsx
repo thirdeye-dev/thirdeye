@@ -38,7 +38,6 @@ export default function Page() {
               <Text color="blue.5">Login with Google</Text>
             </Button>
           </Link>
-
         </Flex>
       </main>
     </>

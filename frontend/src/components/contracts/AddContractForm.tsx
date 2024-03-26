@@ -2,7 +2,13 @@
 
 import { Chain, Network } from "@/models/contract";
 import { createContract } from "@/services/contracts";
-import { Button, SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  SegmentedControl,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 const ethContractAddressRegex = new RegExp(/^0x([A-Fa-f0-9]{40})$/);
@@ -31,7 +37,7 @@ export default function AddContractForm({
         }
 
         return null;
-      }
+      };
       const validateSolAddress = () => {
         if (vals.address.length === 0) return "address is required";
 
@@ -40,13 +46,15 @@ export default function AddContractForm({
         }
 
         return null;
-      }
+      };
       return {
         name: vals.name.length > 0 ? null : "name can't be empty",
-        address: vals.chain===Chain.SOL?validateSolAddress():validateEthAddress(), // NOTE: validate other chains if added
-      }
-      
-    }
+        address:
+          vals.chain === Chain.SOL
+            ? validateSolAddress()
+            : validateEthAddress(), // NOTE: validate other chains if added
+      };
+    },
   });
 
   const handleOnSubmit = async (values: Record<string, unknown>) => {
@@ -68,7 +76,7 @@ export default function AddContractForm({
           }}
           data={Object.entries(Chain).map(([k, v]) => ({
             label: k,
-            value: v
+            value: v,
           }))}
           {...form.getInputProps("chain")}
         />
@@ -85,13 +93,13 @@ export default function AddContractForm({
           type="text"
           {...form.getInputProps("address")}
         />
-        
+
         <Select
           placeholder="Select a network"
           name="network"
           data={Object.entries(Network).map(([k, v]) => ({
             label: k,
-            value: v
+            value: v,
           }))}
           {...form.getInputProps("network")}
         />

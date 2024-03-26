@@ -58,10 +58,7 @@ export default function ContractCard({
 
           <Group spacing={"0.2rem"}>
             <Tooltip label={contract.chain.toUpperCase()} color="gray">
-              <Avatar
-                color={getColorByChain(contract.chain)}
-                size="sm"
-              >
+              <Avatar color={getColorByChain(contract.chain)} size="sm">
                 <ChainIcon chain={contract.chain} />
               </Avatar>
             </Tooltip>
