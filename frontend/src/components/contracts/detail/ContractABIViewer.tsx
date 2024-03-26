@@ -50,8 +50,8 @@ export default function ContractABIViewer({
           align="center"
           gap="md"
         >
-          <Text color="gray.7" size="2em" weight="bold" align="center">
-            More sophisticated decoding options coming soon to solana!
+          <Text color="gray.7" size="1em" weight="bold" align="center">
+            more decoding features available soon!
           </Text>
 
           {/* <Button
