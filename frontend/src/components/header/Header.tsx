@@ -3,7 +3,6 @@ import {
   Divider,
   Flex,
   Group,
-  Header,
   Space,
   useMantineColorScheme,
 } from "@mantine/core";
@@ -23,41 +22,42 @@ export default function HeaderComponent() {
   const shouldShowOrganizationSelector = router.pathname.includes("/org");
   const shouldShowNotificationsIsland = router.pathname.includes("/org");
 
-  return (
-    <Header height={"5rem"} fixed>
-      <Flex
-        direction="row"
-        justify="space-between"
-        align="center"
-        sx={(theme) => ({
-          height: "100%",
-          width: "100%",
-          padding: theme.spacing.md,
-        })}
-      >
-        <Group>
-          <Link href="/">
-            <Logo />
-          </Link>
+  /* return (
+   *   <Header height={"5rem"} fixed>
+   *     <Flex
+   *       direction="row"
+   *       justify="space-between"
+   *       align="center"
+   *       sx={(theme) => ({
+   *         height: "100%",
+   *         width: "100%",
+   *         padding: theme.spacing.md,
+   *       })}
+   *     >
+   *       <Group>
+   *         <Link href="/">
+   *           <Logo />
+   *         </Link>
 
-          <Divider orientation="vertical" />
+   *         <Divider orientation="vertical" />
 
-          {shouldShowOrganizationSelector && <OrganizationSelector />}
-        </Group>
+   *         {shouldShowOrganizationSelector && <OrganizationSelector />}
+   *       </Group>
 
-        {shouldShowNotificationsIsland && (
-          <>
-            <NotificationIsland />
-            <Space w="4rem" />
-          </>
-        )}
+   *       {shouldShowNotificationsIsland && (
+   *         <>
+   *           <NotificationIsland />
+   *           <Space w="4rem" />
+   *         </>
+   *       )}
 
-        <Group>
-          <ActionIcon onClick={() => toggleColorScheme()}>
-            {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-          </ActionIcon>
-        </Group>
-      </Flex>
-    </Header>
-  );
+   *       <Group>
+   *         <ActionIcon onClick={() => toggleColorScheme()}>
+   *           {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
+   *         </ActionIcon>
+   *       </Group>
+   *     </Flex>
+   *   </Header> */
+  /* ); */
+  return null;
 }

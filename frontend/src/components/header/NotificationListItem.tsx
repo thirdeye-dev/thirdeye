@@ -14,7 +14,7 @@ import { BsRecordCircle } from "react-icons/bs";
 
 import { getColorByTag } from "@/utils";
 import Notification from "@/models/notification";
-import { Prism } from "@mantine/prism";
+/* import { Prism } from "@mantine/prism"; */
 
 export default function NotificationListItem({
   notif,
@@ -49,9 +49,9 @@ export default function NotificationListItem({
       </Accordion.Control>
 
       <Accordion.Panel>
-        <Prism language="javascript">
-          {JSON.stringify(notif.notification_body, null, 2)}
-        </Prism>
+        {/* <Prism language="javascript">
+            {JSON.stringify(notif.notification_body, null, 2)}
+            </Prism> */}
       </Accordion.Panel>
     </>
   );

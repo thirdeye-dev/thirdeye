@@ -1,24 +1,17 @@
 import Alert from "@/models/alert";
-import {
-  Button,
-  Flex,
-  ScrollArea,
-  Table,
-  Tooltip,
-  createStyles,
-} from "@mantine/core";
+import { Button, Flex, ScrollArea, Table, Tooltip } from "@mantine/core";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
-const useStyles = createStyles((theme) => ({
-  header: {
-    position: "sticky",
-    top: 0,
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-    transition: "box-shadow 150ms ease",
-  },
-}));
-
+/* const useStyles = createStyles((theme) => ({
+ *   header: {
+ *     position: "sticky",
+ *     top: 0,
+ *     backgroundColor:
+ *       theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+ *     transition: "box-shadow 150ms ease",
+ *   },
+ * }));
+ *  */
 export default function ContractAlertTable({
   alerts,
   addNewAlert,
@@ -30,12 +23,10 @@ export default function ContractAlertTable({
   editAlert: (alert: Alert) => void;
   deleteAlert: (alert: Alert) => void;
 }) {
-  const { classes } = useStyles();
-
   return (
     <ScrollArea h="100%" type="never">
       <Table highlightOnHover verticalSpacing="lg" horizontalSpacing="lg">
-        <thead className={classes.header}>
+        <thead>
           <tr>
             <th>ID</th>
             <th>Name</th>
@@ -92,7 +83,7 @@ export default function ContractAlertTable({
                     </Flex>
                   </td>
                 </tr>
-              ) ?? []
+              ) ?? [],
           )}
         </tbody>
       </Table>

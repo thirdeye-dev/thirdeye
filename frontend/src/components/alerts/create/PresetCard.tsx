@@ -6,51 +6,50 @@ import {
   Stack,
   Transition,
   Text,
-  createStyles,
   rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Prism } from "@mantine/prism";
+/* import { Prism } from "@mantine/prism"; */
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 import PresetAlert from "@/models/presetAlert";
 import { toSentenceCase } from "@/utils";
 
-const useCardStyles = createStyles((theme) => ({
-  card: {
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : "white",
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
-    },
-  },
-
-  cardSelected: {
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.gray[0],
-    border: `2px solid ${theme.colors.blue[6]}`,
-  },
-
-  params: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
-  },
-
-  title: {
-    lineHeight: 1,
-  },
-}));
-
+/* const useCardStyles = createStyles((theme) => ({
+ *   card: {
+ *     backgroundColor:
+ *       theme.colorScheme === "dark" ? theme.colors.dark[7] : "white",
+ *
+ *     "&:hover": {
+ *       backgroundColor:
+ *         theme.colorScheme === "dark"
+ *           ? theme.colors.dark[6]
+ *           : theme.colors.gray[0],
+ *     },
+ *   },
+ *
+ *   cardSelected: {
+ *     backgroundColor:
+ *       theme.colorScheme === "dark"
+ *         ? theme.colors.dark[6]
+ *         : theme.colors.gray[0],
+ *     border: `2px solid ${theme.colors.blue[6]}`,
+ *   },
+ *
+ *   params: {
+ *     display: "flex",
+ *     justifyContent: "space-between",
+ *     padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+ *     borderTop: `${rem(1)} solid ${
+ *       theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
+ *     }`,
+ *   },
+ *
+ *   title: {
+ *     lineHeight: 1,
+ *   },
+ * }));
+ *  */
 export default function PresetCard({
   preset,
   isSelected,
@@ -60,7 +59,7 @@ export default function PresetCard({
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const { classes, cx } = useCardStyles();
+  //const { classes, cx } = useCardStyles();
 
   const [collapsed, { toggle: toggleCollapse }] = useDisclosure(false);
 
@@ -81,12 +80,12 @@ export default function PresetCard({
       withBorder
       w="30vw"
       padding="lg"
-      className={cx(classes.card, isSelected && classes.cardSelected)}
+      // className={cx(classes.card, isSelected && classes.cardSelected)}
     >
       <Card.Section></Card.Section>
 
       <Flex mt="xl" direction="row" justify="space-between" align="center">
-        <Text color="yellow" size="xl" weight={700} className={classes.title}>
+        <Text color="yellow" size="xl" weight={700}>
           {toSentenceCase(preset.name)}
         </Text>
 
@@ -105,11 +104,11 @@ export default function PresetCard({
         {preset.description}
       </Text>
 
-      <Card.Section className={classes.params}>{items}</Card.Section>
+      <Card.Section>{items}</Card.Section>
 
       <Card.Section>
         <Collapse in={collapsed} p="xs">
-          <Prism language="yaml">{preset.alert_yaml}</Prism>
+          {/* <Prism language="yaml">{preset.alert_yaml}</Prism> */}
         </Collapse>
       </Card.Section>
     </Card>
