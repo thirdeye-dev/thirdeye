@@ -1,20 +1,22 @@
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 import {
   ActionIcon,
   Divider,
   Flex,
   Group,
   Space,
+  Burger,
   useMantineColorScheme,
 } from "@mantine/core";
 import { FiMoon, FiSun } from "react-icons/fi";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
-import Logo from "../Logo";
 import OrganizationSelector from "./OrganizationSelector";
 import NotificationIsland from "./NotificationIsland";
+import Logo from "../Logo";
 
-export default function HeaderComponent() {
+export default function HeaderComponent({ burgerOpened, burgerToggle }) {
   const router = useRouter();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -22,42 +24,47 @@ export default function HeaderComponent() {
   const shouldShowOrganizationSelector = router.pathname.includes("/org");
   const shouldShowNotificationsIsland = router.pathname.includes("/org");
 
-  /* return (
-   *   <Header height={"5rem"} fixed>
-   *     <Flex
-   *       direction="row"
-   *       justify="space-between"
-   *       align="center"
-   *       sx={(theme) => ({
-   *         height: "100%",
-   *         width: "100%",
-   *         padding: theme.spacing.md,
-   *       })}
-   *     >
-   *       <Group>
-   *         <Link href="/">
-   *           <Logo />
-   *         </Link>
+  return (
+    <Flex
+      direction="row"
+      justify="space-between"
+      align="center"
+      h="100%"
+      w="100%"
+      p="md"
+    >
+      <Burger
+        opened={burgerOpened}
+        onClick={burgerToggle}
+        hiddenFrom="sm"
+        size="sm"
+      />
 
-   *         <Divider orientation="vertical" />
+      <Group>
+        <Link href="/">
+          <Logo />
+        </Link>
 
-   *         {shouldShowOrganizationSelector && <OrganizationSelector />}
-   *       </Group>
+        {shouldShowOrganizationSelector && (
+          <>
+            <Divider orientation="vertical" />
+            <OrganizationSelector />
+          </>
+        )}
+      </Group>
 
-   *       {shouldShowNotificationsIsland && (
-   *         <>
-   *           <NotificationIsland />
-   *           <Space w="4rem" />
-   *         </>
-   *       )}
+      {shouldShowNotificationsIsland && (
+        <>
+          <NotificationIsland />
+          <Space w="4rem" />
+        </>
+      )}
 
-   *       <Group>
-   *         <ActionIcon onClick={() => toggleColorScheme()}>
-   *           {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-   *         </ActionIcon>
-   *       </Group>
-   *     </Flex>
-   *   </Header> */
-  /* ); */
-  return null;
+      <Group>
+        <ActionIcon onClick={() => toggleColorScheme()}>
+          {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
+        </ActionIcon>
+      </Group>
+    </Flex>
+  );
 }

@@ -4,7 +4,7 @@ import "@/styles/globals.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { NextPage } from "next";
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import { ReactElement, ReactNode } from "react";
 
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
@@ -14,6 +14,7 @@ import { SWRConfig } from "swr";
 import RootLayout from "@/layouts/RootLayout";
 import { RouterTransition } from "@/components/RouterTransition";
 import axiosInstance from "@/axios";
+import theme from "@/theme";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,37 +25,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App(props: AppPropsWithLayout) {
-  const { Component, pageProps } = props;
-
-  // Track the color scheme
-  /* const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
-   * const toggleColorScheme = (value?: ColorScheme) =>
-   *   setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
-
-   * // Load the color scheme from local storage
-   * useEffect(() => {
-   *   const storedColorScheme = localStorage.getItem("colorScheme");
-
-   *   if (storedColorScheme && colorScheme !== storedColorScheme) {
-   *     setColorScheme(storedColorScheme as ColorScheme);
-   *   }
-
-   *   // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
-   * }, []);
-   */
-  // Update the color scheme in local storage if it changes
-  /* useEffect(() => {
-   *   const storedColorScheme = localStorage.getItem("colorScheme");
-
-   *   if (colorScheme !== storedColorScheme && colorScheme) {
-   *     localStorage.setItem("colorScheme", colorScheme);
-   *   }
-   * }, [colorScheme]);
-   */
-  /* const mantineTheme: MantineThemeOverride = {
-   *   colorScheme: colorScheme,
-   *   fontFamily: "Inter, sans-serif",
-   * }; */
+  const { Component } = props;
 
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -69,11 +40,7 @@ export default function App(props: AppPropsWithLayout) {
         />
       </Head>
 
-      {/* <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
-          > */}
-      <MantineProvider>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
         <RouterTransition />
         <Notifications />
 
@@ -91,7 +58,6 @@ export default function App(props: AppPropsWithLayout) {
           </RootLayout>
         </ModalsProvider>
       </MantineProvider>
-      {/* </ColorSchemeProvider> */}
     </>
   );
 }
