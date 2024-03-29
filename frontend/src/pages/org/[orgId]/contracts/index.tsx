@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { useRouter } from "next/router";
 
 import {
@@ -15,7 +14,6 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
-import AppShellLayout from "@/layouts/AppShellLayout";
 import Contract from "@/models/contract";
 import { deleteContract } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
@@ -122,7 +120,3 @@ export default function Contracts() {
     </>
   );
 }
-
-Contracts.getLayout = (page: ReactNode) => {
-  return <AppShellLayout activeLink="contracts">{page}</AppShellLayout>;
-};

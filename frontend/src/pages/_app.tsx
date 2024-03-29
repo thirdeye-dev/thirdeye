@@ -25,7 +25,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App(props: AppPropsWithLayout) {
-  const { Component } = props;
+  const { Component, pageProps } = props;
 
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
@@ -52,8 +52,7 @@ export default function App(props: AppPropsWithLayout) {
                   axiosInstance.get(url).then((res) => res.data), // default fetcher
               }}
             >
-              {/* {getLayout(<Component {...pageProps} />)} */}
-              <h1>owo</h1>
+              {getLayout(<Component {...pageProps} />)}
             </SWRConfig>
           </RootLayout>
         </ModalsProvider>
