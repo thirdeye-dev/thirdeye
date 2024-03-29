@@ -4,6 +4,7 @@ import { AppShell, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 import Header from "@/components/header/Header";
+import Navbar from "@/components/navbar/Navbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,29 +16,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [opened, { toggle }] = useDisclosure();
-
   return (
-    <AppShell
-      header={{ height: { base: 60, md: 70, lg: 80 } }}
-      navbar={{
-        width: { base: 200, md: 300, lg: 400 },
-        breakpoint: "sm",
-        collapsed: { mobile: !opened },
-      }}
-      padding="md"
-    >
+    <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
-        <Header burgerOpened={opened} burgerToggle={toggle} />
+        <Header />
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={true} />
-          ))}
+        <Navbar />
       </AppShell.Navbar>
 
       <AppShell.Main>Main</AppShell.Main>

@@ -36,7 +36,6 @@
         "eslint-config-next": "14.1.4",
         "next": "14.1.4",
         "next-remove-imports": "^1.0.12",
-        "postcss-preset-mantine": "^1.13.0",
         "prop-types": "^15.8.1",
         "react": "18.2.0",
         "react-dom": "18.2.0",
@@ -46,6 +45,7 @@
         "typescript": "5.4.3"
     },
     "devDependencies": {
+        "postcss-preset-mantine": "^1.13.0",
         "prettier": "^3.2.5"
     }
 }

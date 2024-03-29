@@ -1,45 +1,14 @@
+import classes from "./Navbar.module.css";
+
 import { Center, rem, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 import { useRouter } from "next/router";
 
-import { AiFillAlert, AiFillEye, AiFillHome } from "react-icons/ai";
+import { AiFillAlert, AiFillEye } from "react-icons/ai";
 import { FaFileContract } from "react-icons/fa";
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 
-import UserAvatar from "./UserAvatar";
-/*
- * const useStyles = createStyles((theme) => ({
- *   link: {
- *     width: rem(50),
- *     height: rem(50),
- *     borderRadius: theme.radius.md,
- *     display: "flex",
- *     alignItems: "center",
- *     justifyContent: "center",
- *     color:
- *       theme.colorScheme === "dark"
- *         ? theme.colors.dark[0]
- *         : theme.colors.gray[7],
- *
- *     "&:hover": {
- *       backgroundColor:
- *         theme.colorScheme === "dark"
- *           ? theme.colors.dark[5]
- *           : theme.colors.gray[0],
- *     },
- *   },
- *
- *   active: {
- *     "&, &:hover": {
- *       backgroundColor: theme.fn.variant({
- *         variant: "light",
- *         color: theme.primaryColor,
- *       }).background,
- *       color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
- *         .color,
- *     },
- *   },
- * })); */
+import UserAvatar from "../UserAvatar";
 
 interface NavbarLinkProps {
   icon?: React.FC<any>;
@@ -49,17 +18,16 @@ interface NavbarLinkProps {
 }
 
 function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-  // const { classes, cx } = useStyles();
-
   Icon = Icon!; // fixes a weird typescript error
 
   return (
     <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
       <UnstyledButton
         onClick={onClick}
-        //className={cx(classes.link, { [classes.active]: active })}
+        className={classes.link}
+        data-active={active || undefined}
       >
-        <Icon size="1.2rem" stroke={1.5} />
+        <Icon style={{ width: rem(20), height: rem(20) }} stroke={1.5} />{" "}
       </UnstyledButton>
     </Tooltip>
   );
@@ -120,31 +88,27 @@ export default function NavbarMinimal({
     router.push(`/logout`);
   };
 
-  /* return (
-   *   <Navbar height={"92vh"} width={{ base: 80 }} p="md">
-   *     <Center>
-   *       <UserAvatar />
-   *     </Center>
-   *     <Navbar.Section grow mt={50}>
-   *       <Stack justify="center" spacing={0}>
-   *         {links}
-   *       </Stack>
-   *     </Navbar.Section>
-   *     <Navbar.Section>
-   *       <Stack justify="center" spacing={0}>
-   *         <NavbarLink
-   *           icon={SettingsIcon}
-   *           label="Settings"
-   *           onClick={onClickSettings}
-   *         />
-   *         <NavbarLink
-   *           icon={LogoutIcon}
-   *           label="Logout"
-   *           onClick={onClickLogout}
-   *         />
-   *       </Stack>
-   *     </Navbar.Section>
-   *   </Navbar>
-   * ); */
-  return null;
+  return (
+    <>
+      <Center>
+        <UserAvatar />
+      </Center>
+
+      <div className={classes.navbarMain}>
+        <Stack justify="center" gap={0}>
+          {links}
+        </Stack>
+      </div>
+
+      <Stack justify="center" gap={0}>
+        <NavbarLink
+          icon={SettingsIcon}
+          label="Settings"
+          onClick={onClickSettings}
+        />
+
+        <NavbarLink icon={LogoutIcon} label="Logout" onClick={onClickLogout} />
+      </Stack>
+    </>
+  );
 }

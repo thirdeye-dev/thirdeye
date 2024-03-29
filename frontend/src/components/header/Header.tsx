@@ -16,7 +16,7 @@ import OrganizationSelector from "./OrganizationSelector";
 import NotificationIsland from "./NotificationIsland";
 import Logo from "../Logo";
 
-export default function HeaderComponent({ burgerOpened, burgerToggle }) {
+export default function HeaderComponent() {
   const router = useRouter();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -33,13 +33,6 @@ export default function HeaderComponent({ burgerOpened, burgerToggle }) {
       w="100%"
       p="md"
     >
-      <Burger
-        opened={burgerOpened}
-        onClick={burgerToggle}
-        hiddenFrom="sm"
-        size="sm"
-      />
-
       <Group>
         <Link href="/">
           <Logo />
