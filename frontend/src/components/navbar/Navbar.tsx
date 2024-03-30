@@ -49,20 +49,19 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { icon: AiFillEye, label: "Overview", name: "overview", href: "overview" },
+  { icon: AiFillEye, label: "Overview", href: "overview" },
   {
     icon: FaFileContract,
     label: "Smart Contracts",
-    name: "contracts",
     href: "contracts",
   },
-  { icon: AiFillAlert, label: "Alerts", name: "alerts", href: "alerts/create" }, // TODO: Change this to alerts when the page is created
+  { icon: AiFillAlert, label: "Alerts", href: "alerts/create" }, // TODO: Change this to alerts when the page is created
 ];
 
-export default function NavbarMinimal({
-  activeLink = "contracts",
+export default function Navbar({
+  activePathname = "contracts",
 }: {
-  activeLink?: string;
+  activePathname?: string;
 }) {
   const router = useRouter();
   const organizationId = router.query.orgId as string;
@@ -75,7 +74,7 @@ export default function NavbarMinimal({
     <NavbarLink
       {...link}
       key={link.label}
-      active={activeLink === link.name}
+      active={activePathname.includes(link.href)}
       onClick={() => onClickLink(link)}
     />
   ));
