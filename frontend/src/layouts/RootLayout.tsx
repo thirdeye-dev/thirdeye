@@ -10,7 +10,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathName = usePathname();
+  const pathName = usePathname() ?? "";
 
   const isNavbarVisible = !pathName.includes("/auth");
 
