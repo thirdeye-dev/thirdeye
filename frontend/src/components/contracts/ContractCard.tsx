@@ -8,7 +8,6 @@ import {
   Group,
   Stack,
   Text,
-  ThemeIcon,
   Tooltip,
 } from "@mantine/core";
 import { useRouter } from "next/router";
@@ -56,15 +55,19 @@ export default function ContractCard({
             {contract.name}
           </Text>
 
-          <Group spacing={"0.2rem"}>
+          <Group gap={18}>
             <Tooltip label={contract.chain.toUpperCase()} color="gray">
-              <Avatar color={getColorByChain(contract.chain)} size="sm">
+              <Avatar
+                color={getColorByChain(contract.chain)}
+                radius="sm"
+                size="sm"
+              >
                 <ChainIcon chain={contract.chain} />
               </Avatar>
             </Tooltip>
 
             <Tooltip label={contract.network.toUpperCase()} color="gray">
-              <Avatar color="blue" size="sm">
+              <Avatar color="blue" radius="sm" size="sm">
                 {contract.network.at(0)?.toUpperCase()}
               </Avatar>
             </Tooltip>
@@ -74,7 +77,7 @@ export default function ContractCard({
         <CopyToClipboard textToCopy={contract.address} />
 
         <Flex justify={"space-between"}>
-          <Group position="center">
+          <Group>
             <Button
               variant="light"
               color="green"
