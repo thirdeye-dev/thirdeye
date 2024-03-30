@@ -7,7 +7,7 @@ import {
   Flex,
   Group,
   Space,
-  Burger,
+  Tooltip,
   useMantineColorScheme,
 } from "@mantine/core";
 import { FiMoon, FiSun } from "react-icons/fi";
@@ -53,11 +53,13 @@ export default function HeaderComponent() {
         </>
       )}
 
-      <Group>
-        <ActionIcon onClick={() => toggleColorScheme()}>
-          {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-        </ActionIcon>
-      </Group>
+      <ActionIcon
+        size="lg"
+        variant="subtle"
+        onClick={() => toggleColorScheme()}
+      >
+        {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
+      </ActionIcon>
     </Flex>
   );
 }
