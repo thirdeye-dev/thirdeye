@@ -1,23 +1,19 @@
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { Avatar, Group, Select, SelectItemProps, Text } from "@mantine/core";
+import { Avatar, Group, Select, Text, SelectProps } from "@mantine/core";
 
 import useOrgs from "@/hooks/use-orgs";
 
-function SelectItem({ label, ...others }: SelectItemProps) {
-  return (
-    <div {...others}>
-      <Group noWrap>
-        <Avatar variant="outline" color="green" alt={label?.toString()}>
-          {label?.toString().at(0)}
-        </Avatar>
+const SelectOption: SelectProps["renderOption"] = ({ option }) => (
+  <Group wrap="nowrap">
+    <Avatar variant="outline" color="green" alt={option.label?.toString()}>
+      {option.label?.toString().at(0)}
+    </Avatar>
 
-        <Text size="sm">{label}</Text>
-      </Group>
-    </div>
-  );
-}
+    <Text size="sm">{option.label}</Text>
+  </Group>
+);
 
 export default function OrganizationSelector() {
   const router = useRouter();
@@ -46,10 +42,9 @@ export default function OrganizationSelector() {
 
   return (
     <Select
-      w="50%"
       placeholder="Organization"
-      nothingFound="No organizations"
-      itemComponent={SelectItem}
+      nothingFoundMessage="No organizations"
+      renderOption={SelectOption}
       value={selectValue}
       data={data}
       onChange={(orgId) => onOrganizationChange(orgId!)}
