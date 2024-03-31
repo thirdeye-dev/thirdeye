@@ -1,6 +1,6 @@
-import useCurrentUser from "@/hooks/use-current-user";
-import Organization from "@/models/organization";
-import { createOrganization } from "@/services/organizations";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import {
   Button,
   Divider,
@@ -11,10 +11,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
 import { CgOrganisation } from "react-icons/cg";
+
+import useCurrentUser from "@/hooks/use-current-user";
+import Organization from "@/models/organization";
+import { createOrganization } from "@/services/organizations";
 
 export default function Onboarding() {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function Onboarding() {
                 py="lg"
                 size="lg"
                 placeholder="Organization Name"
-                icon={<CgOrganisation />}
+                leftSection={<CgOrganisation />}
                 {...form.getInputProps("organizationName")}
               />
 
