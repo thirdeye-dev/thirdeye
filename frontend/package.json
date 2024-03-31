@@ -30,6 +30,7 @@
         "@uiw/codemirror-theme-vscode": "^4.21.25",
         "@uiw/react-codemirror": "^4.21.25",
         "axios": "^1.6.8",
+        "clsx": "^2.1.0",
         "cookies-next": "^4.1.1",
         "dayjs": "^1.11.10",
         "eslint": "8.57.0",

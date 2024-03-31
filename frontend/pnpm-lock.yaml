@@ -62,6 +62,9 @@ dependencies:
   axios:
     specifier: ^1.6.8
     version: 1.6.8
+  clsx:
+    specifier: ^2.1.0
+    version: 2.1.0
   cookies-next:
     specifier: ^4.1.1
     version: 4.1.1
