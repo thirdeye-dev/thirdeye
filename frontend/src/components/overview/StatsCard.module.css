@@ -1,0 +1,11 @@
+.card {
+    border-bottom: 0.5px solid
+        light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+
+    &:hover {
+        background-color: light-dark(
+            var(--mantine-color-gray-0),
+            var(--mantine-color-dark-6)
+        );
+    }
+}
