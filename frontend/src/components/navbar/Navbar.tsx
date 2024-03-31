@@ -44,7 +44,6 @@ const LogoutIcon = () => {
 interface NavLink {
   icon?: IconType;
   label?: string;
-  name: string;
   href: string;
 }
 
