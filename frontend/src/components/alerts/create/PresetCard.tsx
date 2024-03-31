@@ -6,10 +6,9 @@ import {
   Stack,
   Transition,
   Text,
-  rem,
 } from "@mantine/core";
+import { CodeHighlight } from "@mantine/code-highlight";
 import { useDisclosure } from "@mantine/hooks";
-/* import { Prism } from "@mantine/prism"; */
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import clsx from "clsx";
 
@@ -74,7 +73,7 @@ export default function PresetCard({
 
       <Card.Section>
         <Collapse in={collapsed} p="xs">
-          {/* <Prism language="yaml">{preset.alert_yaml}</Prism> */}
+          <CodeHighlight language="yaml" code={preset.alert_yaml} />
         </Collapse>
       </Card.Section>
     </Card>

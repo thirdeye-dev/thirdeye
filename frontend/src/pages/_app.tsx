@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/nprogress/styles.css";
+import "@mantine/code-highlight/styles.css";
 import "@/styles/globals.css";
 
 import { AppProps } from "next/app";

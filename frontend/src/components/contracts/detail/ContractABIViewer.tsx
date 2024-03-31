@@ -1,7 +1,7 @@
 import { Text, Button, Flex, Modal } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { CodeHighlight } from "@mantine/code-highlight";
 import { notifications } from "@mantine/notifications";
-/* import { Prism } from "@mantine/prism"; */
+import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle } from "react-icons/ai";
 
 import useContractABI from "@/hooks/use-contract-abi";
@@ -67,20 +67,12 @@ export default function ContractABIViewer({
     );
   }
 
-  /* return (
-   *   <Prism
-   *     h="100%"
-   *     styles={{
-   *       root: {
-   *         flex: 1,
-   *       },
-   *       scrollArea: { maxHeight: 100, overflowY: "auto" },
-   *     }}
-   *     language="json"
-   *   >
-   *     {JSON.stringify(abi)}
-   *   </Prism>
-   * ); */
-
-  return null;
+  return (
+    <CodeHighlight
+      h="100%"
+      language="json"
+      code={JSON.stringify(abi)}
+      copyLabel="Copy ABI"
+    />
+  );
 }
