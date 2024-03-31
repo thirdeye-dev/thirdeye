@@ -38,9 +38,9 @@ export default function ContractCard({
 
   return (
     <Card className={classes.main} shadow="sm" radius="md" p="xl" withBorder>
-      <Stack justify={"flex-start"} spacing="none">
-        <Flex justify={"space-between"}>
-          <Text size="1.4rem" fw={800} color="yellow">
+      <Stack justify="flex-start" gap="none">
+        <Flex justify="space-between">
+          <Text size="1.4rem" fw={800} c="yellow">
             {contract.name}
           </Text>
 
