@@ -82,7 +82,7 @@ export default function NotificationIsland() {
         />
 
         <Badge>{latestNotification!.contract_name}</Badge>
-        <Text size="sm" weight="bold" color="gray">
+        <Text size="sm" fw="bold" color="gray">
           triggered alert
         </Text>
 
@@ -114,7 +114,7 @@ export default function NotificationIsland() {
     >
       {!notifications || notifications.length === 0 ? (
         <Flex direction="column" align="center" justify="center" h="100%">
-          <Text size="lg" weight="bold" color="gray">
+          <Text size="lg" fw="bold" color="gray">
             Notifications will appear here
           </Text>
         </Flex>

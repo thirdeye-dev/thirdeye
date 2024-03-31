@@ -68,7 +68,7 @@ export default function PresetCard({
       <Text size="xs" color="dimmed">
         {param.name}
       </Text>
-      <Text weight={500} size="sm">
+      <Text fw={500} size="sm">
         {param.type}
       </Text>
     </Stack>
@@ -85,7 +85,7 @@ export default function PresetCard({
       <Card.Section></Card.Section>
 
       <Flex mt="xl" direction="row" justify="space-between" align="center">
-        <Text color="yellow" size="xl" weight={700}>
+        <Text color="yellow" size="xl" fw={700}>
           {toSentenceCase(preset.name)}
         </Text>
 

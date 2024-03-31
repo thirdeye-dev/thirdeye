@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <main>
         <Flex direction={"row"} justify={"center"} align={"center"} h={"90vh"}>
-          <Text align={"center"} size="1.5rem" weight={700}>
+          <Text align={"center"} size="1.5rem" fw={700}>
             Let&apos;s get you in:
           </Text>
 
