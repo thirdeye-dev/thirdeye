@@ -15,7 +15,11 @@ export default function RootLayout({
   const isNavbarVisible = !pathName.includes("/auth");
 
   return (
-    <AppShell header={{ height: 80 }} navbar={{ width: 80 }} padding="md">
+    <AppShell
+      header={{ height: 80 }}
+      navbar={{ width: 80, breakpoint: 0 }} // we dont need a breakpoint
+      padding="md"
+    >
       <AppShell.Header>
         <Header />
       </AppShell.Header>
