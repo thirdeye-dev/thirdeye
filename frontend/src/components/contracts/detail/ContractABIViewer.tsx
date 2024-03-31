@@ -50,7 +50,7 @@ export default function ContractABIViewer({
           align="center"
           gap="md"
         >
-          <Text color="gray.7" size="2em" fw="bold" align="center">
+          <Text color="gray.7" size="2em" fw="bold" ta="center">
             No ABI added yet
           </Text>
 

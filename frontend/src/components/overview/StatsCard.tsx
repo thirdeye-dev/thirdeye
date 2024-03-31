@@ -34,12 +34,12 @@ export default function StatsCard({
         <ThemeIcon size="xl" color={color} variant="outline">
           {icon}
         </ThemeIcon>
-        <Text size="lg" weight="bold">
+        <Text size="lg" fw="bold">
           {title}
         </Text>
       </Group>
 
-      <Text size={typeof value === "string" ? "lg" : "1.8em"} weight="bold">
+      <Text size={typeof value === "string" ? "lg" : "1.8em"} fw="bold">
         {value}
       </Text>
     </Flex>

@@ -49,7 +49,7 @@ export default function TypeSelectionStep({
         >
           {icon}
 
-          <Text align="center" size="1.5em" mt="md">
+          <Text ta="center" size="1.5em" mt="md">
             {title}
           </Text>
         </ThemeIcon>

@@ -29,7 +29,7 @@ export default function NotificationListItem({
             <BsRecordCircle size="1.5em" color={getColorByTag("success")} />{" "}
             {/* hardcoded tag right now */}
             <Code>{notif.contract_name}</Code>
-            <Text size="sm" weight="bold" color="dimmed">
+            <Text size="sm" fw="bold" color="dimmed">
               ➔
             </Text>
             <Tooltip

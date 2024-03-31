@@ -88,7 +88,7 @@ export default function Contracts() {
         <Paper radius="md" p="xl" mih="80vh" withBorder>
           {isLoading && (
             <Flex direction="column" justify="center" align="center" h="70vh">
-              <Text color="gray.7" size="2.5em" fw="bold" align="center">
+              <Text color="gray.7" size="2.5em" fw="bold" ta="center">
                 Loading...
               </Text>
             </Flex>
@@ -97,10 +97,10 @@ export default function Contracts() {
           {contracts?.length === 0 ? (
             // FIXME: improve the feedback
             <Flex direction="column" justify="center" align="center" h="70vh">
-              <Text color="gray.7" size="2.5em" fw="bold" align="center">
+              <Text color="gray.7" size="2.5em" fw="bold" ta="center">
                 No contracts found
               </Text>
-              <Text size="1.5em" fw="lighter" align="center">
+              <Text size="1.5em" fw="lighter" ta="center">
                 Add or import contracts to get started.
               </Text>
             </Flex>

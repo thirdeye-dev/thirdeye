@@ -41,12 +41,12 @@ export default function Onboarding() {
       <Paper radius="md" p="xl" w="40%" withBorder>
         <form
           onSubmit={form.onSubmit((values) =>
-            handleSubmit(values.organizationName as string)
+            handleSubmit(values.organizationName as string),
           )}
         >
           <Stack>
             <Stack justify={"space-between"}>
-              <Text size="2rem" weight={700} color="coral">
+              <Text size="2rem" fw={700} color="coral">
                 Create your first organization
               </Text>
 
