@@ -13,7 +13,7 @@ import {
 import { FiMoon, FiSun } from "react-icons/fi";
 
 import OrganizationSelector from "./OrganizationSelector";
-import NotificationIsland from "./NotificationIsland";
+import NotificationIsland from "./island//NotificationIsland";
 import Logo from "../Logo";
 
 export default function HeaderComponent() {

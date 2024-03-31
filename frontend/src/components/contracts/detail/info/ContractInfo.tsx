@@ -1,17 +1,10 @@
+import { Text, Flex, Stack, Divider, Paper, Group, Badge } from "@mantine/core";
+
 import CopyToClipboard from "@/components/CopyToClipboard";
-import Contract, { Chain } from "@/models/contract";
+import Contract from "@/models/contract";
 import { gradientByChain } from "@/utils";
-import {
-  Text,
-  Flex,
-  Stack,
-  Divider,
-  Paper,
-  Group,
-  Button,
-  Badge,
-} from "@mantine/core";
-import { AiFillLock, AiFillUnlock } from "react-icons/ai";
+
+import classes from "./ContractInfo.module.css";
 
 export default function ContractInfo({
   contract,
@@ -23,17 +16,7 @@ export default function ContractInfo({
   if (!contract) return null;
 
   return (
-    <Paper
-      h="100%"
-      p="lg"
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[5]
-            : theme.colors.gray[0],
-        borderRadius: theme.radius.md,
-      })}
-    >
+    <Paper className={classes.main} h="100%" p="lg">
       <Stack>
         <Flex direction="row" justify="space-between">
           <Group>

@@ -67,9 +67,9 @@ export default function Onboarding() {
                 size="lg"
                 color="orange.4"
                 variant="outline"
-                sx={(_) => ({
+                style={{
                   alignSelf: "flex-end",
-                })}
+                }}
               >
                 Create Organization
               </Button>
