@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css";
+import "@mantine/nprogress/styles.css";
 import "@/styles/globals.css";
 
 import { AppProps } from "next/app";
@@ -12,7 +13,7 @@ import { Notifications } from "@mantine/notifications";
 import { SWRConfig } from "swr";
 
 import RootLayout from "@/layouts/RootLayout";
-import { RouterTransition } from "@/components/RouterTransition";
+import RouterTransition from "@/components/RouterTransition";
 import axiosInstance from "@/axios";
 import theme from "@/theme";
 
