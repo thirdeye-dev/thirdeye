@@ -216,7 +216,6 @@ export default function CreateAlert() {
           active={activeStep}
           onStepClick={setActiveStep}
           allowNextStepsSelect={false}
-          breakpoint="sm"
           styles={{
             root: {
               display: "flex",
