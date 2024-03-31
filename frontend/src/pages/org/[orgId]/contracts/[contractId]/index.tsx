@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { Box, Breadcrumbs, Flex, Paper, Stack, Divider } from "@mantine/core";
 
-import ContractAlertTable from "@/components/contracts/detail/ContractAlertTable";
+import ContractAlertTable from "@/components/contracts/detail/alertTable/ContractAlertTable";
 import ContractInfo from "@/components/contracts/detail/info/ContractInfo";
 import useContract from "@/hooks/use-contract";
 import useAlerts from "@/hooks/use-alerts";
