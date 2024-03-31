@@ -20,7 +20,7 @@ export default function Page() {
               variant={"subtle"}
               size="lg"
               color={"orange"}
-              leftIcon={<FiGithub />}
+              leftSection={<FiGithub />}
             >
               <Text color="orange.5">Login with Github</Text>
             </Button>
@@ -33,7 +33,7 @@ export default function Page() {
               variant={"subtle"}
               size="lg"
               color={"blue"}
-              leftIcon={<FcGoogle />}
+              leftSection={<FcGoogle />}
             >
               <Text color="blue.5">Login with Google</Text>
             </Button>
