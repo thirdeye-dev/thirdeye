@@ -17,7 +17,7 @@ import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 import Contract from "@/models/contract";
 import { deleteContract } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
-import ContractCard from "@/components/contracts/ContractCard";
+import ContractCard from "@/components/contracts/card/ContractCard";
 import useContracts from "@/hooks/use-contracts";
 
 export default function Contracts() {

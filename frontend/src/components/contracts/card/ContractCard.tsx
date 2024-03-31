@@ -1,7 +1,7 @@
-import Contract from "@/models/contract";
+import { useRouter } from "next/router";
+
 import {
   Avatar,
-  Box,
   Button,
   Card,
   Flex,
@@ -10,11 +10,14 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { useRouter } from "next/router";
 import { FaTrash } from "react-icons/fa";
-import CopyToClipboard from "../CopyToClipboard";
+
 import { getColorByChain } from "@/utils";
 import ChainIcon from "@/components/ChainIcon";
+import Contract from "@/models/contract";
+import CopyToClipboard from "../../CopyToClipboard";
+
+import classes from "./ContractCard.module.css";
 
 export default function ContractCard({
   contract,
@@ -34,21 +37,7 @@ export default function ContractCard({
   };
 
   return (
-    <Card
-      shadow="sm"
-      radius="md"
-      p="xl"
-      withBorder
-      sx={(theme) => ({
-        "&:hover": {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[5]
-              : theme.colors.gray[0],
-          transition: "background-color 0.2s ease-in-out",
-        },
-      })}
-    >
+    <Card className={classes.main} shadow="sm" radius="md" p="xl" withBorder>
       <Stack justify={"flex-start"} spacing="none">
         <Flex justify={"space-between"}>
           <Text size="1.4rem" weight={800} color="yellow">
