@@ -37,14 +37,14 @@ export default function ContractCard({
   };
 
   return (
-    <Card className={classes.main} shadow="sm" radius="md" p="xl" withBorder>
-      <Stack justify="flex-start" gap="none">
+    <Card className={classes.main} shadow="sm" radius="md" p="lg" withBorder>
+      <Stack justify="flex-start" gap={0}>
         <Flex justify="space-between">
           <Text size="1.4rem" fw={800} c="yellow">
             {contract.name}
           </Text>
 
-          <Group gap={18}>
+          <Group gap={8}>
             <Tooltip label={contract.chain.toUpperCase()} color="gray">
               <Avatar
                 color={getColorByChain(contract.chain)}
