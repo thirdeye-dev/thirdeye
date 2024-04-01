@@ -1,0 +1,13 @@
+.header {
+    position: sticky;
+    top: 0;
+    background-color: light-dark(
+        var(--mantine-color-white),
+        var(--mantine-color-dark-6)
+    );
+    transition: box-shadow 150ms ease;
+}
+
+.row :first-child {
+    padding-left: 20px;
+}

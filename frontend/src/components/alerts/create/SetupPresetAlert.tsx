@@ -1,15 +1,15 @@
+import { useEffect } from "react";
 import { NumberInput, Select, Stack, Switch, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 
-import AlertCreateStepLayout from "@/layouts/AlertCreateStepLayout";
 import PresetAlert, {
   PresetAlertParam,
   PresetAlertParamType,
 } from "@/models/presetAlert";
-import { toSentenceCase } from "@/utils";
-import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
+
 import Contract from "@/models/contract";
-import { fetchContracts } from "@/services/contracts";
+import AlertCreateStepLayout from "@/layouts/AlertCreateStepLayout";
+import { toSentenceCase } from "@/utils";
 
 const labelStyling = {
   marginBottom: "0.5rem",
@@ -34,7 +34,6 @@ function ParamField({ param, ...props }: { param: PresetAlertParam }) {
         <NumberInput
           size="lg"
           label={name}
-          precision={2}
           step={0.5}
           required
           styles={{ label: labelStyling }}
@@ -83,7 +82,7 @@ export default function SetupPresetAlert({
   const form = useForm({
     initialValues: presetAlert.params.reduce(
       (acc, param) => ({ ...acc, [param.name]: param.default }),
-      {}
+      {},
     ),
   });
 
@@ -93,9 +92,9 @@ export default function SetupPresetAlert({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, form.values]);
 
-  const onChangeContract = (contractName: string) => {
+  const onChangeContract = (contractName: string | null) => {
     const contract = contracts.find(
-      (contract) => contract.name === contractName
+      (contract) => contract.name === contractName,
     );
 
     if (contract) {

@@ -130,9 +130,7 @@ def google_login(request):
             "https://demo.thirdeyelabs.xyz/api/v1/authentication/google-callback"
         )
         if sol:
-            redirect_uri = (
-                "https://solana.thirdeyelabs.xyz/api/v1/authentication/google-callback?sol=true"
-            )
+            redirect_uri = "https://solana.thirdeyelabs.xyz/api/v1/authentication/google-callback?sol=true"
 
     try:
         return oauth.google.authorize_redirect(request, redirect_uri)
@@ -167,9 +165,7 @@ def github_login(request):
             "https://demo.thirdeyelabs.xyz/api/v1/authentication/github-callback"
         )
         if sol:
-            redirect_uri = (
-                "https://solana.thirdeyelabs.xyz/api/v1/authentication/github-callback?sol=true"
-            )
+            redirect_uri = "https://solana.thirdeyelabs.xyz/api/v1/authentication/github-callback?sol=true"
 
     try:
         return oauth.github.authorize_redirect(request, redirect_uri)

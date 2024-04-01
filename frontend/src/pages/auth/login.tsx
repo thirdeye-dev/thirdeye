@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <main>
         <Flex direction={"row"} justify={"center"} align={"center"} h={"90vh"}>
-          <Text align={"center"} size="1.5rem" weight={700}>
+          <Text ta={"center"} size="1.5rem" fw={700}>
             Let&apos;s get you in:
           </Text>
 
@@ -20,7 +20,7 @@ export default function Page() {
               variant={"subtle"}
               size="lg"
               color={"orange"}
-              leftIcon={<FiGithub />}
+              leftSection={<FiGithub />}
             >
               <Text color="orange.5">Login with Github</Text>
             </Button>
@@ -33,12 +33,11 @@ export default function Page() {
               variant={"subtle"}
               size="lg"
               color={"blue"}
-              leftIcon={<FcGoogle />}
+              leftSection={<FcGoogle />}
             >
               <Text color="blue.5">Login with Google</Text>
             </Button>
           </Link>
-
         </Flex>
       </main>
     </>

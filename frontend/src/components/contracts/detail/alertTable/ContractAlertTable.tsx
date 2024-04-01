@@ -1,23 +1,9 @@
-import Alert from "@/models/alert";
-import {
-  Button,
-  Flex,
-  ScrollArea,
-  Table,
-  Tooltip,
-  createStyles,
-} from "@mantine/core";
+import { Button, Flex, ScrollArea, Table, Tooltip } from "@mantine/core";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
-const useStyles = createStyles((theme) => ({
-  header: {
-    position: "sticky",
-    top: 0,
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-    transition: "box-shadow 150ms ease",
-  },
-}));
+import Alert from "@/models/alert";
+
+import classes from "./ContractAlertTable.module.css";
 
 export default function ContractAlertTable({
   alerts,
@@ -30,18 +16,16 @@ export default function ContractAlertTable({
   editAlert: (alert: Alert) => void;
   deleteAlert: (alert: Alert) => void;
 }) {
-  const { classes } = useStyles();
-
   return (
     <ScrollArea h="100%" type="never">
       <Table highlightOnHover verticalSpacing="lg" horizontalSpacing="lg">
-        <thead className={classes.header}>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-            <th>
+        <Table.Thead className={classes.header}>
+          <Table.Tr>
+            <Table.Th>ID</Table.Th>
+            <Table.Th>Name</Table.Th>
+            <Table.Th>Created At</Table.Th>
+            <Table.Th>Updated At</Table.Th>
+            <Table.Th>
               <Flex justify="flex-end">
                 <Button
                   onClick={addNewAlert}
@@ -52,15 +36,15 @@ export default function ContractAlertTable({
                   Create Alert
                 </Button>
               </Flex>
-            </th>
-          </tr>
-        </thead>
+            </Table.Th>
+          </Table.Tr>
+        </Table.Thead>
 
-        <tbody>
+        <Table.Tbody>
           {alerts?.map(
             (alert) =>
               (
-                <tr key={alert.id}>
+                <Table.Tr key={alert.id} className={classes.row}>
                   <td>{alert.id}</td>
                   <td>{alert.name}</td>
                   <td>{alert.created_at}</td>
@@ -91,10 +75,10 @@ export default function ContractAlertTable({
                       </Tooltip>
                     </Flex>
                   </td>
-                </tr>
-              ) ?? []
+                </Table.Tr>
+              ) ?? [],
           )}
-        </tbody>
+        </Table.Tbody>
       </Table>
     </ScrollArea>
   );

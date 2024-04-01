@@ -1,0 +1,8 @@
+.main {
+    @mixin hover {
+        opacity: 0.8 !important;
+    }
+
+    border-width: 2px !important;
+    border-color: var(--mantine-color-blue-4) !important;
+}

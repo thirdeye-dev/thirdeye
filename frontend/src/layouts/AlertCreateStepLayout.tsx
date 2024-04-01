@@ -11,7 +11,7 @@ export default function AlertCreateStepLayout({
 }) {
   return (
     <Stack w="100%" align="center">
-      <Text size="2.2em" weight="bold" my="4%">
+      <Text size="2.2em" fw="bold" my="4%">
         {title}
       </Text>
 

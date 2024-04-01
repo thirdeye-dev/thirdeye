@@ -1,5 +1,7 @@
 import { Flex, Group, Text, ThemeIcon } from "@mantine/core";
 
+import classes from "./StatsCard.module.css";
+
 export default function StatsCard({
   title,
   value,
@@ -16,30 +18,18 @@ export default function StatsCard({
       p="xl"
       align="center"
       justify="space-between"
-      sx={(theme) => ({
-        borderBottom: `0.5px solid ${
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[4]
-            : theme.colors.gray[2]
-        }`,
-        "&:hover": {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
-        },
-      })}
+      className={classes.card}
     >
       <Group>
         <ThemeIcon size="xl" color={color} variant="outline">
           {icon}
         </ThemeIcon>
-        <Text size="lg" weight="bold">
+        <Text size="lg" fw="bold">
           {title}
         </Text>
       </Group>
 
-      <Text size={typeof value === "string" ? "lg" : "1.8em"} weight="bold">
+      <Text size={typeof value === "string" ? "lg" : "1.8em"} fw="bold">
         {value}
       </Text>
     </Flex>
