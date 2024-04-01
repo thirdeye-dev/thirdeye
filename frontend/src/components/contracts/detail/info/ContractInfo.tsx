@@ -17,10 +17,10 @@ export default function ContractInfo({
 
   return (
     <Paper className={classes.main} h="100%" p="lg">
-      <Stack>
+      <Stack gap={0}>
         <Flex direction="row" justify="space-between">
           <Group>
-            <Text size="2.5em" fw="bold" color="yellow">
+            <Text size="2.5em" fw="bold" c="yellow">
               {contract.name}
             </Text>
 
@@ -30,7 +30,14 @@ export default function ContractInfo({
             >
               {contract.chain}
             </Badge>
-            <Badge variant="dot">{contract.network}</Badge>
+            <Badge
+              variant="dot"
+              style={{
+                border: "0.5px solid var(--mantine-color-dark-3)",
+              }}
+            >
+              {contract.network}
+            </Badge>
           </Group>
         </Flex>
 
