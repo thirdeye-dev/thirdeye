@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-import AppShellLayout from "@/layouts/AppShellLayout";
 import { Box, Flex, Paper, Stack } from "@mantine/core";
 
 import AlertGraph from "@/components/overview/AlertGraph";
@@ -40,7 +38,3 @@ export default function Overview() {
     </Flex>
   );
 }
-
-Overview.getLayout = (page: ReactNode) => {
-  return <AppShellLayout activeLink="overview">{page}</AppShellLayout>;
-};

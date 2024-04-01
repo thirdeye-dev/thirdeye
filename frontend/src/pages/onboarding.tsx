@@ -1,6 +1,6 @@
-import useCurrentUser from "@/hooks/use-current-user";
-import Organization from "@/models/organization";
-import { createOrganization } from "@/services/organizations";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import {
   Button,
   Divider,
@@ -11,10 +11,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
 import { CgOrganisation } from "react-icons/cg";
+
+import useCurrentUser from "@/hooks/use-current-user";
+import Organization from "@/models/organization";
+import { createOrganization } from "@/services/organizations";
 
 export default function Onboarding() {
   const router = useRouter();
@@ -41,12 +42,12 @@ export default function Onboarding() {
       <Paper radius="md" p="xl" w="40%" withBorder>
         <form
           onSubmit={form.onSubmit((values) =>
-            handleSubmit(values.organizationName as string)
+            handleSubmit(values.organizationName as string),
           )}
         >
           <Stack>
             <Stack justify={"space-between"}>
-              <Text size="2rem" weight={700} color="coral">
+              <Text size="2rem" fw={700} color="coral">
                 Create your first organization
               </Text>
 
@@ -58,7 +59,7 @@ export default function Onboarding() {
                 py="lg"
                 size="lg"
                 placeholder="Organization Name"
-                icon={<CgOrganisation />}
+                leftSection={<CgOrganisation />}
                 {...form.getInputProps("organizationName")}
               />
 
@@ -67,9 +68,9 @@ export default function Onboarding() {
                 size="lg"
                 color="orange.4"
                 variant="outline"
-                sx={(_) => ({
+                style={{
                   alignSelf: "flex-end",
-                })}
+                }}
               >
                 Create Organization
               </Button>

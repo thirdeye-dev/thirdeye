@@ -62,7 +62,7 @@ export default function ExecutionPieCharts({
   if (!alertTriggers || alertTriggers.length === 0) {
     return (
       <Flex h="100%" w="100%" justify="center" align="center">
-        <Text size="1.5em" color="dimmed" align="center">
+        <Text size="1.5em" color="dimmed" ta="center">
           Alerts / Executions PieCharts will appear here
         </Text>
       </Flex>
@@ -71,7 +71,7 @@ export default function ExecutionPieCharts({
 
   return (
     <Stack h="100%">
-      <Text size="1.8em" weight="bold" color="yellow">
+      <Text size="1.8em" fw="bold" color="yellow">
         Executions / Triggers weekly
       </Text>
 

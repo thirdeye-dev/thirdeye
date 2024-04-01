@@ -6,50 +6,16 @@ import {
   Stack,
   Transition,
   Text,
-  createStyles,
-  rem,
 } from "@mantine/core";
+import { CodeHighlight } from "@mantine/code-highlight";
 import { useDisclosure } from "@mantine/hooks";
-import { Prism } from "@mantine/prism";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import clsx from "clsx";
 
 import PresetAlert from "@/models/presetAlert";
 import { toSentenceCase } from "@/utils";
 
-const useCardStyles = createStyles((theme) => ({
-  card: {
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : "white",
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
-    },
-  },
-
-  cardSelected: {
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.gray[0],
-    border: `2px solid ${theme.colors.blue[6]}`,
-  },
-
-  params: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
-  },
-
-  title: {
-    lineHeight: 1,
-  },
-}));
+import classes from "./PresetCard.module.css";
 
 export default function PresetCard({
   preset,
@@ -60,16 +26,14 @@ export default function PresetCard({
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const { classes, cx } = useCardStyles();
-
   const [collapsed, { toggle: toggleCollapse }] = useDisclosure(false);
 
   const items = preset.params.map((param, idx) => (
-    <Stack spacing="xs" key={idx}>
+    <Stack gap="xs" key={idx}>
       <Text size="xs" color="dimmed">
         {param.name}
       </Text>
-      <Text weight={500} size="sm">
+      <Text fw={500} size="sm">
         {param.type}
       </Text>
     </Stack>
@@ -81,12 +45,12 @@ export default function PresetCard({
       withBorder
       w="30vw"
       padding="lg"
-      className={cx(classes.card, isSelected && classes.cardSelected)}
+      className={clsx(classes.card, isSelected && classes.cardSelected)}
     >
       <Card.Section></Card.Section>
 
       <Flex mt="xl" direction="row" justify="space-between" align="center">
-        <Text color="yellow" size="xl" weight={700} className={classes.title}>
+        <Text c="yellow" size="xl" fw={700} lh={1}>
           {toSentenceCase(preset.name)}
         </Text>
 
@@ -101,7 +65,7 @@ export default function PresetCard({
         </ActionIcon>
       </Flex>
 
-      <Text my="sm" color="dimmed">
+      <Text my="sm" c="dimmed">
         {preset.description}
       </Text>
 
@@ -109,7 +73,7 @@ export default function PresetCard({
 
       <Card.Section>
         <Collapse in={collapsed} p="xs">
-          <Prism language="yaml">{preset.alert_yaml}</Prism>
+          <CodeHighlight language="yaml" code={preset.alert_yaml} />
         </Collapse>
       </Card.Section>
     </Card>

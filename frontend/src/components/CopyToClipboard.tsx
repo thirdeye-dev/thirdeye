@@ -21,7 +21,7 @@ export default function CopyToClipboard({
   return (
     <Paper withBorder radius="md" shadow="sm" p="md" my="md" w="100%">
       <Flex justify={"space-between"} align="center">
-        <Text size="sm" weight={500} ff="monospace">
+        <Text size="sm" fw={500} ff="monospace">
           {textToCopy}
         </Text>
 

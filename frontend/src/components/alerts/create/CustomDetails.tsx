@@ -34,9 +34,9 @@ export default function CustomDetails({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, form.values]);
 
-  const onChangeContract = (contractName: string) => {
+  const onChangeContract = (contractName: string | null) => {
     const contract = contracts.find(
-      (contract) => contract.name === contractName
+      (contract) => contract.name === contractName,
     );
 
     if (contract) {

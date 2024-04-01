@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { useRouter } from "next/router";
 
 import {
@@ -15,11 +14,10 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { AiFillCheckCircle, AiOutlinePlus } from "react-icons/ai";
 
-import AppShellLayout from "@/layouts/AppShellLayout";
 import Contract from "@/models/contract";
 import { deleteContract } from "@/services/contracts";
 import AddContractForm from "@/components/contracts/AddContractForm";
-import ContractCard from "@/components/contracts/ContractCard";
+import ContractCard from "@/components/contracts/card/ContractCard";
 import useContracts from "@/hooks/use-contracts";
 
 export default function Contracts() {
@@ -71,7 +69,7 @@ export default function Contracts() {
 
       <Container size="xl">
         <Flex justify="space-between" align="center" mb="md">
-          <Text size="2rem" weight={700}>
+          <Text size="2rem" fw={700}>
             CONTRACTS
           </Text>
 
@@ -90,7 +88,7 @@ export default function Contracts() {
         <Paper radius="md" p="xl" mih="80vh" withBorder>
           {isLoading && (
             <Flex direction="column" justify="center" align="center" h="70vh">
-              <Text color="gray.7" size="2.5em" weight="bold" align="center">
+              <Text color="gray.7" size="2.5em" fw="bold" ta="center">
                 Loading...
               </Text>
             </Flex>
@@ -99,10 +97,10 @@ export default function Contracts() {
           {contracts?.length === 0 ? (
             // FIXME: improve the feedback
             <Flex direction="column" justify="center" align="center" h="70vh">
-              <Text color="gray.7" size="2.5em" weight="bold" align="center">
+              <Text color="gray.7" size="2.5em" fw="bold" ta="center">
                 No contracts found
               </Text>
-              <Text size="1.5em" weight="lighter" align="center">
+              <Text size="1.5em" fw="lighter" ta="center">
                 Add or import contracts to get started.
               </Text>
             </Flex>
@@ -122,7 +120,3 @@ export default function Contracts() {
     </>
   );
 }
-
-Contracts.getLayout = (page: ReactNode) => {
-  return <AppShellLayout activeLink="contracts">{page}</AppShellLayout>;
-};

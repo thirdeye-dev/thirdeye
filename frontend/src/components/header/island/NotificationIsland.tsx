@@ -20,9 +20,11 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { BsRecordCircle, BsThreeDots } from "react-icons/bs";
 
 import { getColorByTag } from "@/utils";
-import NotificationListItem from "./NotificationListItem";
 import useNotificationsWS from "@/hooks/use-notifications-ws";
 import Notification from "@/models/notification";
+import NotificationListItem from "../NotificationListItem";
+
+import classes from "./NotificationIsland.module.css";
 
 dayjs.extend(relativeTime);
 
@@ -68,21 +70,14 @@ export default function NotificationIsland() {
 
   const LatestNotification = () => {
     return (
-      <Group
-        pl="xs"
-        sx={{
-          "&:hover": {
-            opacity: 0.8,
-          },
-        }}
-      >
+      <Group className={classes.latest} pl="xs">
         <BsRecordCircle
           size="1.2em"
           color={getColorByTag("success")} // FIXME: not supplied by backend yet
         />
 
         <Badge>{latestNotification!.contract_name}</Badge>
-        <Text size="sm" weight="bold" color="gray">
+        <Text size="sm" fw="bold" color="gray">
           triggered alert
         </Text>
 
@@ -100,21 +95,16 @@ export default function NotificationIsland() {
 
   return (
     <Paper
+      className={classes.main}
       withBorder
       radius="lg"
       h="100%"
       w="42%"
       shadow="lg"
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[8]
-            : theme.colors.gray[1],
-      })}
     >
       {!notifications || notifications.length === 0 ? (
         <Flex direction="column" align="center" justify="center" h="100%">
-          <Text size="lg" weight="bold" color="gray">
+          <Text size="lg" fw="bold" color="gray">
             Notifications will appear here
           </Text>
         </Flex>
