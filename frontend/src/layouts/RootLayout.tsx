@@ -1,36 +1,22 @@
-import { usePathname } from "next/navigation";
-
-import { AppShell } from "@mantine/core";
+import { Inter } from "next/font/google";
+import { Stack } from "@mantine/core";
 
 import Header from "@/components/header/Header";
-import Navbar from "@/components/navbar/Navbar";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathName = usePathname() ?? "";
-
-  const isNavbarVisible = !pathName.includes("/auth");
-
   return (
-    <AppShell
-      header={{ height: 80 }}
-      navbar={{ width: 80, breakpoint: 0 }} // we dont need a breakpoint
-      padding="md"
-    >
-      <AppShell.Header>
-        <Header />
-      </AppShell.Header>
-
-      {isNavbarVisible && (
-        <AppShell.Navbar p="md">
-          <Navbar activePathname={pathName} />
-        </AppShell.Navbar>
-      )}
-
-      <AppShell.Main>{children}</AppShell.Main>
-    </AppShell>
+    <Stack className={inter.className}>
+      <Header />
+      {children}
+    </Stack>
   );
 }

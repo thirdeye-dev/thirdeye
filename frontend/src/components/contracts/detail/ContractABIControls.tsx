@@ -29,14 +29,14 @@ export default function ContractABIControls({
 
   return (
     <Flex p="md" direction="row" justify="space-between">
-      <Text size="2em" c="yellow" fw="bold">
+      <Text size="2em" color="yellow" weight="bold">
         ABI
       </Text>
       {abi ? (
         <Button
           color="gray"
           variant="outline"
-          leftSection={<AiOutlineClose />}
+          leftIcon={<AiOutlineClose />}
           onClick={handleDelete}
         >
           Remove

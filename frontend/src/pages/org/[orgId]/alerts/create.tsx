@@ -1,6 +1,7 @@
 import { Button, Container, Flex, Stack, Stepper } from "@mantine/core";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
+import AppShellLayout from "@/layouts/AppShellLayout";
 import ChoosePresetAlert from "@/components/alerts/create/ChoosePresetAlert";
 import TypeSelectionStep from "@/components/alerts/create/TypeSelectionStep";
 import InformationReviewStep from "@/components/alerts/create/InformationReviewStep";
@@ -25,7 +26,7 @@ export default function CreateAlert() {
 
   const [alertType, setAlertType] = useState<AlertType | null>(null);
   const [selectedContract, setSelectedContract] = useState<Contract | null>(
-    null,
+    null
   );
 
   // Preset
@@ -41,7 +42,7 @@ export default function CreateAlert() {
 
   const incStep = () =>
     setActiveStep((current) =>
-      current < getPossibleStepsLength() ? current + 1 : current,
+      current < getPossibleStepsLength() ? current + 1 : current
     );
 
   const decStep = () =>
@@ -136,7 +137,7 @@ export default function CreateAlert() {
             // @ts-ignore FIXME: fix type
             params: presetParams,
           },
-          selectedContract!.id,
+          selectedContract!.id
         );
         break;
 
@@ -148,7 +149,7 @@ export default function CreateAlert() {
             alert_yaml: customYaml,
           },
           orgId,
-          selectedContract!.id,
+          selectedContract!.id
         );
         break;
     }
@@ -216,6 +217,7 @@ export default function CreateAlert() {
           active={activeStep}
           onStepClick={setActiveStep}
           allowNextStepsSelect={false}
+          breakpoint="sm"
           styles={{
             root: {
               display: "flex",
@@ -258,3 +260,7 @@ export default function CreateAlert() {
     </Container>
   );
 }
+
+CreateAlert.getLayout = (page: ReactNode) => (
+  <AppShellLayout activeLink="alerts">{page}</AppShellLayout>
+);

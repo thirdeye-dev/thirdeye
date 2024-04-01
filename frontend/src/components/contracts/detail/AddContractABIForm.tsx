@@ -16,7 +16,7 @@ import { addContractABI } from "@/services/contracts";
 
 const CodeMirror = dynamic(
   () => import("@uiw/react-codemirror").then((mod) => mod.default),
-  { ssr: false },
+  { ssr: false }
 );
 
 const FileInput = ({ submitText }: { submitText: (text: string) => void }) => {
@@ -45,7 +45,7 @@ const FileInput = ({ submitText }: { submitText: (text: string) => void }) => {
         </Dropzone.Idle>
       </Group>
 
-      <Text size="xl" ta="center">
+      <Text size="xl" align="center">
         Drag here or click to select a file
       </Text>
     </Dropzone>

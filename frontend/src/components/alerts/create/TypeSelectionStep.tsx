@@ -6,8 +6,6 @@ import { BsFillCartCheckFill, BsFillGearFill } from "react-icons/bs";
 import AlertCreateStepLayout from "@/layouts/AlertCreateStepLayout";
 import { AlertType } from "@/models/alertType";
 
-import classes from "./TypeSelectionStep.module.css";
-
 export default function TypeSelectionStep({
   alertType,
   setAlertType,
@@ -28,12 +26,17 @@ export default function TypeSelectionStep({
   }) => {
     return (
       <Paper
-        className={classes.main}
         w="25%"
         h="70%"
         radius="md"
-        opacity={isSelected ? 0.8 : 1}
-        withBorder={isSelected}
+        sx={{
+          "&:hover": {
+            opacity: 0.8,
+          },
+
+          opacity: isSelected ? 0.8 : 1,
+          border: isSelected ? "2px solid #3f51b5" : "none",
+        }}
         onClick={onClick}
       >
         <ThemeIcon
@@ -46,7 +49,7 @@ export default function TypeSelectionStep({
         >
           {icon}
 
-          <Text ta="center" size="1.5em" mt="md">
+          <Text align="center" size="1.5em" mt="md">
             {title}
           </Text>
         </ThemeIcon>

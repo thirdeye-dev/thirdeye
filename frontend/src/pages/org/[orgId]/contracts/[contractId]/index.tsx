@@ -1,11 +1,13 @@
+import { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Box, Breadcrumbs, Flex, Paper, Stack, Divider } from "@mantine/core";
 
-import ContractAlertTable from "@/components/contracts/detail/alertTable/ContractAlertTable";
-import ContractInfo from "@/components/contracts/detail/info/ContractInfo";
+import ContractAlertTable from "@/components/contracts/detail/ContractAlertTable";
+import ContractInfo from "@/components/contracts/detail/ContractInfo";
 import useContract from "@/hooks/use-contract";
+import AppShellLayout from "@/layouts/AppShellLayout";
 import useAlerts from "@/hooks/use-alerts";
 import ContractABIControls from "@/components/contracts/detail/ContractABIControls";
 import ContractABIViewer from "@/components/contracts/detail/ContractABIViewer";
@@ -80,3 +82,7 @@ export default function ContractDetailed() {
     </Stack>
   );
 }
+
+ContractDetailed.getLayout = (page: ReactNode) => {
+  return <AppShellLayout activeLink="contracts">{page}</AppShellLayout>;
+};

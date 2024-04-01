@@ -1,20 +1,19 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-
 import {
   ActionIcon,
   Divider,
   Flex,
   Group,
+  Header,
   Space,
-  Tooltip,
   useMantineColorScheme,
 } from "@mantine/core";
 import { FiMoon, FiSun } from "react-icons/fi";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-import OrganizationSelector from "./OrganizationSelector";
-import NotificationIsland from "./island//NotificationIsland";
 import Logo from "../Logo";
+import OrganizationSelector from "./OrganizationSelector";
+import NotificationIsland from "./NotificationIsland";
 
 export default function HeaderComponent() {
   const router = useRouter();
@@ -25,41 +24,40 @@ export default function HeaderComponent() {
   const shouldShowNotificationsIsland = router.pathname.includes("/org");
 
   return (
-    <Flex
-      direction="row"
-      justify="space-between"
-      align="center"
-      h="100%"
-      w="100%"
-      p="md"
-    >
-      <Group>
-        <Link href="/">
-          <Logo />
-        </Link>
+    <Header height={"5rem"} fixed>
+      <Flex
+        direction="row"
+        justify="space-between"
+        align="center"
+        sx={(theme) => ({
+          height: "100%",
+          width: "100%",
+          padding: theme.spacing.md,
+        })}
+      >
+        <Group>
+          <Link href="/">
+            <Logo />
+          </Link>
 
-        {shouldShowOrganizationSelector && (
+          <Divider orientation="vertical" />
+
+          {shouldShowOrganizationSelector && <OrganizationSelector />}
+        </Group>
+
+        {shouldShowNotificationsIsland && (
           <>
-            <Divider orientation="vertical" />
-            <OrganizationSelector />
+            <NotificationIsland />
+            <Space w="4rem" />
           </>
         )}
-      </Group>
 
-      {shouldShowNotificationsIsland && (
-        <>
-          <NotificationIsland />
-          <Space w="4rem" />
-        </>
-      )}
-
-      <ActionIcon
-        size="lg"
-        variant="subtle"
-        onClick={() => toggleColorScheme()}
-      >
-        {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
-      </ActionIcon>
-    </Flex>
+        <Group>
+          <ActionIcon onClick={() => toggleColorScheme()}>
+            {colorScheme === "dark" ? <FiSun /> : <FiMoon />}
+          </ActionIcon>
+        </Group>
+      </Flex>
+    </Header>
   );
 }

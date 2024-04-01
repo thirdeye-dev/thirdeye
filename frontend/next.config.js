@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const removeImports = require("next-remove-imports")(); // get rid of this whenever possible
+const removeImports = require("next-remove-imports")();
 
 const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
 
@@ -33,9 +33,9 @@ const nextConfig = {
       source: "/api/v1/:slug*",
       destination: `${backendUrl}/:slug*`,
     });
-
+      
     return rewrites;
-  },
+  }
 };
 
 module.exports = removeImports(nextConfig);

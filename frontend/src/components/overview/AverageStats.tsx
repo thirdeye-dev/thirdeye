@@ -46,7 +46,7 @@ export default function AverageStats({ orgId }: { orgId: string | undefined }) {
 
   return (
     <Stack>
-      <Text size="1.8em" fw="bold" color="yellow">
+      <Text size="1.8em" weight="bold" color="yellow">
         Average Stats
       </Text>
       <Tabs variant="outline" defaultValue="weekly">
