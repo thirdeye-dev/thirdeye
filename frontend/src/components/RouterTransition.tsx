@@ -21,5 +21,5 @@ export default function RouterTransition() {
     };
   }, [router.asPath, router.events]);
 
-  return <NavigationProgress initialProgress={50} />;
+  return <NavigationProgress />;
 }
