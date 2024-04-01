@@ -2,7 +2,8 @@
 
 const removeImports = require("next-remove-imports")(); // get rid of this whenever possible
 
-const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
+const backendUrl =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 const nextConfig = {
   experimental: {
