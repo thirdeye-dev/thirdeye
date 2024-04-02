@@ -189,7 +189,7 @@ class GithubLoginCallbackView(APIView):
             raise AuthenticationFailed(
                 "OAuth authentication error.",
             )
-        
+
         resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
         profile = resp.json()
