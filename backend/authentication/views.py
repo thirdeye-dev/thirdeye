@@ -189,7 +189,7 @@ class GithubLoginCallbackView(APIView):
             raise AuthenticationFailed(
                 "OAuth authentication error.",
             )
-
+        
         resp = oauth.github.get("user", token=token)
         resp.raise_for_status()
         profile = resp.json()
@@ -241,9 +241,17 @@ class GithubLoginCallbackView(APIView):
     def post(self, request):
         user = self.validate_and_return_user(request)
 
+        sol = request.GET.get("sol") == "true"
+
         tokens = user.tokens()
         access_token = tokens.get("access")
         refresh_token = tokens.get("refresh")
+
+        if sol:
+            return redirect(
+                f"https://solana.thirdeyelabs.xyz/auth/social?access"
+                f"={access_token}&refresh={refresh_token}&username={user.username}&sol=true"
+            )
 
         return redirect(
             f"{settings.FRONTEND_URL}auth/social?access"
