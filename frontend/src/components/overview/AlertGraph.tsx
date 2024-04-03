@@ -37,7 +37,7 @@ export default function AlertGraph({ orgId }: { orgId: string | undefined }) {
     ...c,
     data: c.entries.map((e) => ({
       day: weekDays.indexOf(e.day),
-      executions: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+      executions: e.executions,
     })),
     color: mantineColors[idx % mantineColors.length],
   }));
