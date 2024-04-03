@@ -30,7 +30,7 @@ export default function RootLayout({
         </AppShell.Navbar>
       )}
 
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main h="100vh">{children}</AppShell.Main>
     </AppShell>
   );
 }

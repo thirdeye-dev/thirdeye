@@ -1,4 +1,4 @@
-import { Box, Flex, Paper, Stack } from "@mantine/core";
+import { Box, Flex, Paper, Stack, Grid } from "@mantine/core";
 
 import AlertGraph from "@/components/overview/AlertGraph";
 import AlertHeatmap from "@/components/overview/AlertHeatmap";
@@ -12,29 +12,39 @@ export default function Overview() {
   const organizationId = router.query.orgId as string | undefined;
 
   return (
-    <Flex direction="row" gap="md" h="88vh">
-      <Box w="70%" h="100%">
+    <Grid
+      justify="space-between"
+      gutter="md"
+      styles={{
+        inner: { height: "100%" },
+        root: {
+          height: "100%",
+        },
+      }}
+    >
+      <Grid.Col span={9}>
         <Stack h="100%">
-          <Paper withBorder w="100%" h="70%" p="md">
+          <Paper withBorder p="md" h="70%">
             <AlertGraph orgId={organizationId} />
           </Paper>
 
-          <Paper withBorder w="100%" h="30%" p="md">
+          <Paper withBorder p="md" h="30%">
             <AlertHeatmap orgId={organizationId} />
           </Paper>
         </Stack>
-      </Box>
+      </Grid.Col>
 
-      <Box w="30%" h="100%">
+      <Grid.Col span={3}>
         <Stack h="100%">
-          <Paper withBorder w="100%" h="65%" p="md">
+          <Paper withBorder p="md" h="65%">
             <AverageStats orgId={organizationId} />
           </Paper>
-          <Paper withBorder w="100%" h="35%" p="md">
+
+          <Paper withBorder p="md" h="35%">
             <ExecutionPieCharts orgId={organizationId} />
           </Paper>
         </Stack>
-      </Box>
-    </Flex>
+      </Grid.Col>
+    </Grid>
   );
 }

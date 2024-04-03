@@ -14,6 +14,9 @@ dependencies:
   '@emotion/server':
     specifier: ^11.11.0
     version: 11.11.0
+  '@mantine/charts':
+    specifier: ^7.7.1
+    version: 7.7.1(@mantine/core@7.7.0)(@mantine/hooks@7.7.0)(react-dom@18.2.0)(react@18.2.0)(recharts@2.12.3)
   '@mantine/code-highlight':
     specifier: ^7.7.1
     version: 7.7.1(@mantine/core@7.7.0)(@mantine/hooks@7.7.0)(react-dom@18.2.0)(react@18.2.0)
@@ -1308,6 +1311,22 @@ packages:
       '@lezer/common': 1.2.1
       '@lezer/highlight': 1.2.0
       '@lezer/lr': 1.4.0
+    dev: false
+
+  /@mantine/charts@7.7.1(@mantine/core@7.7.0)(@mantine/hooks@7.7.0)(react-dom@18.2.0)(react@18.2.0)(recharts@2.12.3):
+    resolution: {integrity: sha512-7FMsTQcEQZrX5WAxzhvH/yWBwAJ2oVaZga9f5D80dyCtVgSQt0aRYSQejiMpgYCcaohCVSdQ+TL1YS5nZLvjog==}
+    peerDependencies:
+      '@mantine/core': 7.7.1
+      '@mantine/hooks': 7.7.1
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      recharts: ^2.10.3
+    dependencies:
+      '@mantine/core': 7.7.0(@mantine/hooks@7.7.0)(@types/react@18.2.72)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': 7.7.0(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      recharts: 2.12.3(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@mantine/code-highlight@7.7.1(@mantine/core@7.7.0)(@mantine/hooks@7.7.0)(react-dom@18.2.0)(react@18.2.0):
