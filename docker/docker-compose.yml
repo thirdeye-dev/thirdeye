@@ -12,22 +12,22 @@ services:
     env_file:
       - ./.env
   
-  # frontend:
-  #   hostname: frontend
-  #   image: frontend_app_thirdeye
-  #   container_name: frontend_app_thirdeye
-  #   build:
-  #     context: ../
-  #     dockerfile: ./docker/Dockerfile.frontend
-  #   networks:
-  #     default:
-  #     internal:
-  #   volumes:
-  #     - ../frontend:/usr/app
-  #   env_file:
-  #     - ./.env
-    # ports:
-    #  - "3000:3000"
+  frontend:
+    hostname: frontend
+    image: frontend_app_thirdeye
+    container_name: frontend_app_thirdeye
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile.frontend
+    networks:
+      default:
+      internal:
+    volumes:
+      - ../frontend:/usr/app
+    env_file:
+      - ./.env
+    ports:
+     - "3000:3000"
 
   # nginx:
   #   hostname: nginx

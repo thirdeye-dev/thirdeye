@@ -17,4 +17,7 @@ EXPOSE 3000
 
 USER node
 
-CMD [ "pm2-runtime", "npm", "--", "start" ]
+ENV NEXT_PUBLIC_BACKEND_URL=http://0.0.0.0:8000
+
+CMD ["pm2-runtime", "npm", "--", "start", "--", "-H", "0.0.0.0"]
+
