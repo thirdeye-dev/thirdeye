@@ -6,7 +6,7 @@ Your smart contracts can be and will be pwned sometime. You should be allowed to
 
 ```
 cd docker/
-cp .env_template .env
+cp .env.template .env
 docker-compose up
 ```
 
