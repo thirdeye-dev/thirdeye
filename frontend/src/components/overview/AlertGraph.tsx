@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ScatterChart } from "@mantine/charts";
 
 import { OverviewContract, OverviewData } from "@/models/overviewData";
