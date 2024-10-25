@@ -8,6 +8,8 @@ import websocket
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from web3 import Web3
+# from web3.middleware import geth_poa_middleware
+# from web3.middleware.geth import geth_poa_middleware
 from web3.middleware import geth_poa_middleware
 
 from api_app.monitoring.models import (

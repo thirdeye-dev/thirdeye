@@ -25,6 +25,7 @@ redis
 django-jsonfield
 django-celery-beat
 scipy
-web3==4.4.1
+web3==6.11.4
 drf-spectacular
-websocket-client==1.5.1
+websocket-client==1.6.4
+websockets==12.0
