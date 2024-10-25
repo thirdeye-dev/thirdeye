@@ -142,7 +142,7 @@ def monitor_contract(self, monitoring_task_id):
     logger.info(f"[DEBUG] the chain URL is: {rpc_url}")
 
     w3 = Web3(Web3.WebsocketProvider(rpc_url))
-    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+    w3.middleware_stack.inject(geth_poa_middleware, layer=0)
 
     # if network_id != int(w3.net.version):
     #     raise ValueError("Connected to the wrong Ethereum network")
