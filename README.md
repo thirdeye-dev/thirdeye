@@ -10,6 +10,8 @@ cp .env.template .env
 docker-compose up
 ```
 
+Then go to `http://localhost`. Have fun!
+
 ## Frontend Setup
 
 ```

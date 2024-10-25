@@ -23,34 +23,33 @@ services:
       default:
       internal:
     volumes:
-      - ../frontend:/usr/app
+      # - ../frontend:/usr/app
+      - /usr/app/.next  # Ensure the .next directory persists
     env_file:
       - ./.env
     ports:
      - "3000:3000"
 
-  # nginx:
-  #   hostname: nginx
-  #   image: nginx:alpine
-  #   container_name: nginx_app_thirdeye
-  #   networks:
-  #     default:
-  #     internal:
-  #   volumes:
-  #     - ./nginx/default.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     # - frontend
-  #     - backend
+  nginx:
+    hostname: nginx
+    image: nginx:alpine
+    container_name: nginx_app_thirdeye
+    networks:
+      default:
+      internal:
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      # - frontend
+      - backend
 
   backend:
     container_name: backend_app_thirdeye
     networks:
       default:
       internal:
-    expose:
-      - "8000"
     build:
       context: ..
       dockerfile: docker/Dockerfile.backend
@@ -108,6 +107,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=mypass  # Redis - result backend
+      - RABBITMQ_ERLANG_COOKIE=8d101d36b684119c90db26eed8e166771f64a1f05c66d3e4a62e98248ca60405
 
   redis:
     container_name: redis_app_thirdeye
